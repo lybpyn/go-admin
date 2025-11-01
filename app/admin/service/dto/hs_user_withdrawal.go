@@ -88,19 +88,10 @@ func (s *HsUserWithdrawalInsertReq) GetId() interface{} {
 }
 
 type HsUserWithdrawalUpdateReq struct {
-    Id int `uri:"id" comment:""` // 
-    WithdrawNo string `json:"withdrawNo" comment:"提现单号，唯一"`
-    UserId string `json:"userId" comment:"用户ID"`
-    Currency string `json:"currency" comment:"ISO 4217币种代码，如 USD/CNY"`
-    Amount string `json:"amount" comment:"提现金额"`
-    Fee string `json:"fee" comment:"提现手续费"`
-    NetAmount string `json:"netAmount" comment:"实际出账金额（amount - fee）"`
-    Method string `json:"method" comment:"提现方式：bank/paypal/crypto/…"`
-    AccountInfo string `json:"accountInfo" comment:"提现账户信息（脱敏）"`
-    Status string `json:"status" comment:"状态：pending/review/processing/success/failed/canceled"`
-    Reason string `json:"reason" comment:"失败/取消原因"`
+    Id int `uri:"id" comment:""` //
     ChannelTxnId string `json:"channelTxnId" comment:"通道回执流水号"`
-    RequestedAt time.Time `json:"requestedAt" comment:"发起时间"`
+    Reason string `json:"reason" comment:"失败/取消原因"`
+    Status string `json:"status" comment:"状态：pending/review/processing/success/failed/canceled"`
     ProcessedAt time.Time `json:"processedAt" comment:"处理完成时间"`
     common.ControlBy
 }
@@ -109,18 +100,9 @@ func (s *HsUserWithdrawalUpdateReq) Generate(model *models.HsUserWithdrawal)  {
     if s.Id == 0 {
         model.Model = common.Model{ Id: s.Id }
     }
-    model.WithdrawNo = s.WithdrawNo
-    model.UserId = s.UserId
-    model.Currency = s.Currency
-    model.Amount = s.Amount
-    model.Fee = s.Fee
-    model.NetAmount = s.NetAmount
-    model.Method = s.Method
-    model.AccountInfo = s.AccountInfo
-    model.Status = s.Status
-    model.Reason = s.Reason
     model.ChannelTxnId = s.ChannelTxnId
-    model.RequestedAt = s.RequestedAt
+    model.Reason = s.Reason
+    model.Status = s.Status
     model.ProcessedAt = s.ProcessedAt
     model.UpdateBy = s.UpdateBy // 添加这而，需要记录是被谁更新的
 }
