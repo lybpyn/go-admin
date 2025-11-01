@@ -21,3 +21,9 @@ cmd/migrate/migration/version-local/*
 # go sum
 go.sum
 config/settings.deva.yml
+
+# nohup output
+nohup.out
+
+# GitHub templates and workflows
+.github
