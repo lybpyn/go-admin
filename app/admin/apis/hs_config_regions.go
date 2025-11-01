@@ -22,6 +22,7 @@ type HsConfigRegions struct {
 // @Summary 获取系统地区表（注册地区选择）列表
 // @Description 获取系统地区表（注册地区选择）列表
 // @Tags 系统地区表（注册地区选择）
+// @Param name query string false "地区名称"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
 // @Success 200 {object} response.Response{data=response.Page{list=[]models.HsConfigRegions}} "{"code": 200, "data": [...]}"

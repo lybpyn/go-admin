@@ -9,6 +9,7 @@ import (
 type HsInviteRelations struct {
     models.Model
     
+    UserId string `json:"userId" gorm:"type:bigint(20);comment:用户ID"` 
     Level1InviterId string `json:"level1InviterId" gorm:"type:bigint(20);comment:一级邀请人ID"` 
     Level2InviterId string `json:"level2InviterId" gorm:"type:bigint(20);comment:二级邀请人ID"` 
     models.ModelTime

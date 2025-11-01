@@ -9,6 +9,7 @@ import (
 
 type HsConfigRegionsGetPageReq struct {
 	dto.Pagination     `search:"-"`
+    Name string `form:"name"  search:"type:exact;column:name;table:hs_config_regions" comment:"地区名称"`
     HsConfigRegionsOrder
 }
 
