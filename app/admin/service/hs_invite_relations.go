@@ -36,6 +36,53 @@ func (e *HsInviteRelations) GetPage(c *dto.HsInviteRelationsGetPageReq, p *actio
 	return nil
 }
 
+// GetStatsPage 获取邀请统计列表
+func (e *HsInviteRelations) GetStatsPage(c *dto.HsInviteRelationsStatsGetPageReq, list *[]dto.HsInviteRelationsStatsResp, count *int64) error {
+	var err error
+
+	// 构建基础查询
+	query := e.Orm.Table("hs_invite_relations AS r").
+		Select(`
+			r.level1_inviter_id AS inviter_user_id,
+			u.invite_code AS invite_code,
+			COUNT(DISTINCT r.user_id) AS invite_count,
+			COALESCE(SUM(c.commission_amount), 0) AS total_commission
+		`).
+		Joins("LEFT JOIN hs_users AS u ON r.level1_inviter_id = u.id").
+		Joins("LEFT JOIN hs_invite_commissions AS c ON r.level1_inviter_id = c.user_id AND c.status = 1").
+		Where("r.level1_inviter_id IS NOT NULL AND r.level1_inviter_id != ''").
+		Group("r.level1_inviter_id, u.invite_code")
+
+	// 添加筛选条件
+	if c.InviterUserId != "" {
+		query = query.Where("r.level1_inviter_id = ?", c.InviterUserId)
+	}
+	if c.InviteCode != "" {
+		query = query.Where("u.invite_code = ?", c.InviteCode)
+	}
+
+	// 先获取总数
+	err = query.Count(count).Error
+	if err != nil {
+		e.Log.Errorf("HsInviteRelationsService GetStatsPage count error:%s \r\n", err)
+		return err
+	}
+
+	// 分页查询
+	offset := (c.GetPageIndex() - 1) * c.GetPageSize()
+	err = query.
+		Limit(c.GetPageSize()).
+		Offset(offset).
+		Scan(list).Error
+
+	if err != nil {
+		e.Log.Errorf("HsInviteRelationsService GetStatsPage error:%s \r\n", err)
+		return err
+	}
+
+	return nil
+}
+
 // Get 获取HsInviteRelations对象
 func (e *HsInviteRelations) Get(d *dto.HsInviteRelationsGetReq, p *actions.DataPermission, model *models.HsInviteRelations) error {
 	var data models.HsInviteRelations

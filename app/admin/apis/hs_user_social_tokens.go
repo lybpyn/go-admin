@@ -22,7 +22,7 @@ type HsUserSocialTokens struct {
 // @Summary 获取社交登录Token表列表
 // @Description 获取社交登录Token表列表
 // @Tags 社交登录Token表
-// @Param userId query string false ""
+// @Param userId query string false "用户ID"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
 // @Success 200 {object} response.Response{data=response.Page{list=[]models.HsUserSocialTokens}} "{"code": 200, "data": [...]}"

@@ -23,9 +23,9 @@ type HsUsers struct {
 // @Description 获取用户主表列表
 // @Tags 用户主表
 // @Param username query string false "用户名（可选展示用）"
-// @Param firstname query string false ""
-// @Param lastname query string false ""
-// @Param inviteCode query string false ""
+// @Param firstname query string false "用户名字"
+// @Param lastname query string false "用户姓氏"
+// @Param inviteCode query string false "邀请码"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
 // @Success 200 {object} response.Response{data=response.Page{list=[]models.HsUsers}} "{"code": 200, "data": [...]}"

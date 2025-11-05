@@ -27,3 +27,4 @@ nohup.out
 
 # GitHub templates and workflows
 .github
+database/

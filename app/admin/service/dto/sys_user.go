@@ -187,3 +187,9 @@ type PassWord struct {
 	NewPassword string `json:"newPassword" vd:"len($)>0"`
 	OldPassword string `json:"oldPassword" vd:"len($)>0"`
 }
+
+// UpdateSysUserWorkStatusReq 更新管理员上下班状态请求参数
+type UpdateSysUserWorkStatusReq struct {
+	WorkStatus string `json:"workStatus" binding:"required,oneof=on_duty off_duty" comment:"上班状态：on_duty=上班中, off_duty=下班中"`
+}
+

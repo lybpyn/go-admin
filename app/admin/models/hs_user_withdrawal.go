@@ -17,8 +17,12 @@ type HsUserWithdrawal struct {
     Fee string `json:"fee" gorm:"type:decimal(18,2);comment:提现手续费"` 
     NetAmount string `json:"netAmount" gorm:"type:decimal(18,2);comment:实际出账金额（amount - fee）"` 
     Method string `json:"method" gorm:"type:varchar(32);comment:提现方式：bank/paypal/crypto/…"` 
-    AccountInfo string `json:"accountInfo" gorm:"type:json;comment:提现账户信息（脱敏）"` 
-    Status string `json:"status" gorm:"type:varchar(16);comment:状态：pending/review/processing/success/failed/canceled"` 
+    AccountInfo string `json:"accountInfo" gorm:"type:json;comment:提现账户信息（脱敏）"`
+    Status string `json:"status" gorm:"type:varchar(16);comment:状态：pending/review/processing/success/failed/canceled"`
+    HandlerId int `json:"handlerId" gorm:"type:int;comment:接单管理员ID（关联sys_user.user_id）"`
+    HandlerName string `json:"handlerName" gorm:"type:varchar(128);comment:接单管理员名称（冗余字段）"`
+    ClaimedAt time.Time `json:"claimedAt" gorm:"type:datetime(3);comment:接单时间"`
+    IsClaimed int `json:"isClaimed" gorm:"type:tinyint(1);default:0;comment:是否已接单：0=未接单, 1=已接单"`
     Reason string `json:"reason" gorm:"type:varchar(255);comment:失败/取消原因"` 
     ChannelTxnId string `json:"channelTxnId" gorm:"type:varchar(128);comment:通道回执流水号"` 
     RequestedAt time.Time `json:"requestedAt" gorm:"type:datetime(3);comment:发起时间"` 

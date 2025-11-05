@@ -264,3 +264,22 @@ func (e *SysUser) GetProfile(c *dto.SysUserById, user *models.SysUser, roles *[]
 
 	return nil
 }
+
+// UpdateWorkStatus 更新管理员上下班状态
+func (e *SysUser) UpdateWorkStatus(userId int, workStatus string) error {
+	result := e.Orm.Model(&models.SysUser{}).
+		Where("user_id = ?", userId).
+		Update("work_status", workStatus)
+
+	if result.Error != nil {
+		e.Log.Errorf("Service UpdateWorkStatus error: %s", result.Error)
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return errors.New("更新上班状态失败")
+	}
+
+	return nil
+}
+

@@ -19,6 +19,7 @@ func registerHsUserLedgerRouter(v1 *gin.RouterGroup, authMiddleware *jwt.GinJWTM
 	r := v1.Group("/hs-user-ledger").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
 	{
 		r.GET("", actions.PermissionAction(), api.GetPage)
+		r.GET("/finance-stats", api.GetFinanceStats)
 		r.GET("/:id", actions.PermissionAction(), api.Get)
 		r.POST("", api.Insert)
 		r.PUT("/:id", actions.PermissionAction(), api.Update)

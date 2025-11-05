@@ -457,3 +457,44 @@ func (e SysUser) GetInfo(c *gin.Context) {
 	mp["code"] = 200
 	e.OK(mp, "")
 }
+
+// UpdateWorkStatus 更新管理员上下班状态
+// @Summary 更新管理员上下班状态
+// @Description 管理员切换上班/下班状态
+// @Tags 个人中心
+// @Accept  application/json
+// @Product application/json
+// @Param data body dto.UpdateSysUserWorkStatusReq true "body"
+// @Success 200 {object} response.Response "{"code": 200, "message": "更新成功"}"
+// @Router /api/v1/user/work-status [put]
+// @Security Bearer
+func (e SysUser) UpdateWorkStatus(c *gin.Context) {
+	s := service.SysUser{}
+	req := dto.UpdateSysUserWorkStatusReq{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req, binding.JSON).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
+
+	userId := user.GetUserId(c)
+
+	err = s.UpdateWorkStatus(userId, req.WorkStatus)
+	if err != nil {
+		e.Error(500, err, "更新上班状态失败")
+		return
+	}
+
+	statusText := "下班"
+	if req.WorkStatus == "on_duty" {
+		statusText = "上班"
+	}
+
+	e.OK(nil, "已成功切换为"+statusText+"状态")
+}
+

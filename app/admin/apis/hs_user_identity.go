@@ -22,7 +22,7 @@ type HsUserIdentity struct {
 // @Summary 获取HsUserIdentity列表
 // @Description 获取HsUserIdentity列表
 // @Tags HsUserIdentity
-// @Param userId query string false ""
+// @Param userId query string false "用户ID"
 // @Param identityType query string false "凭证类型: email, phone, google, apple, twitter, tiktok"
 // @Param identifier query string false "凭证值: 邮箱, 手机号, 第三方平台的唯一ID"
 // @Param credential query string false "存储密码哈希(email/phone)或refresh_token(social)"

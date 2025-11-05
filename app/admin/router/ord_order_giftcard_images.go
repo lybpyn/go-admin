@@ -10,16 +10,15 @@ import (
 )
 
 func init() {
-	routerCheckRole = append(routerCheckRole, registerHsInviteRelationsRouter)
+	routerCheckRole = append(routerCheckRole, registerOrdOrderGiftcardImagesRouter)
 }
 
-// registerHsInviteRelationsRouter
-func registerHsInviteRelationsRouter(v1 *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddleware) {
-	api := apis.HsInviteRelations{}
-	r := v1.Group("/hs-invite-relations").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
+// registerOrdOrderGiftcardImagesRouter
+func registerOrdOrderGiftcardImagesRouter(v1 *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddleware) {
+	api := apis.OrdOrderGiftcardImages{}
+	r := v1.Group("/ord-order-giftcard-images").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
 	{
 		r.GET("", actions.PermissionAction(), api.GetPage)
-		r.GET("/stats", api.GetStatsPage)
 		r.GET("/:id", actions.PermissionAction(), api.Get)
 		r.POST("", api.Insert)
 		r.PUT("/:id", actions.PermissionAction(), api.Update)

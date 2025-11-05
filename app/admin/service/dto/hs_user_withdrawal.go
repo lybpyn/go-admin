@@ -46,7 +46,7 @@ func (m *HsUserWithdrawalGetPageReq) GetNeedSearch() interface{} {
 }
 
 type HsUserWithdrawalInsertReq struct {
-    Id int `json:"-" comment:""` // 
+    Id int `json:"-" comment:""` //
     WithdrawNo string `json:"withdrawNo" comment:"提现单号，唯一"`
     UserId string `json:"userId" comment:"用户ID"`
     Currency string `json:"currency" comment:"ISO 4217币种代码，如 USD/CNY"`
@@ -58,8 +58,8 @@ type HsUserWithdrawalInsertReq struct {
     Status string `json:"status" comment:"状态：pending/review/processing/success/failed/canceled"`
     Reason string `json:"reason" comment:"失败/取消原因"`
     ChannelTxnId string `json:"channelTxnId" comment:"通道回执流水号"`
-    RequestedAt time.Time `json:"requestedAt" comment:"发起时间"`
-    ProcessedAt time.Time `json:"processedAt" comment:"处理完成时间"`
+    RequestedAt common.LocalTime `json:"requestedAt" comment:"发起时间"`
+    ProcessedAt common.LocalTime `json:"processedAt" comment:"处理完成时间"`
     common.ControlBy
 }
 
@@ -78,8 +78,8 @@ func (s *HsUserWithdrawalInsertReq) Generate(model *models.HsUserWithdrawal)  {
     model.Status = s.Status
     model.Reason = s.Reason
     model.ChannelTxnId = s.ChannelTxnId
-    model.RequestedAt = s.RequestedAt
-    model.ProcessedAt = s.ProcessedAt
+    model.RequestedAt = s.RequestedAt.ToTime()
+    model.ProcessedAt = s.ProcessedAt.ToTime()
     model.CreateBy = s.CreateBy // 添加这而，需要记录是被谁创建的
 }
 
@@ -92,7 +92,7 @@ type HsUserWithdrawalUpdateReq struct {
     ChannelTxnId string `json:"channelTxnId" comment:"通道回执流水号"`
     Reason string `json:"reason" comment:"失败/取消原因"`
     Status string `json:"status" comment:"状态：pending/review/processing/success/failed/canceled"`
-    ProcessedAt time.Time `json:"processedAt" comment:"处理完成时间"`
+    ProcessedAt common.LocalTime `json:"processedAt" comment:"处理完成时间"`
     common.ControlBy
 }
 
@@ -103,7 +103,7 @@ func (s *HsUserWithdrawalUpdateReq) Generate(model *models.HsUserWithdrawal)  {
     model.ChannelTxnId = s.ChannelTxnId
     model.Reason = s.Reason
     model.Status = s.Status
-    model.ProcessedAt = s.ProcessedAt
+    model.ProcessedAt = s.ProcessedAt.ToTime()
     model.UpdateBy = s.UpdateBy // 添加这而，需要记录是被谁更新的
 }
 
@@ -126,4 +126,49 @@ type HsUserWithdrawalDeleteReq struct {
 
 func (s *HsUserWithdrawalDeleteReq) GetId() interface{} {
 	return s.Ids
+}
+
+// HsUserWithdrawalClaimReq 接单请求参数
+type HsUserWithdrawalClaimReq struct {
+	Id int `uri:"id" comment:"提现订单ID"`
+}
+
+func (s *HsUserWithdrawalClaimReq) GetId() interface{} {
+	return s.Id
+}
+
+// HsUserWithdrawalReleaseReq 释放订单（取消接单）请求参数
+type HsUserWithdrawalReleaseReq struct {
+	Id int `uri:"id" comment:"提现订单ID"`
+}
+
+func (s *HsUserWithdrawalReleaseReq) GetId() interface{} {
+	return s.Id
+}
+
+// HsUserWithdrawalCompleteReq 完成订单处理请求参数
+type HsUserWithdrawalCompleteReq struct {
+	Id           int    `uri:"id" comment:"提现订单ID"`
+	Status       string `json:"status" binding:"required,oneof=success failed" comment:"处理结果：success=成功, failed=失败"`
+	Reason       string `json:"reason" comment:"失败原因（status=failed时必填）"`
+	ChannelTxnId string `json:"channelTxnId" comment:"通道回执流水号"`
+}
+
+func (s *HsUserWithdrawalCompleteReq) GetId() interface{} {
+	return s.Id
+}
+
+// HsUserWithdrawalAvailableReq 获取可接单列表请求参数
+type HsUserWithdrawalAvailableReq struct {
+	dto.Pagination `search:"-"`
+}
+
+func (m *HsUserWithdrawalAvailableReq) GetNeedSearch() interface{} {
+	return *m
+}
+
+// HsUserWithdrawalMyOrdersReq 获取我的处理订单列表请求参数
+type HsUserWithdrawalMyOrdersReq struct {
+	dto.Pagination `search:"-"`
+	Status         string `form:"status" search:"type:exact;column:status;table:hs_user_withdrawal" comment:"订单状态"`
 }

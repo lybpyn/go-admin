@@ -34,15 +34,30 @@ type HsUserLedgerOrder struct {
     CreatedAt string `form:"createdAtOrder"  search:"type:order;column:created_at;table:hs_user_ledger"`
     UpdatedAt string `form:"updatedAtOrder"  search:"type:order;column:updated_at;table:hs_user_ledger"`
     DeletedAt string `form:"deletedAtOrder"  search:"type:order;column:deleted_at;table:hs_user_ledger"`
-    
+
 }
 
 func (m *HsUserLedgerGetPageReq) GetNeedSearch() interface{} {
 	return *m
 }
 
+// HsUserLedgerFinanceStatsReq 财务统计查询请求
+type HsUserLedgerFinanceStatsReq struct {
+	Dimension string `form:"dimension" binding:"required" comment:"统计维度: day/week/month"`
+	StartDate string `form:"startDate" binding:"required" comment:"开始日期 格式: 2024-01-01"`
+	EndDate   string `form:"endDate" binding:"required" comment:"结束日期 格式: 2024-01-31"`
+}
+
+// HsUserLedgerFinanceStatsResp 财务统计响应
+type HsUserLedgerFinanceStatsResp struct {
+	DatePeriod        string `json:"datePeriod" comment:"日期周期"`
+	TotalWithdraw     string `json:"totalWithdraw" comment:"总提现金额"`
+	TotalWithdrawFee  string `json:"totalWithdrawFee" comment:"总手续费"`
+	TotalCommission   string `json:"totalCommission" comment:"总佣金"`
+}
+
 type HsUserLedgerInsertReq struct {
-    Id int `json:"-" comment:""` // 
+    Id int `json:"-" comment:""` //
     UserId string `json:"userId" comment:""`
     Currency string `json:"currency" comment:"ISO 4217，例如 USD/CNY"`
     Direction string `json:"direction" comment:"1=入账(credit), -1=出账(debit)"`
@@ -84,7 +99,7 @@ func (s *HsUserLedgerInsertReq) GetId() interface{} {
 }
 
 type HsUserLedgerUpdateReq struct {
-    Id int `uri:"id" comment:""` // 
+    Id int `uri:"id" comment:""` //
     UserId string `json:"userId" comment:""`
     Currency string `json:"currency" comment:"ISO 4217，例如 USD/CNY"`
     Direction string `json:"direction" comment:"1=入账(credit), -1=出账(debit)"`

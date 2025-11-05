@@ -12,14 +12,14 @@ import (
 	cDto "go-admin/common/dto"
 )
 
-type OrdUserOrders struct {
+type OrdOrderGiftcardImages struct {
 	service.Service
 }
 
-// GetPage 获取OrdUserOrders列表
-func (e *OrdUserOrders) GetPage(c *dto.OrdUserOrdersGetPageReq, p *actions.DataPermission, list *[]models.OrdUserOrders, count *int64) error {
+// GetPage 获取OrdOrderGiftcardImages列表
+func (e *OrdOrderGiftcardImages) GetPage(c *dto.OrdOrderGiftcardImagesGetPageReq, p *actions.DataPermission, list *[]models.OrdOrderGiftcardImages, count *int64) error {
 	var err error
-	var data models.OrdUserOrders
+	var data models.OrdOrderGiftcardImages
 
 	err = e.Orm.Model(&data).
 		Scopes(
@@ -27,19 +27,18 @@ func (e *OrdUserOrders) GetPage(c *dto.OrdUserOrdersGetPageReq, p *actions.DataP
 			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
 			actions.Permission(data.TableName(), p),
 		).
-		Order("created_at DESC").
 		Find(list).Limit(-1).Offset(-1).
 		Count(count).Error
 	if err != nil {
-		e.Log.Errorf("OrdUserOrdersService GetPage error:%s \r\n", err)
+		e.Log.Errorf("OrdOrderGiftcardImagesService GetPage error:%s \r\n", err)
 		return err
 	}
 	return nil
 }
 
-// Get 获取OrdUserOrders对象
-func (e *OrdUserOrders) Get(d *dto.OrdUserOrdersGetReq, p *actions.DataPermission, model *models.OrdUserOrders) error {
-	var data models.OrdUserOrders
+// Get 获取OrdOrderGiftcardImages对象
+func (e *OrdOrderGiftcardImages) Get(d *dto.OrdOrderGiftcardImagesGetReq, p *actions.DataPermission, model *models.OrdOrderGiftcardImages) error {
+	var data models.OrdOrderGiftcardImages
 
 	err := e.Orm.Model(&data).
 		Scopes(
@@ -48,7 +47,7 @@ func (e *OrdUserOrders) Get(d *dto.OrdUserOrdersGetReq, p *actions.DataPermissio
 		First(model, d.GetId()).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		err = errors.New("查看对象不存在或无权查看")
-		e.Log.Errorf("Service GetOrdUserOrders error:%s \r\n", err)
+		e.Log.Errorf("Service GetOrdOrderGiftcardImages error:%s \r\n", err)
 		return err
 	}
 	if err != nil {
@@ -58,23 +57,23 @@ func (e *OrdUserOrders) Get(d *dto.OrdUserOrdersGetReq, p *actions.DataPermissio
 	return nil
 }
 
-// Insert 创建OrdUserOrders对象
-func (e *OrdUserOrders) Insert(c *dto.OrdUserOrdersInsertReq) error {
+// Insert 创建OrdOrderGiftcardImages对象
+func (e *OrdOrderGiftcardImages) Insert(c *dto.OrdOrderGiftcardImagesInsertReq) error {
     var err error
-    var data models.OrdUserOrders
+    var data models.OrdOrderGiftcardImages
     c.Generate(&data)
 	err = e.Orm.Create(&data).Error
 	if err != nil {
-		e.Log.Errorf("OrdUserOrdersService Insert error:%s \r\n", err)
+		e.Log.Errorf("OrdOrderGiftcardImagesService Insert error:%s \r\n", err)
 		return err
 	}
 	return nil
 }
 
-// Update 修改OrdUserOrders对象
-func (e *OrdUserOrders) Update(c *dto.OrdUserOrdersUpdateReq, p *actions.DataPermission) error {
+// Update 修改OrdOrderGiftcardImages对象
+func (e *OrdOrderGiftcardImages) Update(c *dto.OrdOrderGiftcardImagesUpdateReq, p *actions.DataPermission) error {
     var err error
-    var data = models.OrdUserOrders{}
+    var data = models.OrdOrderGiftcardImages{}
     e.Orm.Scopes(
             actions.Permission(data.TableName(), p),
         ).First(&data, c.GetId())
@@ -82,7 +81,7 @@ func (e *OrdUserOrders) Update(c *dto.OrdUserOrdersUpdateReq, p *actions.DataPer
 
     db := e.Orm.Save(&data)
     if err = db.Error; err != nil {
-        e.Log.Errorf("OrdUserOrdersService Save error:%s \r\n", err)
+        e.Log.Errorf("OrdOrderGiftcardImagesService Save error:%s \r\n", err)
         return err
     }
     if db.RowsAffected == 0 {
@@ -91,16 +90,16 @@ func (e *OrdUserOrders) Update(c *dto.OrdUserOrdersUpdateReq, p *actions.DataPer
     return nil
 }
 
-// Remove 删除OrdUserOrders
-func (e *OrdUserOrders) Remove(d *dto.OrdUserOrdersDeleteReq, p *actions.DataPermission) error {
-	var data models.OrdUserOrders
+// Remove 删除OrdOrderGiftcardImages
+func (e *OrdOrderGiftcardImages) Remove(d *dto.OrdOrderGiftcardImagesDeleteReq, p *actions.DataPermission) error {
+	var data models.OrdOrderGiftcardImages
 
 	db := e.Orm.Model(&data).
 		Scopes(
 			actions.Permission(data.TableName(), p),
 		).Delete(&data, d.GetId())
 	if err := db.Error; err != nil {
-        e.Log.Errorf("Service RemoveOrdUserOrders error:%s \r\n", err)
+        e.Log.Errorf("Service RemoveOrdOrderGiftcardImages error:%s \r\n", err)
         return err
     }
     if db.RowsAffected == 0 {

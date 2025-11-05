@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-admin-team/go-admin-core/sdk/api"
 	"github.com/go-admin-team/go-admin-core/sdk/pkg/captcha"
+	_ "github.com/go-admin-team/go-admin-core/sdk/pkg/response"
 )
 
 type System struct {

@@ -22,9 +22,11 @@ type OrdUserOrders struct {
     DiscountRate string `json:"discountRate" gorm:"type:decimal(5,2);comment:折扣"` 
     Rate string `json:"rate" gorm:"type:decimal(20,8);comment:汇率"` 
     Status string `json:"status" gorm:"type:tinyint(4);comment:订单状态: 0=待支付,1=已支付,2=已发卡,3=已完成,4=已取消"` 
-    CardExtra string `json:"cardExtra" gorm:"type:json;comment:CardExtra"` 
-    CompletedAt time.Time `json:"completedAt" gorm:"type:timestamp;comment:完成时间"` 
-    CanceledAt time.Time `json:"canceledAt" gorm:"type:timestamp;comment:取消时间"` 
+    CardExtra string `json:"cardExtra" gorm:"type:json;comment:CardExtra"`
+    CompletedAt time.Time `json:"completedAt" gorm:"type:timestamp;comment:完成时间"`
+    CanceledAt time.Time `json:"canceledAt" gorm:"type:timestamp;comment:取消时间"`
+    Remark time.Time `json:"remark" gorm:"type:timestamp;comment:备注"`
+
     models.ModelTime
     models.ControlBy
 }

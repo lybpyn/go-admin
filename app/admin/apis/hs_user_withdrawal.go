@@ -194,3 +194,143 @@ func (e HsUserWithdrawal) Delete(c *gin.Context) {
 	}
 	e.OK( req.GetId(), "删除成功")
 }
+
+// GetAvailable 获取可接单的提现订单列表
+// @Summary 获取可接单的提现订单列表
+// @Description 获取所有未被接单的提现订单（is_claimed=0, status=pending/review）
+// @Tags 用户余额提现申请表
+// @Param pageSize query int false "页条数"
+// @Param pageIndex query int false "页码"
+// @Success 200 {object} response.Response{data=response.Page{list=[]models.HsUserWithdrawal}} "{"code": 200, "data": [...]}"
+// @Router /api/v1/hs-user-withdrawal/available [get]
+// @Security Bearer
+func (e HsUserWithdrawal) GetAvailable(c *gin.Context) {
+	req := dto.HsUserWithdrawalAvailableReq{}
+	s := service.HsUserWithdrawal{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
+
+	list := make([]models.HsUserWithdrawal, 0)
+	var count int64
+
+	err = s.GetAvailable(&req, &list, &count)
+	if err != nil {
+		e.Error(500, err, fmt.Sprintf("获取可接单列表失败，\r\n失败信息 %s", err.Error()))
+		return
+	}
+
+	e.PageOK(list, int(count), req.GetPageIndex(), req.GetPageSize(), "查询成功")
+}
+
+// GetMyOrders 获取我的处理订单列表
+// @Summary 获取我的处理订单列表
+// @Description 获取当前管理员接单处理的订单列表
+// @Tags 用户余额提现申请表
+// @Param status query string false "订单状态"
+// @Param pageSize query int false "页条数"
+// @Param pageIndex query int false "页码"
+// @Success 200 {object} response.Response{data=response.Page{list=[]models.HsUserWithdrawal}} "{"code": 200, "data": [...]}"
+// @Router /api/v1/hs-user-withdrawal/my-orders [get]
+// @Security Bearer
+func (e HsUserWithdrawal) GetMyOrders(c *gin.Context) {
+	req := dto.HsUserWithdrawalMyOrdersReq{}
+	s := service.HsUserWithdrawal{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
+
+	handlerId := user.GetUserId(c)
+	list := make([]models.HsUserWithdrawal, 0)
+	var count int64
+
+	err = s.GetMyOrders(&req, handlerId, &list, &count)
+	if err != nil {
+		e.Error(500, err, fmt.Sprintf("获取我的订单列表失败，\r\n失败信息 %s", err.Error()))
+		return
+	}
+
+	e.PageOK(list, int(count), req.GetPageIndex(), req.GetPageSize(), "查询成功")
+}
+
+// Claim 接单
+// @Summary 接单
+// @Description 管理员接单处理提现订单
+// @Tags 用户余额提现申请表
+// @Param id path int true "订单ID"
+// @Success 200 {object} response.Response "{"code": 200, "message": "接单成功"}"
+// @Router /api/v1/hs-user-withdrawal/{id}/claim [post]
+// @Security Bearer
+func (e HsUserWithdrawal) Claim(c *gin.Context) {
+	req := dto.HsUserWithdrawalClaimReq{}
+	s := service.HsUserWithdrawal{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req, binding.Uri).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
+
+	handlerId := user.GetUserId(c)
+	handlerName := user.GetUserName(c)
+
+	err = s.Claim(req.Id, handlerId, handlerName)
+	if err != nil {
+		e.Error(500, err, err.Error())
+		return
+	}
+
+	e.OK(nil, "接单成功")
+}
+
+// Release 释放订单（取消接单）
+// @Summary 释放订单
+// @Description 管理员取消接单，释放订单
+// @Tags 用户余额提现申请表
+// @Param id path int true "订单ID"
+// @Success 200 {object} response.Response "{"code": 200, "message": "释放订单成功"}"
+// @Router /api/v1/hs-user-withdrawal/{id}/release [post]
+// @Security Bearer
+func (e HsUserWithdrawal) Release(c *gin.Context) {
+	req := dto.HsUserWithdrawalReleaseReq{}
+	s := service.HsUserWithdrawal{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req, binding.Uri).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
+
+	handlerId := user.GetUserId(c)
+
+	err = s.Release(req.Id, handlerId)
+	if err != nil {
+		e.Error(500, err, err.Error())
+		return
+	}
+
+	e.OK(nil, "释放订单成功")
+}
+

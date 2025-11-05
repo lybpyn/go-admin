@@ -10,6 +10,11 @@ import (
 
 type OrdUserOrdersGetPageReq struct {
 	dto.Pagination     `search:"-"`
+	UserId string `form:"userId" search:"type:exact;column:user_id;table:ord_user_orders" comment:"用户ID"`
+	OrderNo string `form:"orderNo" search:"type:exact;column:order_no;table:ord_user_orders" comment:"订单号"`
+	Status string `form:"status" search:"type:exact;column:status;table:ord_user_orders" comment:"订单状态"`
+	BeginTime string `form:"beginTime" search:"type:gte;column:created_at;table:ord_user_orders" comment:"开始时间"`
+	EndTime string `form:"endTime" search:"type:lte;column:created_at;table:ord_user_orders" comment:"结束时间"`
     OrdUserOrdersOrder
 }
 
@@ -59,6 +64,7 @@ type OrdUserOrdersInsertReq struct {
     CardExtra string `json:"cardExtra" comment:""`
     CompletedAt time.Time `json:"completedAt" comment:"完成时间"`
     CanceledAt time.Time `json:"canceledAt" comment:"取消时间"`
+    Remark time.Time `json:"remark" comment:"备注"`
     common.ControlBy
 }
 
@@ -81,6 +87,7 @@ func (s *OrdUserOrdersInsertReq) Generate(model *models.OrdUserOrders)  {
     model.CardExtra = s.CardExtra
     model.CompletedAt = s.CompletedAt
     model.CanceledAt = s.CanceledAt
+    model.Remark = s.Remark
     model.CreateBy = s.CreateBy // 添加这而，需要记录是被谁创建的
 }
 
@@ -105,6 +112,7 @@ type OrdUserOrdersUpdateReq struct {
     CardExtra string `json:"cardExtra" comment:""`
     CompletedAt time.Time `json:"completedAt" comment:"完成时间"`
     CanceledAt time.Time `json:"canceledAt" comment:"取消时间"`
+    Remark time.Time `json:"remark" comment:"备注"`
     common.ControlBy
 }
 
@@ -127,6 +135,7 @@ func (s *OrdUserOrdersUpdateReq) Generate(model *models.OrdUserOrders)  {
     model.CardExtra = s.CardExtra
     model.CompletedAt = s.CompletedAt
     model.CanceledAt = s.CanceledAt
+    model.Remark = s.Remark
     model.UpdateBy = s.UpdateBy // 添加这而，需要记录是被谁更新的
 }
 

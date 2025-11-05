@@ -6,6 +6,1980 @@ definitions:
       configValue:
         type: string
     type: object
+  dto.HsBanksDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsBanksInsertReq:
+    properties:
+      bankCode:
+        type: string
+      country:
+        type: string
+      createBy:
+        type: integer
+      extra:
+        type: string
+      name:
+        type: string
+      note:
+        type: string
+      routingNumber:
+        type: string
+      status:
+        type: string
+      supportsInternational:
+        type: string
+      swiftCode:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.HsBanksUpdateReq:
+    properties:
+      bankCode:
+        type: string
+      country:
+        type: string
+      createBy:
+        type: integer
+      extra:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      note:
+        type: string
+      routingNumber:
+        type: string
+      status:
+        type: string
+      supportsInternational:
+        type: string
+      swiftCode:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.HsCarouselBannerDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsCarouselBannerInsertReq:
+    properties:
+      createBy:
+        type: integer
+      endTime:
+        type: string
+      imageUrl:
+        type: string
+      linkUrl:
+        type: string
+      sortOrder:
+        type: string
+      startTime:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.HsCarouselBannerUpdateReq:
+    properties:
+      createBy:
+        type: integer
+      endTime:
+        type: string
+      id:
+        type: integer
+      imageUrl:
+        type: string
+      linkUrl:
+        type: string
+      sortOrder:
+        type: string
+      startTime:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.HsConfgiUserLevelsDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsConfgiUserLevelsInsertReq:
+    properties:
+      createBy:
+        type: integer
+      firstInviteCommossions:
+        type: string
+      isActive:
+        type: string
+      levelIcon:
+        type: string
+      levelName:
+        type: string
+      levelPrivileges:
+        type: string
+      secondInviteCommossions:
+        type: string
+      sortOrder:
+        type: string
+      upExperience:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.HsConfgiUserLevelsUpdateReq:
+    properties:
+      createBy:
+        type: integer
+      firstInviteCommossions:
+        type: string
+      id:
+        description: 等级ID
+        type: integer
+      isActive:
+        type: string
+      levelIcon:
+        type: string
+      levelName:
+        type: string
+      levelPrivileges:
+        type: string
+      secondInviteCommossions:
+        type: string
+      sortOrder:
+        type: string
+      upExperience:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.HsConfigCheckinRewardsDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsConfigCheckinRewardsInsertReq:
+    properties:
+      consecutiveDays:
+        type: string
+      createBy:
+        type: integer
+      experienceReward:
+        type: string
+      extraRewards:
+        type: string
+      isActive:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.HsConfigCheckinRewardsUpdateReq:
+    properties:
+      consecutiveDays:
+        type: string
+      createBy:
+        type: integer
+      experienceReward:
+        type: string
+      extraRewards:
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      isActive:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.HsConfigRegionsDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsConfigRegionsInsertReq:
+    properties:
+      code:
+        type: string
+      createBy:
+        type: integer
+      isActive:
+        type: string
+      name:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.HsConfigRegionsUpdateReq:
+    properties:
+      code:
+        type: string
+      createBy:
+        type: integer
+      id:
+        description: 地区ID
+        type: integer
+      isActive:
+        type: string
+      name:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.HsConfigSupportedChainsCoinDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsConfigSupportedChainsCoinInsertReq:
+    properties:
+      chainCode:
+        type: string
+      chainId:
+        type: string
+      chainName:
+        type: string
+      createBy:
+        type: integer
+      depositEnabled:
+        type: string
+      explorerUrl:
+        type: string
+      minWithdrawAmount:
+        type: string
+      nativeSymbol:
+        type: string
+      network:
+        type: string
+      remark:
+        type: string
+      rpcEndpoint:
+        type: string
+      sortOrder:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      withdrawCoin:
+        type: string
+      withdrawEnabled:
+        type: string
+      withdrawFee:
+        type: string
+    type: object
+  dto.HsConfigSupportedChainsCoinUpdateReq:
+    properties:
+      chainCode:
+        type: string
+      chainId:
+        type: string
+      chainName:
+        type: string
+      createBy:
+        type: integer
+      depositEnabled:
+        type: string
+      explorerUrl:
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      minWithdrawAmount:
+        type: string
+      nativeSymbol:
+        type: string
+      network:
+        type: string
+      remark:
+        type: string
+      rpcEndpoint:
+        type: string
+      sortOrder:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      withdrawCoin:
+        type: string
+      withdrawEnabled:
+        type: string
+      withdrawFee:
+        type: string
+    type: object
+  dto.HsInviteCommissionsDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsInviteCommissionsInsertReq:
+    properties:
+      commissionAmount:
+        type: string
+      commissionLevel:
+        type: string
+      commissionRate:
+        type: string
+      createBy:
+        type: integer
+      orderId:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsInviteCommissionsUpdateReq:
+    properties:
+      commissionAmount:
+        type: string
+      commissionLevel:
+        type: string
+      commissionRate:
+        type: string
+      createBy:
+        type: integer
+      id:
+        type: integer
+      orderId:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsInviteRelationsDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsInviteRelationsInsertReq:
+    properties:
+      createBy:
+        type: integer
+      level1InviterId:
+        type: string
+      level2InviterId:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsInviteRelationsStatsResp:
+    properties:
+      inviteCode:
+        type: string
+      inviteCount:
+        type: integer
+      inviterUserId:
+        type: string
+      totalCommission:
+        type: string
+    type: object
+  dto.HsInviteRelationsUpdateReq:
+    properties:
+      createBy:
+        type: integer
+      id:
+        type: integer
+      level1InviterId:
+        type: string
+      level2InviterId:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsInvitesBindDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsInvitesBindInsertReq:
+    properties:
+      createBy:
+        type: integer
+      inviterId:
+        type: string
+      level:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsInvitesBindUpdateReq:
+    properties:
+      createBy:
+        type: integer
+      id:
+        type: integer
+      inviterId:
+        type: string
+      level:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsMerchantsDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsMerchantsInsertReq:
+    properties:
+      contactEmail:
+        type: string
+      contactName:
+        type: string
+      contactPhone:
+        type: string
+      country:
+        type: string
+      createBy:
+        type: integer
+      dailyLimit:
+        type: string
+      extra:
+        type: string
+      merchantCode:
+        type: string
+      name:
+        type: string
+      note:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.HsMerchantsUpdateReq:
+    properties:
+      contactEmail:
+        type: string
+      contactName:
+        type: string
+      contactPhone:
+        type: string
+      country:
+        type: string
+      createBy:
+        type: integer
+      dailyLimit:
+        type: string
+      extra:
+        type: string
+      id:
+        type: integer
+      merchantCode:
+        type: string
+      name:
+        type: string
+      note:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.HsReceivingAccountsDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsReceivingAccountsInsertReq:
+    properties:
+      accountName:
+        type: string
+      accountNumber:
+        type: string
+      allowedCountries:
+        type: string
+      autoTransferEnabled:
+        type: string
+      autoTransferThreshold:
+        type: string
+      bankId:
+        type: string
+      createBy:
+        type: integer
+      currency:
+        type: string
+      dailyLimit:
+        type: string
+      interfaceConfig:
+        type: string
+      interfaceType:
+        type: string
+      isDefault:
+        type: string
+      maxAmount:
+        type: string
+      merchantId:
+        type: string
+      minAmount:
+        type: string
+      note:
+        type: string
+      riskThresholdAmount:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.HsReceivingAccountsUpdateReq:
+    properties:
+      accountName:
+        type: string
+      accountNumber:
+        type: string
+      allowedCountries:
+        type: string
+      autoTransferEnabled:
+        type: string
+      autoTransferThreshold:
+        type: string
+      bankId:
+        type: string
+      createBy:
+        type: integer
+      currency:
+        type: string
+      dailyLimit:
+        type: string
+      id:
+        type: integer
+      interfaceConfig:
+        type: string
+      interfaceType:
+        type: string
+      isDefault:
+        type: string
+      maxAmount:
+        type: string
+      merchantId:
+        type: string
+      minAmount:
+        type: string
+      note:
+        type: string
+      riskThresholdAmount:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.HsUserBankCardsDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsUserBankCardsInsertReq:
+    properties:
+      bankId:
+        type: string
+      bankName:
+        type: string
+      branchName:
+        type: string
+      cardHolderName:
+        type: string
+      cardNumber:
+        type: string
+      cardType:
+        type: string
+      createBy:
+        type: integer
+      idCard:
+        type: string
+      isDefault:
+        type: string
+      phone:
+        type: string
+      remark:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsUserBankCardsUpdateReq:
+    properties:
+      bankId:
+        type: string
+      bankName:
+        type: string
+      branchName:
+        type: string
+      cardHolderName:
+        type: string
+      cardNumber:
+        type: string
+      cardType:
+        type: string
+      createBy:
+        type: integer
+      id:
+        description: 主键ID
+        type: integer
+      idCard:
+        type: string
+      isDefault:
+        type: string
+      phone:
+        type: string
+      remark:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsUserCheckinStatsDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsUserCheckinStatsInsertReq:
+    properties:
+      createBy:
+        type: integer
+      currentConsecutiveDays:
+        type: string
+      lastCheckinDate:
+        type: string
+      maxConsecutiveDays:
+        type: string
+      thisMonthCheckinDays:
+        type: string
+      totalCheckinDays:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsUserCheckinStatsUpdateReq:
+    properties:
+      createBy:
+        type: integer
+      currentConsecutiveDays:
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      lastCheckinDate:
+        type: string
+      maxConsecutiveDays:
+        type: string
+      thisMonthCheckinDays:
+        type: string
+      totalCheckinDays:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsUserCheckinsDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsUserCheckinsInsertReq:
+    properties:
+      checkinDate:
+        type: string
+      checkinTime:
+        type: string
+      consecutiveDays:
+        type: string
+      createBy:
+        type: integer
+      rewardPoints:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsUserCheckinsUpdateReq:
+    properties:
+      checkinDate:
+        type: string
+      checkinTime:
+        type: string
+      consecutiveDays:
+        type: string
+      createBy:
+        type: integer
+      id:
+        description: 主键ID
+        type: integer
+      rewardPoints:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsUserExperienceLogsDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsUserExperienceLogsInsertReq:
+    properties:
+      createBy:
+        type: integer
+      description:
+        type: string
+      experienceAfter:
+        type: string
+      experienceBefore:
+        type: string
+      experienceChange:
+        type: string
+      sourceId:
+        type: string
+      sourceType:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsUserExperienceLogsUpdateReq:
+    properties:
+      createBy:
+        type: integer
+      description:
+        type: string
+      experienceAfter:
+        type: string
+      experienceBefore:
+        type: string
+      experienceChange:
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      sourceId:
+        type: string
+      sourceType:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsUserIdentityDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsUserIdentityInsertReq:
+    properties:
+      createBy:
+        type: integer
+      credential:
+        type: string
+      identifier:
+        type: string
+      identityType:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+      verified:
+        type: string
+    type: object
+  dto.HsUserIdentityUpdateReq:
+    properties:
+      createBy:
+        type: integer
+      credential:
+        type: string
+      id:
+        type: integer
+      identifier:
+        type: string
+      identityType:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+      verified:
+        type: string
+    type: object
+  dto.HsUserLedgerDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsUserLedgerFinanceStatsResp:
+    properties:
+      datePeriod:
+        type: string
+      totalCommission:
+        type: string
+      totalWithdraw:
+        type: string
+      totalWithdrawFee:
+        type: string
+    type: object
+  dto.HsUserLedgerInsertReq:
+    properties:
+      amount:
+        type: string
+      balanceAfter:
+        type: string
+      balanceBefore:
+        type: string
+      bizId:
+        type: string
+      bizType:
+        type: string
+      createBy:
+        type: integer
+      currency:
+        type: string
+      direction:
+        type: string
+      idempotencyKey:
+        type: string
+      refId:
+        type: string
+      refTable:
+        type: string
+      remark:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsUserLedgerUpdateReq:
+    properties:
+      amount:
+        type: string
+      balanceAfter:
+        type: string
+      balanceBefore:
+        type: string
+      bizId:
+        type: string
+      bizType:
+        type: string
+      createBy:
+        type: integer
+      currency:
+        type: string
+      direction:
+        type: string
+      id:
+        type: integer
+      idempotencyKey:
+        type: string
+      refId:
+        type: string
+      refTable:
+        type: string
+      remark:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsUserSocialTokensDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsUserSocialTokensInsertReq:
+    properties:
+      accessToken:
+        type: string
+      createBy:
+        type: integer
+      expiresIn:
+        type: string
+      issuedAt:
+        type: string
+      provider:
+        type: string
+      refreshToken:
+        type: string
+      scope:
+        type: string
+      tokenType:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsUserSocialTokensUpdateReq:
+    properties:
+      accessToken:
+        type: string
+      createBy:
+        type: integer
+      expiresIn:
+        type: string
+      id:
+        type: integer
+      issuedAt:
+        type: string
+      provider:
+        type: string
+      refreshToken:
+        type: string
+      scope:
+        type: string
+      tokenType:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsUserWithdrawAddressesDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsUserWithdrawAddressesInsertReq:
+    properties:
+      address:
+        type: string
+      configSupportedChainsCoinId:
+        type: string
+      createBy:
+        type: integer
+      createdIp:
+        type: string
+      isDefault:
+        type: string
+      label:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsUserWithdrawAddressesUpdateReq:
+    properties:
+      address:
+        type: string
+      configSupportedChainsCoinId:
+        type: string
+      createBy:
+        type: integer
+      createdIp:
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      isDefault:
+        type: string
+      label:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.HsUserWithdrawalDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsUserWithdrawalInsertReq:
+    properties:
+      accountInfo:
+        type: string
+      amount:
+        type: string
+      channelTxnId:
+        type: string
+      createBy:
+        type: integer
+      currency:
+        type: string
+      fee:
+        type: string
+      method:
+        type: string
+      netAmount:
+        type: string
+      processedAt:
+        type: string
+      reason:
+        type: string
+      requestedAt:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+      withdrawNo:
+        type: string
+    type: object
+  dto.HsUserWithdrawalUpdateReq:
+    properties:
+      channelTxnId:
+        type: string
+      createBy:
+        type: integer
+      id:
+        type: integer
+      processedAt:
+        type: string
+      reason:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.HsUsersDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.HsUsersInsertReq:
+    properties:
+      avatar:
+        type: string
+      balance:
+        type: string
+      createBy:
+        type: integer
+      experience:
+        type: string
+      firstname:
+        type: string
+      inviteCode:
+        type: string
+      lastname:
+        type: string
+      levelId:
+        type: string
+      passwordHash:
+        type: string
+      status:
+        type: string
+      totalExperience:
+        type: string
+      updateBy:
+        type: integer
+      username:
+        type: string
+      version:
+        type: string
+    type: object
+  dto.HsUsersUpdateReq:
+    properties:
+      avatar:
+        type: string
+      balance:
+        type: string
+      createBy:
+        type: integer
+      experience:
+        type: string
+      firstname:
+        type: string
+      id:
+        type: integer
+      inviteCode:
+        type: string
+      lastname:
+        type: string
+      levelId:
+        type: string
+      passwordHash:
+        type: string
+      status:
+        type: string
+      totalExperience:
+        type: string
+      updateBy:
+        type: integer
+      username:
+        type: string
+      version:
+        type: string
+    type: object
+  dto.MdEventDefinitionTabDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.MdEventDefinitionTabInsertReq:
+    properties:
+      createBy:
+        type: integer
+      eventCode:
+        type: string
+      eventDesc:
+        type: string
+      eventName:
+        type: string
+      eventType:
+        type: string
+      moduleName:
+        type: string
+      paramSchema:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.MdEventDefinitionTabUpdateReq:
+    properties:
+      createBy:
+        type: integer
+      eventCode:
+        type: string
+      eventDesc:
+        type: string
+      eventName:
+        type: string
+      eventType:
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      moduleName:
+        type: string
+      paramSchema:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.MdEventLogTabDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.MdEventLogTabInsertReq:
+    properties:
+      appVersion:
+        type: string
+      countryCode:
+        type: string
+      createBy:
+        type: integer
+      deviceBrand:
+        type: string
+      deviceId:
+        type: string
+      deviceModel:
+        type: string
+      eventCode:
+        type: string
+      eventId:
+        type: string
+      eventName:
+        type: string
+      eventParams:
+        type: string
+      eventTime:
+        type: string
+      ipAddress:
+        type: string
+      language:
+        type: string
+      moduleName:
+        type: string
+      networkType:
+        type: string
+      osType:
+        type: string
+      osVersion:
+        type: string
+      pageName:
+        type: string
+      platform:
+        type: string
+      referrer:
+        type: string
+      sessionId:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.MdEventLogTabUpdateReq:
+    properties:
+      appVersion:
+        type: string
+      countryCode:
+        type: string
+      createBy:
+        type: integer
+      deviceBrand:
+        type: string
+      deviceId:
+        type: string
+      deviceModel:
+        type: string
+      eventCode:
+        type: string
+      eventId:
+        type: string
+      eventName:
+        type: string
+      eventParams:
+        type: string
+      eventTime:
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      ipAddress:
+        type: string
+      language:
+        type: string
+      moduleName:
+        type: string
+      networkType:
+        type: string
+      osType:
+        type: string
+      osVersion:
+        type: string
+      pageName:
+        type: string
+      platform:
+        type: string
+      referrer:
+        type: string
+      sessionId:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.MdUserDeviceTabDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.MdUserDeviceTabInsertReq:
+    properties:
+      appVersion:
+        type: string
+      countryCode:
+        type: string
+      createBy:
+        type: integer
+      deviceBrand:
+        type: string
+      deviceId:
+        type: string
+      deviceModel:
+        type: string
+      firstOpenTime:
+        type: string
+      installTime:
+        type: string
+      isRegistered:
+        type: string
+      language:
+        type: string
+      lastActiveTime:
+        type: string
+      osType:
+        type: string
+      osVersion:
+        type: string
+      platform:
+        type: string
+      registerTime:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.MdUserDeviceTabUpdateReq:
+    properties:
+      appVersion:
+        type: string
+      countryCode:
+        type: string
+      createBy:
+        type: integer
+      deviceBrand:
+        type: string
+      deviceId:
+        type: string
+      deviceModel:
+        type: string
+      firstOpenTime:
+        type: string
+      id:
+        description: 主键ID
+        type: integer
+      installTime:
+        type: string
+      isRegistered:
+        type: string
+      language:
+        type: string
+      lastActiveTime:
+        type: string
+      osType:
+        type: string
+      osVersion:
+        type: string
+      platform:
+        type: string
+      registerTime:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.NoNotificationReceiversDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.NoNotificationReceiversInsertReq:
+    properties:
+      createBy:
+        type: integer
+      isRead:
+        type: string
+      notificationId:
+        type: string
+      readAt:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.NoNotificationReceiversUpdateReq:
+    properties:
+      createBy:
+        type: integer
+      id:
+        type: integer
+      isRead:
+        type: string
+      notificationId:
+        type: string
+      readAt:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.NoSystemNotificationsDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.NoSystemNotificationsInsertReq:
+    properties:
+      content:
+        type: string
+      createBy:
+        type: integer
+      isRead:
+        type: string
+      readAt:
+        type: string
+      status:
+        type: string
+      targetType:
+        type: string
+      targetUserId:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.NoSystemNotificationsUpdateReq:
+    properties:
+      content:
+        type: string
+      createBy:
+        type: integer
+      id:
+        description: 消息ID
+        type: integer
+      isRead:
+        type: string
+      readAt:
+        type: string
+      status:
+        type: string
+      targetType:
+        type: string
+      targetUserId:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.OrdCurrencyRatesDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.OrdCurrencyRatesInsertReq:
+    properties:
+      createBy:
+        type: integer
+      quoteCurrency:
+        type: string
+      rate:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.OrdCurrencyRatesUpdateReq:
+    properties:
+      createBy:
+        type: integer
+      id:
+        description: 主键ID
+        type: integer
+      quoteCurrency:
+        type: string
+      rate:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.OrdGiftCardSuppliersDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.OrdGiftCardSuppliersInsertReq:
+    properties:
+      apiConfig:
+        type: string
+      apiEndpoint:
+        type: string
+      apiKey:
+        type: string
+      code:
+        type: string
+      contactEmail:
+        type: string
+      contactPerson:
+        type: string
+      contactPhone:
+        type: string
+      createBy:
+        type: integer
+      name:
+        type: string
+      settlementRate:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.OrdGiftCardSuppliersUpdateReq:
+    properties:
+      apiConfig:
+        type: string
+      apiEndpoint:
+        type: string
+      apiKey:
+        type: string
+      code:
+        type: string
+      contactEmail:
+        type: string
+      contactPerson:
+        type: string
+      contactPhone:
+        type: string
+      createBy:
+        type: integer
+      id:
+        description: 主键ID
+        type: integer
+      name:
+        type: string
+      settlementRate:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.OrdGiftcardCategoryDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.OrdGiftcardCategoryInsertReq:
+    properties:
+      createBy:
+        type: integer
+      discountRate:
+        type: string
+      name:
+        type: string
+      sortOrder:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.OrdGiftcardCategoryUpdateReq:
+    properties:
+      createBy:
+        type: integer
+      discountRate:
+        type: string
+      id:
+        description: 分类ID
+        type: integer
+      name:
+        type: string
+      sortOrder:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.OrdGiftcardDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.OrdGiftcardDiscountsDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.OrdGiftcardDiscountsInsertReq:
+    properties:
+      cardType:
+        type: string
+      createBy:
+        type: integer
+      discountRate:
+        type: string
+      giftcardId:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.OrdGiftcardDiscountsUpdateReq:
+    properties:
+      cardType:
+        type: string
+      createBy:
+        type: integer
+      discountRate:
+        type: string
+      giftcardId:
+        type: string
+      id:
+        type: integer
+      updateBy:
+        type: integer
+    type: object
+  dto.OrdGiftcardInsertReq:
+    properties:
+      createBy:
+        type: integer
+      discountRate:
+        type: string
+      extra:
+        type: string
+      name:
+        type: string
+      regionId:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      valuesConfig:
+        type: string
+    type: object
+  dto.OrdGiftcardRegionDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.OrdGiftcardRegionInsertReq:
+    properties:
+      categoryId:
+        type: string
+      createBy:
+        type: integer
+      isMain:
+        type: string
+      quoteCurrency:
+        type: string
+      quoteCurrencySymbol:
+        type: string
+      rate:
+        type: string
+      regionCode:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.OrdGiftcardRegionUpdateReq:
+    properties:
+      categoryId:
+        type: string
+      createBy:
+        type: integer
+      id:
+        description: 地区ID
+        type: integer
+      isMain:
+        type: string
+      quoteCurrency:
+        type: string
+      quoteCurrencySymbol:
+        type: string
+      rate:
+        type: string
+      regionCode:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.OrdGiftcardUpdateReq:
+    properties:
+      createBy:
+        type: integer
+      discountRate:
+        type: string
+      extra:
+        type: string
+      id:
+        description: 礼品卡ID
+        type: integer
+      name:
+        type: string
+      regionId:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      valuesConfig:
+        type: string
+    type: object
+  dto.OrdGiftcardWriteoffsDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.OrdGiftcardWriteoffsInsertReq:
+    properties:
+      createBy:
+        type: integer
+      giftCardCode:
+        type: string
+      giftCardId:
+        type: string
+      orderId:
+        type: string
+      remark:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.OrdGiftcardWriteoffsUpdateReq:
+    properties:
+      createBy:
+        type: integer
+      giftCardCode:
+        type: string
+      giftCardId:
+        type: string
+      id:
+        description: 主键ID，自增
+        type: integer
+      orderId:
+        type: string
+      remark:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.OrdOrderGiftcardImagesDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.OrdOrderGiftcardImagesInsertReq:
+    properties:
+      createBy:
+        type: integer
+      imageUrl:
+        type: string
+      orderId:
+        type: string
+      sortOrder:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.OrdOrderGiftcardImagesUpdateReq:
+    properties:
+      createBy:
+        type: integer
+      id:
+        description: 主键ID
+        type: integer
+      imageUrl:
+        type: string
+      orderId:
+        type: string
+      sortOrder:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.OrdUserOrdersDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.OrdUserOrdersInsertReq:
+    properties:
+      balance:
+        type: string
+      canceledAt:
+        type: string
+      cardExtra:
+        type: string
+      cardType:
+        type: string
+      categoryId:
+        type: string
+      completedAt:
+        type: string
+      createBy:
+        type: integer
+      currency:
+        type: string
+      discountRate:
+        type: string
+      giftCardCode:
+        type: string
+      giftcardId:
+        type: string
+      orderNo:
+        type: string
+      rate:
+        type: string
+      regionId:
+        type: string
+      remark:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
+  dto.OrdUserOrdersUpdateReq:
+    properties:
+      balance:
+        type: string
+      canceledAt:
+        type: string
+      cardExtra:
+        type: string
+      cardType:
+        type: string
+      categoryId:
+        type: string
+      completedAt:
+        type: string
+      createBy:
+        type: integer
+      currency:
+        type: string
+      discountRate:
+        type: string
+      giftCardCode:
+        type: string
+      giftcardId:
+        type: string
+      id:
+        description: 订单ID
+        type: integer
+      orderNo:
+        type: string
+      rate:
+        type: string
+      regionId:
+        type: string
+      remark:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: string
+    type: object
   dto.PassWord:
     properties:
       newPassword:
@@ -170,14 +2144,10 @@ definitions:
     type: object
   dto.SysDictDataDeleteReq:
     properties:
-      createBy:
-        type: integer
       ids:
         items:
           type: integer
         type: array
-      updateBy:
-        type: integer
     type: object
   dto.SysDictDataGetAllResp:
     properties:
@@ -357,7 +2327,7 @@ definitions:
         type: integer
       sysApi:
         items:
-          $ref: '#/definitions/models.SysApi'
+          $ref: '#/definitions/go-admin_app_admin_models.SysApi'
         type: array
       title:
         description: 显示名称
@@ -420,7 +2390,7 @@ definitions:
         type: integer
       sysApi:
         items:
-          $ref: '#/definitions/models.SysApi'
+          $ref: '#/definitions/go-admin_app_admin_models.SysApi'
         type: array
       title:
         description: 显示名称
@@ -533,11 +2503,11 @@ definitions:
         type: string
       sysDept:
         items:
-          $ref: '#/definitions/models.SysDept'
+          $ref: '#/definitions/go-admin_app_admin_models.SysDept'
         type: array
       sysMenu:
         items:
-          $ref: '#/definitions/models.SysMenu'
+          $ref: '#/definitions/go-admin_app_admin_models.SysMenu'
         type: array
       updateBy:
         type: integer
@@ -581,11 +2551,11 @@ definitions:
         type: string
       sysDept:
         items:
-          $ref: '#/definitions/models.SysDept'
+          $ref: '#/definitions/go-admin_app_admin_models.SysDept'
         type: array
       sysMenu:
         items:
-          $ref: '#/definitions/models.SysMenu'
+          $ref: '#/definitions/go-admin_app_admin_models.SysMenu'
         type: array
       updateBy:
         type: integer
@@ -683,23 +2653,17 @@ definitions:
         description: 用户ID
         type: integer
     type: object
-  handler.Login:
+  dto.UpdateSysUserWorkStatusReq:
     properties:
-      code:
-        type: string
-      password:
-        type: string
-      username:
-        type: string
-      uuid:
+      workStatus:
+        enum:
+        - on_duty
+        - off_duty
         type: string
     required:
-    - code
-    - password
-    - username
-    - uuid
+    - workStatus
     type: object
-  models.SysApi:
+  go-admin_app_admin_models.SysApi:
     properties:
       action:
         type: string
@@ -722,7 +2686,7 @@ definitions:
       updatedAt:
         type: string
     type: object
-  models.SysConfig:
+  go-admin_app_admin_models.SysConfig:
     properties:
       configKey:
         type: string
@@ -747,11 +2711,11 @@ definitions:
       updatedAt:
         type: string
     type: object
-  models.SysDept:
+  go-admin_app_admin_models.SysDept:
     properties:
       children:
         items:
-          $ref: '#/definitions/models.SysDept'
+          $ref: '#/definitions/go-admin_app_admin_models.SysDept'
         type: array
       createBy:
         type: integer
@@ -792,7 +2756,7 @@ definitions:
       updatedAt:
         type: string
     type: object
-  models.SysMenu:
+  go-admin_app_admin_models.SysMenu:
     properties:
       action:
         type: string
@@ -804,7 +2768,7 @@ definitions:
         type: string
       children:
         items:
-          $ref: '#/definitions/models.SysMenu'
+          $ref: '#/definitions/go-admin_app_admin_models.SysMenu'
         type: array
       component:
         type: string
@@ -844,7 +2808,7 @@ definitions:
         type: integer
       sysApi:
         items:
-          $ref: '#/definitions/models.SysApi'
+          $ref: '#/definitions/go-admin_app_admin_models.SysApi'
         type: array
       title:
         type: string
@@ -853,6 +2817,1057 @@ definitions:
       updatedAt:
         type: string
       visible:
+        type: string
+    type: object
+  handler.Login:
+    properties:
+      code:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+      uuid:
+        type: string
+    required:
+    - code
+    - password
+    - username
+    - uuid
+    type: object
+  models.HsBanks:
+    properties:
+      bankCode:
+        type: string
+      country:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      extra:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      note:
+        type: string
+      routingNumber:
+        type: string
+      status:
+        type: string
+      supportsInternational:
+        type: string
+      swiftCode:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.HsCarouselBanner:
+    properties:
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      endTime:
+        type: string
+      id:
+        type: integer
+      imageUrl:
+        type: string
+      linkUrl:
+        type: string
+      sortOrder:
+        type: string
+      startTime:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.HsConfgiUserLevels:
+    properties:
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      firstInviteCommossions:
+        type: string
+      id:
+        type: integer
+      isActive:
+        type: string
+      levelIcon:
+        type: string
+      levelName:
+        type: string
+      levelPrivileges:
+        type: string
+      secondInviteCommossions:
+        type: string
+      sortOrder:
+        type: string
+      upExperience:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.HsConfigCheckinRewards:
+    properties:
+      consecutiveDays:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      experienceReward:
+        type: string
+      extraRewards:
+        type: string
+      id:
+        type: integer
+      isActive:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.HsConfigRegions:
+    properties:
+      code:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      id:
+        type: integer
+      isActive:
+        type: string
+      name:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.HsConfigSupportedChainsCoin:
+    properties:
+      chainCode:
+        type: string
+      chainId:
+        type: string
+      chainName:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      depositEnabled:
+        type: string
+      explorerUrl:
+        type: string
+      id:
+        type: integer
+      minWithdrawAmount:
+        type: string
+      nativeSymbol:
+        type: string
+      network:
+        type: string
+      remark:
+        type: string
+      rpcEndpoint:
+        type: string
+      sortOrder:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      withdrawCoin:
+        type: string
+      withdrawEnabled:
+        type: string
+      withdrawFee:
+        type: string
+    type: object
+  models.HsInviteCommissions:
+    properties:
+      commissionAmount:
+        type: string
+      commissionLevel:
+        type: string
+      commissionRate:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      id:
+        type: integer
+      orderId:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.HsInviteRelations:
+    properties:
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      id:
+        type: integer
+      level1InviterId:
+        type: string
+      level2InviterId:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.HsInvitesBind:
+    properties:
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      id:
+        type: integer
+      inviterId:
+        type: string
+      level:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.HsMerchants:
+    properties:
+      contactEmail:
+        type: string
+      contactName:
+        type: string
+      contactPhone:
+        type: string
+      country:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      dailyLimit:
+        type: string
+      extra:
+        type: string
+      id:
+        type: integer
+      merchantCode:
+        type: string
+      name:
+        type: string
+      note:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.HsReceivingAccounts:
+    properties:
+      accountName:
+        type: string
+      accountNumber:
+        type: string
+      allowedCountries:
+        type: string
+      autoTransferEnabled:
+        type: string
+      autoTransferThreshold:
+        type: string
+      bankId:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      currency:
+        type: string
+      dailyLimit:
+        type: string
+      id:
+        type: integer
+      interfaceConfig:
+        type: string
+      interfaceType:
+        type: string
+      isDefault:
+        type: string
+      maxAmount:
+        type: string
+      merchantId:
+        type: string
+      minAmount:
+        type: string
+      note:
+        type: string
+      riskThresholdAmount:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.HsUserBankCards:
+    properties:
+      bankId:
+        type: string
+      bankName:
+        type: string
+      branchName:
+        type: string
+      cardHolderName:
+        type: string
+      cardNumber:
+        type: string
+      cardType:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      id:
+        type: integer
+      idCard:
+        type: string
+      isDefault:
+        type: string
+      phone:
+        type: string
+      remark:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.HsUserCheckinStats:
+    properties:
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      currentConsecutiveDays:
+        type: string
+      id:
+        type: integer
+      lastCheckinDate:
+        type: string
+      maxConsecutiveDays:
+        type: string
+      thisMonthCheckinDays:
+        type: string
+      totalCheckinDays:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.HsUserCheckins:
+    properties:
+      checkinDate:
+        type: string
+      checkinTime:
+        type: string
+      consecutiveDays:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      id:
+        type: integer
+      rewardPoints:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.HsUserExperienceLogs:
+    properties:
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      description:
+        type: string
+      experienceAfter:
+        type: string
+      experienceBefore:
+        type: string
+      experienceChange:
+        type: string
+      id:
+        type: integer
+      sourceId:
+        type: string
+      sourceType:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.HsUserIdentity:
+    properties:
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      credential:
+        type: string
+      id:
+        type: integer
+      identifier:
+        type: string
+      identityType:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: string
+      verified:
+        type: string
+    type: object
+  models.HsUserLedger:
+    properties:
+      amount:
+        type: string
+      balanceAfter:
+        type: string
+      balanceBefore:
+        type: string
+      bizId:
+        type: string
+      bizType:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      currency:
+        type: string
+      direction:
+        type: string
+      id:
+        type: integer
+      idempotencyKey:
+        type: string
+      refId:
+        type: string
+      refTable:
+        type: string
+      remark:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.HsUserSocialTokens:
+    properties:
+      accessToken:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      expiresIn:
+        type: string
+      id:
+        type: integer
+      issuedAt:
+        type: string
+      provider:
+        type: string
+      refreshToken:
+        type: string
+      scope:
+        type: string
+      tokenType:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.HsUserWithdrawAddresses:
+    properties:
+      address:
+        type: string
+      configSupportedChainsCoinId:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      createdIp:
+        type: string
+      id:
+        type: integer
+      isDefault:
+        type: string
+      label:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.HsUserWithdrawal:
+    properties:
+      accountInfo:
+        type: string
+      amount:
+        type: string
+      channelTxnId:
+        type: string
+      claimedAt:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      currency:
+        type: string
+      fee:
+        type: string
+      handlerId:
+        type: integer
+      handlerName:
+        type: string
+      id:
+        type: integer
+      isClaimed:
+        type: integer
+      method:
+        type: string
+      netAmount:
+        type: string
+      processedAt:
+        type: string
+      reason:
+        type: string
+      requestedAt:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: string
+      withdrawNo:
+        type: string
+    type: object
+  models.HsUsers:
+    properties:
+      avatar:
+        type: string
+      balance:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      experience:
+        type: string
+      firstname:
+        type: string
+      id:
+        type: integer
+      inviteCode:
+        type: string
+      lastname:
+        type: string
+      levelId:
+        type: string
+      passwordHash:
+        type: string
+      status:
+        type: string
+      totalExperience:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      username:
+        type: string
+      version:
+        type: string
+    type: object
+  models.MdEventDefinitionTab:
+    properties:
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      eventCode:
+        type: string
+      eventDesc:
+        type: string
+      eventName:
+        type: string
+      eventType:
+        type: string
+      id:
+        type: integer
+      moduleName:
+        type: string
+      paramSchema:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.MdEventLogTab:
+    properties:
+      appVersion:
+        type: string
+      countryCode:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      deviceBrand:
+        type: string
+      deviceId:
+        type: string
+      deviceModel:
+        type: string
+      eventCode:
+        type: string
+      eventId:
+        type: string
+      eventName:
+        type: string
+      eventParams:
+        type: string
+      eventTime:
+        type: string
+      id:
+        type: integer
+      ipAddress:
+        type: string
+      language:
+        type: string
+      moduleName:
+        type: string
+      networkType:
+        type: string
+      osType:
+        type: string
+      osVersion:
+        type: string
+      pageName:
+        type: string
+      platform:
+        type: string
+      referrer:
+        type: string
+      sessionId:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.MdUserDeviceTab:
+    properties:
+      appVersion:
+        type: string
+      countryCode:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      deviceBrand:
+        type: string
+      deviceId:
+        type: string
+      deviceModel:
+        type: string
+      firstOpenTime:
+        type: string
+      id:
+        type: integer
+      installTime:
+        type: string
+      isRegistered:
+        type: string
+      language:
+        type: string
+      lastActiveTime:
+        type: string
+      osType:
+        type: string
+      osVersion:
+        type: string
+      platform:
+        type: string
+      registerTime:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.NoNotificationReceivers:
+    properties:
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      id:
+        type: integer
+      isRead:
+        type: string
+      notificationId:
+        type: string
+      readAt:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.NoSystemNotifications:
+    properties:
+      content:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      id:
+        type: integer
+      isRead:
+        type: string
+      readAt:
+        type: string
+      status:
+        type: string
+      targetType:
+        type: string
+      targetUserId:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.OrdCurrencyRates:
+    properties:
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      id:
+        type: integer
+      quoteCurrency:
+        type: string
+      rate:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.OrdGiftCardSuppliers:
+    properties:
+      apiConfig:
+        type: string
+      apiEndpoint:
+        type: string
+      apiKey:
+        type: string
+      code:
+        type: string
+      contactEmail:
+        type: string
+      contactPerson:
+        type: string
+      contactPhone:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      settlementRate:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.OrdGiftcard:
+    properties:
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      discountRate:
+        type: string
+      extra:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      regionId:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      valuesConfig:
+        type: string
+    type: object
+  models.OrdGiftcardCategory:
+    properties:
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      discountRate:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      sortOrder:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.OrdGiftcardDiscounts:
+    properties:
+      cardType:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      discountRate:
+        type: string
+      giftcardId:
+        type: string
+      id:
+        type: integer
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.OrdGiftcardRegion:
+    properties:
+      categoryId:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      id:
+        type: integer
+      isMain:
+        type: string
+      quoteCurrency:
+        type: string
+      quoteCurrencySymbol:
+        type: string
+      rate:
+        type: string
+      regionCode:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.OrdGiftcardWriteoffs:
+    properties:
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      giftCardCode:
+        type: string
+      giftCardId:
+        type: string
+      id:
+        type: integer
+      orderId:
+        type: string
+      remark:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.OrdOrderGiftcardImages:
+    properties:
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      id:
+        type: integer
+      imageUrl:
+        type: string
+      orderId:
+        type: string
+      sortOrder:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.OrdUserOrders:
+    properties:
+      balance:
+        type: string
+      canceledAt:
+        type: string
+      cardExtra:
+        type: string
+      cardType:
+        type: string
+      categoryId:
+        type: string
+      completedAt:
+        type: string
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      currency:
+        type: string
+      discountRate:
+        type: string
+      giftCardCode:
+        type: string
+      giftcardId:
+        type: string
+      id:
+        type: integer
+      orderNo:
+        type: string
+      rate:
+        type: string
+      regionId:
+        type: string
+      remark:
+        type: string
+      status:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
         type: string
     type: object
   response.Page:
@@ -898,8 +3913,6 @@ definitions:
       createBy:
         type: integer
       createdAt:
-        type: string
-      deletedAt:
         type: string
       dictType:
         type: string
@@ -988,8 +4001,6 @@ definitions:
       crud:
         type: boolean
       dataScope:
-        type: string
-      deletedAt:
         type: string
       functionAuthor:
         description: 功能作者
@@ -1554,6 +4565,2909 @@ paths:
       summary: 获取个人信息
       tags:
       - 个人中心
+  /api/v1/hs-banks:
+    delete:
+      description: 删除银行列表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsBanksDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除银行列表
+      tags:
+      - 银行列表
+    get:
+      description: 获取银行列表列表
+      parameters:
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsBanks'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取银行列表列表
+      tags:
+      - 银行列表
+    post:
+      consumes:
+      - application/json
+      description: 创建银行列表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsBanksInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建银行列表
+      tags:
+      - 银行列表
+  /api/v1/hs-banks/{id}:
+    get:
+      description: 获取银行列表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsBanks'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取银行列表
+      tags:
+      - 银行列表
+    put:
+      consumes:
+      - application/json
+      description: 修改银行列表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsBanksUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改银行列表
+      tags:
+      - 银行列表
+  /api/v1/hs-carousel-banner:
+    delete:
+      description: 删除首页轮播广告
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsCarouselBannerDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除首页轮播广告
+      tags:
+      - 首页轮播广告
+    get:
+      description: 获取首页轮播广告列表
+      parameters:
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsCarouselBanner'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取首页轮播广告列表
+      tags:
+      - 首页轮播广告
+    post:
+      consumes:
+      - application/json
+      description: 创建首页轮播广告
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsCarouselBannerInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建首页轮播广告
+      tags:
+      - 首页轮播广告
+  /api/v1/hs-carousel-banner/{id}:
+    get:
+      description: 获取首页轮播广告
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsCarouselBanner'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取首页轮播广告
+      tags:
+      - 首页轮播广告
+    put:
+      consumes:
+      - application/json
+      description: 修改首页轮播广告
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsCarouselBannerUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改首页轮播广告
+      tags:
+      - 首页轮播广告
+  /api/v1/hs-confgi-user-levels:
+    delete:
+      description: 删除用户等级配置表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsConfgiUserLevelsDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除用户等级配置表
+      tags:
+      - 用户等级配置表
+    get:
+      description: 获取用户等级配置表列表
+      parameters:
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsConfgiUserLevels'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户等级配置表列表
+      tags:
+      - 用户等级配置表
+    post:
+      consumes:
+      - application/json
+      description: 创建用户等级配置表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsConfgiUserLevelsInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建用户等级配置表
+      tags:
+      - 用户等级配置表
+  /api/v1/hs-confgi-user-levels/{id}:
+    get:
+      description: 获取用户等级配置表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsConfgiUserLevels'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户等级配置表
+      tags:
+      - 用户等级配置表
+    put:
+      consumes:
+      - application/json
+      description: 修改用户等级配置表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsConfgiUserLevelsUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改用户等级配置表
+      tags:
+      - 用户等级配置表
+  /api/v1/hs-config-checkin-rewards:
+    delete:
+      description: 删除签到奖励配置表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsConfigCheckinRewardsDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除签到奖励配置表
+      tags:
+      - 签到奖励配置表
+    get:
+      description: 获取签到奖励配置表列表
+      parameters:
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsConfigCheckinRewards'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取签到奖励配置表列表
+      tags:
+      - 签到奖励配置表
+    post:
+      consumes:
+      - application/json
+      description: 创建签到奖励配置表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsConfigCheckinRewardsInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建签到奖励配置表
+      tags:
+      - 签到奖励配置表
+  /api/v1/hs-config-checkin-rewards/{id}:
+    get:
+      description: 获取签到奖励配置表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsConfigCheckinRewards'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取签到奖励配置表
+      tags:
+      - 签到奖励配置表
+    put:
+      consumes:
+      - application/json
+      description: 修改签到奖励配置表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsConfigCheckinRewardsUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改签到奖励配置表
+      tags:
+      - 签到奖励配置表
+  /api/v1/hs-config-regions:
+    delete:
+      description: 删除系统地区表（注册地区选择）
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsConfigRegionsDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除系统地区表（注册地区选择）
+      tags:
+      - 系统地区表（注册地区选择）
+    get:
+      description: 获取系统地区表（注册地区选择）列表
+      parameters:
+      - description: 地区名称
+        in: query
+        name: name
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsConfigRegions'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取系统地区表（注册地区选择）列表
+      tags:
+      - 系统地区表（注册地区选择）
+    post:
+      consumes:
+      - application/json
+      description: 创建系统地区表（注册地区选择）
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsConfigRegionsInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建系统地区表（注册地区选择）
+      tags:
+      - 系统地区表（注册地区选择）
+  /api/v1/hs-config-regions/{id}:
+    get:
+      description: 获取系统地区表（注册地区选择）
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsConfigRegions'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取系统地区表（注册地区选择）
+      tags:
+      - 系统地区表（注册地区选择）
+    put:
+      consumes:
+      - application/json
+      description: 修改系统地区表（注册地区选择）
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsConfigRegionsUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改系统地区表（注册地区选择）
+      tags:
+      - 系统地区表（注册地区选择）
+  /api/v1/hs-config-supported-chains-coin:
+    delete:
+      description: 删除系统支持的区块链网络配置表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsConfigSupportedChainsCoinDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除系统支持的区块链网络配置表
+      tags:
+      - 系统支持的区块链网络配置表
+    get:
+      description: 获取系统支持的区块链网络配置表列表
+      parameters:
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsConfigSupportedChainsCoin'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取系统支持的区块链网络配置表列表
+      tags:
+      - 系统支持的区块链网络配置表
+    post:
+      consumes:
+      - application/json
+      description: 创建系统支持的区块链网络配置表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsConfigSupportedChainsCoinInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建系统支持的区块链网络配置表
+      tags:
+      - 系统支持的区块链网络配置表
+  /api/v1/hs-config-supported-chains-coin/{id}:
+    get:
+      description: 获取系统支持的区块链网络配置表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsConfigSupportedChainsCoin'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取系统支持的区块链网络配置表
+      tags:
+      - 系统支持的区块链网络配置表
+    put:
+      consumes:
+      - application/json
+      description: 修改系统支持的区块链网络配置表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsConfigSupportedChainsCoinUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改系统支持的区块链网络配置表
+      tags:
+      - 系统支持的区块链网络配置表
+  /api/v1/hs-invite-commissions:
+    delete:
+      description: 删除订单分成流水表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsInviteCommissionsDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除订单分成流水表
+      tags:
+      - 订单分成流水表
+    get:
+      description: 获取订单分成流水表列表
+      parameters:
+      - description: 订单ID
+        in: query
+        name: orderId
+        type: string
+      - description: 分成获得者ID
+        in: query
+        name: userId
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsInviteCommissions'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取订单分成流水表列表
+      tags:
+      - 订单分成流水表
+    post:
+      consumes:
+      - application/json
+      description: 创建订单分成流水表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsInviteCommissionsInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建订单分成流水表
+      tags:
+      - 订单分成流水表
+  /api/v1/hs-invite-commissions/{id}:
+    get:
+      description: 获取订单分成流水表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsInviteCommissions'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取订单分成流水表
+      tags:
+      - 订单分成流水表
+    put:
+      consumes:
+      - application/json
+      description: 修改订单分成流水表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsInviteCommissionsUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改订单分成流水表
+      tags:
+      - 订单分成流水表
+  /api/v1/hs-invite-relations:
+    delete:
+      description: 删除用户邀请关系冗余表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsInviteRelationsDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除用户邀请关系冗余表
+      tags:
+      - 用户邀请关系冗余表
+    get:
+      description: 获取用户邀请关系冗余表列表
+      parameters:
+      - description: 用户ID
+        in: query
+        name: userId
+        type: string
+      - description: 一级邀请人ID
+        in: query
+        name: level1InviterId
+        type: string
+      - description: 二级邀请人ID
+        in: query
+        name: level2InviterId
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsInviteRelations'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户邀请关系冗余表列表
+      tags:
+      - 用户邀请关系冗余表
+    post:
+      consumes:
+      - application/json
+      description: 创建用户邀请关系冗余表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsInviteRelationsInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建用户邀请关系冗余表
+      tags:
+      - 用户邀请关系冗余表
+  /api/v1/hs-invite-relations/{id}:
+    get:
+      description: 获取用户邀请关系冗余表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsInviteRelations'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户邀请关系冗余表
+      tags:
+      - 用户邀请关系冗余表
+    put:
+      consumes:
+      - application/json
+      description: 修改用户邀请关系冗余表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsInviteRelationsUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改用户邀请关系冗余表
+      tags:
+      - 用户邀请关系冗余表
+  /api/v1/hs-invite-relations/stats:
+    get:
+      description: 获取邀请统计列表，显示邀请人ID、邀请码、邀请人数、邀请累计金额
+      parameters:
+      - description: 邀请人ID
+        in: query
+        name: inviterUserId
+        type: string
+      - description: 邀请码
+        in: query
+        name: inviteCode
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/dto.HsInviteRelationsStatsResp'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取邀请统计列表
+      tags:
+      - 用户邀请关系冗余表
+  /api/v1/hs-invites-bind:
+    delete:
+      description: 删除用户邀请关系表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsInvitesBindDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除用户邀请关系表
+      tags:
+      - 用户邀请关系表
+    get:
+      description: 获取用户邀请关系表列表
+      parameters:
+      - description: 被邀请用户ID
+        in: query
+        name: userId
+        type: string
+      - description: 直接邀请人ID (一级)
+        in: query
+        name: inviterId
+        type: string
+      - description: '层级: 1=一级, 2=二级'
+        in: query
+        name: level
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsInvitesBind'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户邀请关系表列表
+      tags:
+      - 用户邀请关系表
+    post:
+      consumes:
+      - application/json
+      description: 创建用户邀请关系表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsInvitesBindInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建用户邀请关系表
+      tags:
+      - 用户邀请关系表
+  /api/v1/hs-invites-bind/{id}:
+    get:
+      description: 获取用户邀请关系表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsInvitesBind'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户邀请关系表
+      tags:
+      - 用户邀请关系表
+    put:
+      consumes:
+      - application/json
+      description: 修改用户邀请关系表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsInvitesBindUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改用户邀请关系表
+      tags:
+      - 用户邀请关系表
+  /api/v1/hs-merchants:
+    delete:
+      description: 删除卡商管理表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsMerchantsDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除卡商管理表
+      tags:
+      - 卡商管理表
+    get:
+      description: 获取卡商管理表列表
+      parameters:
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsMerchants'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取卡商管理表列表
+      tags:
+      - 卡商管理表
+    post:
+      consumes:
+      - application/json
+      description: 创建卡商管理表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsMerchantsInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建卡商管理表
+      tags:
+      - 卡商管理表
+  /api/v1/hs-merchants/{id}:
+    get:
+      description: 获取卡商管理表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsMerchants'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取卡商管理表
+      tags:
+      - 卡商管理表
+    put:
+      consumes:
+      - application/json
+      description: 修改卡商管理表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsMerchantsUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改卡商管理表
+      tags:
+      - 卡商管理表
+  /api/v1/hs-receiving-accounts:
+    delete:
+      description: 删除收款账号/设置表 (关联卡商与银行或通道)
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsReceivingAccountsDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除收款账号/设置表 (关联卡商与银行或通道)
+      tags:
+      - 收款账号/设置表 (关联卡商与银行或通道)
+    get:
+      description: 获取收款账号/设置表 (关联卡商与银行或通道)列表
+      parameters:
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsReceivingAccounts'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取收款账号/设置表 (关联卡商与银行或通道)列表
+      tags:
+      - 收款账号/设置表 (关联卡商与银行或通道)
+    post:
+      consumes:
+      - application/json
+      description: 创建收款账号/设置表 (关联卡商与银行或通道)
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsReceivingAccountsInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建收款账号/设置表 (关联卡商与银行或通道)
+      tags:
+      - 收款账号/设置表 (关联卡商与银行或通道)
+  /api/v1/hs-receiving-accounts/{id}:
+    get:
+      description: 获取收款账号/设置表 (关联卡商与银行或通道)
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsReceivingAccounts'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取收款账号/设置表 (关联卡商与银行或通道)
+      tags:
+      - 收款账号/设置表 (关联卡商与银行或通道)
+    put:
+      consumes:
+      - application/json
+      description: 修改收款账号/设置表 (关联卡商与银行或通道)
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsReceivingAccountsUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改收款账号/设置表 (关联卡商与银行或通道)
+      tags:
+      - 收款账号/设置表 (关联卡商与银行或通道)
+  /api/v1/hs-user-bank-cards:
+    delete:
+      description: 删除用户银行卡信息表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserBankCardsDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除用户银行卡信息表
+      tags:
+      - 用户银行卡信息表
+    get:
+      description: 获取用户银行卡信息表列表
+      parameters:
+      - description: 用户ID
+        in: query
+        name: userId
+        type: string
+      - description: 银行ID（关联hs_banks表）
+        in: query
+        name: bankId
+        type: string
+      - description: 银行卡号（加密存储）
+        in: query
+        name: cardNumber
+        type: string
+      - description: 持卡人姓名
+        in: query
+        name: cardHolderName
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsUserBankCards'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户银行卡信息表列表
+      tags:
+      - 用户银行卡信息表
+    post:
+      consumes:
+      - application/json
+      description: 创建用户银行卡信息表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserBankCardsInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建用户银行卡信息表
+      tags:
+      - 用户银行卡信息表
+  /api/v1/hs-user-bank-cards/{id}:
+    get:
+      description: 获取用户银行卡信息表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsUserBankCards'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户银行卡信息表
+      tags:
+      - 用户银行卡信息表
+    put:
+      consumes:
+      - application/json
+      description: 修改用户银行卡信息表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserBankCardsUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改用户银行卡信息表
+      tags:
+      - 用户银行卡信息表
+  /api/v1/hs-user-checkin-stats:
+    delete:
+      description: 删除用户签到统计表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserCheckinStatsDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除用户签到统计表
+      tags:
+      - 用户签到统计表
+    get:
+      description: 获取用户签到统计表列表
+      parameters:
+      - description: 用户ID
+        in: query
+        name: userId
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsUserCheckinStats'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户签到统计表列表
+      tags:
+      - 用户签到统计表
+    post:
+      consumes:
+      - application/json
+      description: 创建用户签到统计表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserCheckinStatsInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建用户签到统计表
+      tags:
+      - 用户签到统计表
+  /api/v1/hs-user-checkin-stats/{id}:
+    get:
+      description: 获取用户签到统计表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsUserCheckinStats'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户签到统计表
+      tags:
+      - 用户签到统计表
+    put:
+      consumes:
+      - application/json
+      description: 修改用户签到统计表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserCheckinStatsUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改用户签到统计表
+      tags:
+      - 用户签到统计表
+  /api/v1/hs-user-checkins:
+    delete:
+      description: 删除用户签到表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserCheckinsDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除用户签到表
+      tags:
+      - 用户签到表
+    get:
+      description: 获取用户签到表列表
+      parameters:
+      - description: 用户ID
+        in: query
+        name: userId
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsUserCheckins'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户签到表列表
+      tags:
+      - 用户签到表
+    post:
+      consumes:
+      - application/json
+      description: 创建用户签到表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserCheckinsInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建用户签到表
+      tags:
+      - 用户签到表
+  /api/v1/hs-user-checkins/{id}:
+    get:
+      description: 获取用户签到表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsUserCheckins'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户签到表
+      tags:
+      - 用户签到表
+    put:
+      consumes:
+      - application/json
+      description: 修改用户签到表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserCheckinsUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改用户签到表
+      tags:
+      - 用户签到表
+  /api/v1/hs-user-experience-logs:
+    delete:
+      description: 删除用户经验值流水表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserExperienceLogsDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除用户经验值流水表
+      tags:
+      - 用户经验值流水表
+    get:
+      description: 获取用户经验值流水表列表
+      parameters:
+      - description: 用户ID
+        in: query
+        name: userId
+        type: string
+      - description: 经验来源类型(checkin,gift_card_exchange,order_complete等)
+        in: query
+        name: sourceType
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsUserExperienceLogs'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户经验值流水表列表
+      tags:
+      - 用户经验值流水表
+    post:
+      consumes:
+      - application/json
+      description: 创建用户经验值流水表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserExperienceLogsInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建用户经验值流水表
+      tags:
+      - 用户经验值流水表
+  /api/v1/hs-user-experience-logs/{id}:
+    get:
+      description: 获取用户经验值流水表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsUserExperienceLogs'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户经验值流水表
+      tags:
+      - 用户经验值流水表
+    put:
+      consumes:
+      - application/json
+      description: 修改用户经验值流水表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserExperienceLogsUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改用户经验值流水表
+      tags:
+      - 用户经验值流水表
+  /api/v1/hs-user-identity:
+    delete:
+      description: 删除HsUserIdentity
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserIdentityDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除HsUserIdentity
+      tags:
+      - HsUserIdentity
+    get:
+      description: 获取HsUserIdentity列表
+      parameters:
+      - description: 用户ID
+        in: query
+        name: userId
+        type: string
+      - description: '凭证类型: email, phone, google, apple, twitter, tiktok'
+        in: query
+        name: identityType
+        type: string
+      - description: '凭证值: 邮箱, 手机号, 第三方平台的唯一ID'
+        in: query
+        name: identifier
+        type: string
+      - description: 存储密码哈希(email/phone)或refresh_token(social)
+        in: query
+        name: credential
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsUserIdentity'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取HsUserIdentity列表
+      tags:
+      - HsUserIdentity
+    post:
+      consumes:
+      - application/json
+      description: 创建HsUserIdentity
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserIdentityInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建HsUserIdentity
+      tags:
+      - HsUserIdentity
+  /api/v1/hs-user-identity/{id}:
+    get:
+      description: 获取HsUserIdentity
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsUserIdentity'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取HsUserIdentity
+      tags:
+      - HsUserIdentity
+    put:
+      consumes:
+      - application/json
+      description: 修改HsUserIdentity
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserIdentityUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改HsUserIdentity
+      tags:
+      - HsUserIdentity
+  /api/v1/hs-user-ledger:
+    delete:
+      description: 删除用户余额流水
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserLedgerDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除用户余额流水
+      tags:
+      - 用户余额流水
+    get:
+      description: 获取用户余额流水列表
+      parameters:
+      - description: 用户ID
+        in: query
+        name: userId
+        type: string
+      - description: 业务单号：例如订单号/提现单号
+        in: query
+        name: bizId
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsUserLedger'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户余额流水列表
+      tags:
+      - 用户余额流水
+    post:
+      consumes:
+      - application/json
+      description: 创建用户余额流水
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserLedgerInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建用户余额流水
+      tags:
+      - 用户余额流水
+  /api/v1/hs-user-ledger/{id}:
+    get:
+      description: 获取用户余额流水
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsUserLedger'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户余额流水
+      tags:
+      - 用户余额流水
+    put:
+      consumes:
+      - application/json
+      description: 修改用户余额流水
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserLedgerUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改用户余额流水
+      tags:
+      - 用户余额流水
+  /api/v1/hs-user-ledger/finance-stats:
+    get:
+      description: 按日/周/月维度统计总提现金额、总手续费、总佣金
+      parameters:
+      - description: '统计维度: day/week/month'
+        in: query
+        name: dimension
+        required: true
+        type: string
+      - description: '开始日期 格式: 2024-01-01'
+        in: query
+        name: startDate
+        required: true
+        type: string
+      - description: '结束日期 格式: 2024-01-31'
+        in: query
+        name: endDate
+        required: true
+        type: string
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.HsUserLedgerFinanceStatsResp'
+                  type: array
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取财务统计数据
+      tags:
+      - 用户余额流水
+  /api/v1/hs-user-social-tokens:
+    delete:
+      description: 删除社交登录Token表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserSocialTokensDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除社交登录Token表
+      tags:
+      - 社交登录Token表
+    get:
+      description: 获取社交登录Token表列表
+      parameters:
+      - description: 用户ID
+        in: query
+        name: userId
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsUserSocialTokens'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取社交登录Token表列表
+      tags:
+      - 社交登录Token表
+    post:
+      consumes:
+      - application/json
+      description: 创建社交登录Token表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserSocialTokensInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建社交登录Token表
+      tags:
+      - 社交登录Token表
+  /api/v1/hs-user-social-tokens/{id}:
+    get:
+      description: 获取社交登录Token表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsUserSocialTokens'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取社交登录Token表
+      tags:
+      - 社交登录Token表
+    put:
+      consumes:
+      - application/json
+      description: 修改社交登录Token表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserSocialTokensUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改社交登录Token表
+      tags:
+      - 社交登录Token表
+  /api/v1/hs-user-withdraw-addresses:
+    delete:
+      description: 删除用户虚拟币提现地址表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserWithdrawAddressesDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除用户虚拟币提现地址表
+      tags:
+      - 用户虚拟币提现地址表
+    get:
+      description: 获取用户虚拟币提现地址表列表
+      parameters:
+      - description: 所属用户ID
+        in: query
+        name: userId
+        type: string
+      - description: 钱包提现地址
+        in: query
+        name: address
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsUserWithdrawAddresses'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户虚拟币提现地址表列表
+      tags:
+      - 用户虚拟币提现地址表
+    post:
+      consumes:
+      - application/json
+      description: 创建用户虚拟币提现地址表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserWithdrawAddressesInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建用户虚拟币提现地址表
+      tags:
+      - 用户虚拟币提现地址表
+  /api/v1/hs-user-withdraw-addresses/{id}:
+    get:
+      description: 获取用户虚拟币提现地址表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsUserWithdrawAddresses'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户虚拟币提现地址表
+      tags:
+      - 用户虚拟币提现地址表
+    put:
+      consumes:
+      - application/json
+      description: 修改用户虚拟币提现地址表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserWithdrawAddressesUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改用户虚拟币提现地址表
+      tags:
+      - 用户虚拟币提现地址表
+  /api/v1/hs-user-withdrawal:
+    delete:
+      description: 删除用户余额提现申请表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserWithdrawalDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除用户余额提现申请表
+      tags:
+      - 用户余额提现申请表
+    get:
+      description: 获取用户余额提现申请表列表
+      parameters:
+      - description: 提现单号，唯一
+        in: query
+        name: withdrawNo
+        type: string
+      - description: 用户ID
+        in: query
+        name: userId
+        type: string
+      - description: 通道回执流水号
+        in: query
+        name: channelTxnId
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsUserWithdrawal'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户余额提现申请表列表
+      tags:
+      - 用户余额提现申请表
+    post:
+      consumes:
+      - application/json
+      description: 创建用户余额提现申请表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserWithdrawalInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建用户余额提现申请表
+      tags:
+      - 用户余额提现申请表
+  /api/v1/hs-user-withdrawal/{id}:
+    get:
+      description: 获取用户余额提现申请表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsUserWithdrawal'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户余额提现申请表
+      tags:
+      - 用户余额提现申请表
+    put:
+      consumes:
+      - application/json
+      description: 修改用户余额提现申请表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserWithdrawalUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改用户余额提现申请表
+      tags:
+      - 用户余额提现申请表
+  /api/v1/hs-user-withdrawal/{id}/claim:
+    post:
+      description: 管理员接单处理提现订单
+      parameters:
+      - description: 订单ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "message": "接单成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 接单
+      tags:
+      - 用户余额提现申请表
+  /api/v1/hs-user-withdrawal/{id}/release:
+    post:
+      description: 管理员取消接单，释放订单
+      parameters:
+      - description: 订单ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "message": "释放订单成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 释放订单
+      tags:
+      - 用户余额提现申请表
+  /api/v1/hs-user-withdrawal/available:
+    get:
+      description: 获取所有未被接单的提现订单（is_claimed=0, status=pending/review）
+      parameters:
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsUserWithdrawal'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取可接单的提现订单列表
+      tags:
+      - 用户余额提现申请表
+  /api/v1/hs-user-withdrawal/my-orders:
+    get:
+      description: 获取当前管理员接单处理的订单列表
+      parameters:
+      - description: 订单状态
+        in: query
+        name: status
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsUserWithdrawal'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取我的处理订单列表
+      tags:
+      - 用户余额提现申请表
+  /api/v1/hs-users:
+    delete:
+      description: 删除用户主表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUsersDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除用户主表
+      tags:
+      - 用户主表
+    get:
+      description: 获取用户主表列表
+      parameters:
+      - description: 用户名（可选展示用）
+        in: query
+        name: username
+        type: string
+      - description: 用户名字
+        in: query
+        name: firstname
+        type: string
+      - description: 用户姓氏
+        in: query
+        name: lastname
+        type: string
+      - description: 邀请码
+        in: query
+        name: inviteCode
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.HsUsers'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户主表列表
+      tags:
+      - 用户主表
+    post:
+      consumes:
+      - application/json
+      description: 创建用户主表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUsersInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建用户主表
+      tags:
+      - 用户主表
+  /api/v1/hs-users/{id}:
+    get:
+      description: 获取用户主表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.HsUsers'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户主表
+      tags:
+      - 用户主表
+    put:
+      consumes:
+      - application/json
+      description: 修改用户主表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUsersUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改用户主表
+      tags:
+      - 用户主表
   /api/v1/login:
     post:
       consumes:
@@ -1582,6 +7496,411 @@ paths:
       summary: 登陆
       tags:
       - 登陆
+  /api/v1/md-event-definition-tab:
+    delete:
+      description: 删除事件定义表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MdEventDefinitionTabDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除事件定义表
+      tags:
+      - 事件定义表
+    get:
+      description: 获取事件定义表列表
+      parameters:
+      - description: 事件代码（唯一）
+        in: query
+        name: eventCode
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.MdEventDefinitionTab'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取事件定义表列表
+      tags:
+      - 事件定义表
+    post:
+      consumes:
+      - application/json
+      description: 创建事件定义表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MdEventDefinitionTabInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建事件定义表
+      tags:
+      - 事件定义表
+  /api/v1/md-event-definition-tab/{id}:
+    get:
+      description: 获取事件定义表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.MdEventDefinitionTab'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取事件定义表
+      tags:
+      - 事件定义表
+    put:
+      consumes:
+      - application/json
+      description: 修改事件定义表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MdEventDefinitionTabUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改事件定义表
+      tags:
+      - 事件定义表
+  /api/v1/md-event-log-tab:
+    delete:
+      description: 删除埋点事件日志表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MdEventLogTabDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除埋点事件日志表
+      tags:
+      - 埋点事件日志表
+    get:
+      description: 获取埋点事件日志表列表
+      parameters:
+      - description: 事件ID（唯一标识）
+        in: query
+        name: eventId
+        type: string
+      - description: 事件代码，如：xx_Installation, xx_register_success
+        in: query
+        name: eventCode
+        type: string
+      - description: 事件名称，如：安装、注册成功
+        in: query
+        name: eventName
+        type: string
+      - description: 模块名称
+        in: query
+        name: moduleName
+        type: string
+      - description: 用户ID（未登录为0）
+        in: query
+        name: userId
+        type: string
+      - description: 设备唯一标识（IDFA/GAID等）
+        in: query
+        name: deviceId
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.MdEventLogTab'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取埋点事件日志表列表
+      tags:
+      - 埋点事件日志表
+    post:
+      consumes:
+      - application/json
+      description: 创建埋点事件日志表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MdEventLogTabInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建埋点事件日志表
+      tags:
+      - 埋点事件日志表
+  /api/v1/md-event-log-tab/{id}:
+    get:
+      description: 获取埋点事件日志表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.MdEventLogTab'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取埋点事件日志表
+      tags:
+      - 埋点事件日志表
+    put:
+      consumes:
+      - application/json
+      description: 修改埋点事件日志表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MdEventLogTabUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改埋点事件日志表
+      tags:
+      - 埋点事件日志表
+  /api/v1/md-user-device-tab:
+    delete:
+      description: 删除用户设备信息表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MdUserDeviceTabDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除用户设备信息表
+      tags:
+      - 用户设备信息表
+    get:
+      description: 获取用户设备信息表列表
+      parameters:
+      - description: 设备唯一标识
+        in: query
+        name: deviceId
+        type: string
+      - description: 用户ID（未绑定为0）
+        in: query
+        name: userId
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.MdUserDeviceTab'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户设备信息表列表
+      tags:
+      - 用户设备信息表
+    post:
+      consumes:
+      - application/json
+      description: 创建用户设备信息表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MdUserDeviceTabInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建用户设备信息表
+      tags:
+      - 用户设备信息表
+  /api/v1/md-user-device-tab/{id}:
+    get:
+      description: 获取用户设备信息表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.MdUserDeviceTab'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取用户设备信息表
+      tags:
+      - 用户设备信息表
+    put:
+      consumes:
+      - application/json
+      description: 修改用户设备信息表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MdUserDeviceTabUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改用户设备信息表
+      tags:
+      - 用户设备信息表
   /api/v1/menu:
     delete:
       description: 删除数据
@@ -1718,6 +8037,1407 @@ paths:
       summary: 根据登录角色名称获取菜单列表数据（左菜单使用）
       tags:
       - 菜单
+  /api/v1/no-notification-receivers:
+    delete:
+      description: 删除系统消息接收人表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NoNotificationReceiversDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除系统消息接收人表
+      tags:
+      - 系统消息接收人表
+    get:
+      description: 获取系统消息接收人表列表
+      parameters:
+      - description: 消息ID
+        in: query
+        name: notificationId
+        type: string
+      - description: 接收用户ID
+        in: query
+        name: userId
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.NoNotificationReceivers'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取系统消息接收人表列表
+      tags:
+      - 系统消息接收人表
+    post:
+      consumes:
+      - application/json
+      description: 创建系统消息接收人表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NoNotificationReceiversInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建系统消息接收人表
+      tags:
+      - 系统消息接收人表
+  /api/v1/no-notification-receivers/{id}:
+    get:
+      description: 获取系统消息接收人表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.NoNotificationReceivers'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取系统消息接收人表
+      tags:
+      - 系统消息接收人表
+    put:
+      consumes:
+      - application/json
+      description: 修改系统消息接收人表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NoNotificationReceiversUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改系统消息接收人表
+      tags:
+      - 系统消息接收人表
+  /api/v1/no-system-notifications:
+    delete:
+      description: 删除系统消息提醒表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NoSystemNotificationsDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除系统消息提醒表
+      tags:
+      - 系统消息提醒表
+    get:
+      description: 获取系统消息提醒表列表
+      parameters:
+      - description: 目标用户ID（仅 target_type=user 时有效）
+        in: query
+        name: targetUserId
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.NoSystemNotifications'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取系统消息提醒表列表
+      tags:
+      - 系统消息提醒表
+    post:
+      consumes:
+      - application/json
+      description: 创建系统消息提醒表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NoSystemNotificationsInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建系统消息提醒表
+      tags:
+      - 系统消息提醒表
+  /api/v1/no-system-notifications/{id}:
+    get:
+      description: 获取系统消息提醒表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.NoSystemNotifications'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取系统消息提醒表
+      tags:
+      - 系统消息提醒表
+    put:
+      consumes:
+      - application/json
+      description: 修改系统消息提醒表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NoSystemNotificationsUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改系统消息提醒表
+      tags:
+      - 系统消息提醒表
+  /api/v1/ord-currency-rates:
+    delete:
+      description: 删除货币对汇率表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdCurrencyRatesDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除货币对汇率表
+      tags:
+      - 货币对汇率表
+    get:
+      description: 获取货币对汇率表列表
+      parameters:
+      - description: 计价货币 ISO4217，例如 CNY
+        in: query
+        name: quoteCurrency
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.OrdCurrencyRates'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取货币对汇率表列表
+      tags:
+      - 货币对汇率表
+    post:
+      consumes:
+      - application/json
+      description: 创建货币对汇率表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdCurrencyRatesInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建货币对汇率表
+      tags:
+      - 货币对汇率表
+  /api/v1/ord-currency-rates/{id}:
+    get:
+      description: 获取货币对汇率表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.OrdCurrencyRates'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取货币对汇率表
+      tags:
+      - 货币对汇率表
+    put:
+      consumes:
+      - application/json
+      description: 修改货币对汇率表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdCurrencyRatesUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改货币对汇率表
+      tags:
+      - 货币对汇率表
+  /api/v1/ord-gift-card-suppliers:
+    delete:
+      description: 删除礼品卡供应商表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftCardSuppliersDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除礼品卡供应商表
+      tags:
+      - 礼品卡供应商表
+    get:
+      description: 获取礼品卡供应商表列表
+      parameters:
+      - description: 供应商名称
+        in: query
+        name: name
+        type: string
+      - description: 供应商代码
+        in: query
+        name: code
+        type: string
+      - description: 联系人
+        in: query
+        name: contactPerson
+        type: string
+      - description: 联系邮箱
+        in: query
+        name: contactEmail
+        type: string
+      - description: 联系电话
+        in: query
+        name: contactPhone
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.OrdGiftCardSuppliers'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取礼品卡供应商表列表
+      tags:
+      - 礼品卡供应商表
+    post:
+      consumes:
+      - application/json
+      description: 创建礼品卡供应商表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftCardSuppliersInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建礼品卡供应商表
+      tags:
+      - 礼品卡供应商表
+  /api/v1/ord-gift-card-suppliers/{id}:
+    get:
+      description: 获取礼品卡供应商表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.OrdGiftCardSuppliers'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取礼品卡供应商表
+      tags:
+      - 礼品卡供应商表
+    put:
+      consumes:
+      - application/json
+      description: 修改礼品卡供应商表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftCardSuppliersUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改礼品卡供应商表
+      tags:
+      - 礼品卡供应商表
+  /api/v1/ord-giftcard:
+    delete:
+      description: 删除礼品卡明细
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除礼品卡明细
+      tags:
+      - 礼品卡明细
+    get:
+      description: 获取礼品卡明细列表
+      parameters:
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.OrdGiftcard'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取礼品卡明细列表
+      tags:
+      - 礼品卡明细
+    post:
+      consumes:
+      - application/json
+      description: 创建礼品卡明细
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建礼品卡明细
+      tags:
+      - 礼品卡明细
+  /api/v1/ord-giftcard-category:
+    delete:
+      description: 删除礼品卡分类
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardCategoryDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除礼品卡分类
+      tags:
+      - 礼品卡分类
+    get:
+      description: 获取礼品卡分类列表
+      parameters:
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.OrdGiftcardCategory'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取礼品卡分类列表
+      tags:
+      - 礼品卡分类
+    post:
+      consumes:
+      - application/json
+      description: 创建礼品卡分类
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardCategoryInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建礼品卡分类
+      tags:
+      - 礼品卡分类
+  /api/v1/ord-giftcard-category/{id}:
+    get:
+      description: 获取礼品卡分类
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.OrdGiftcardCategory'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取礼品卡分类
+      tags:
+      - 礼品卡分类
+    put:
+      consumes:
+      - application/json
+      description: 修改礼品卡分类
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardCategoryUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改礼品卡分类
+      tags:
+      - 礼品卡分类
+  /api/v1/ord-giftcard-discounts:
+    delete:
+      description: 删除礼品卡不同类型折扣
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardDiscountsDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除礼品卡不同类型折扣
+      tags:
+      - 礼品卡不同类型折扣
+    get:
+      description: 获取礼品卡不同类型折扣列表
+      parameters:
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.OrdGiftcardDiscounts'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取礼品卡不同类型折扣列表
+      tags:
+      - 礼品卡不同类型折扣
+    post:
+      consumes:
+      - application/json
+      description: 创建礼品卡不同类型折扣
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardDiscountsInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建礼品卡不同类型折扣
+      tags:
+      - 礼品卡不同类型折扣
+  /api/v1/ord-giftcard-discounts/{id}:
+    get:
+      description: 获取礼品卡不同类型折扣
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.OrdGiftcardDiscounts'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取礼品卡不同类型折扣
+      tags:
+      - 礼品卡不同类型折扣
+    put:
+      consumes:
+      - application/json
+      description: 修改礼品卡不同类型折扣
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardDiscountsUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改礼品卡不同类型折扣
+      tags:
+      - 礼品卡不同类型折扣
+  /api/v1/ord-giftcard-region:
+    delete:
+      description: 删除礼品卡地区
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardRegionDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除礼品卡地区
+      tags:
+      - 礼品卡地区
+    get:
+      description: 获取礼品卡地区列表
+      parameters:
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.OrdGiftcardRegion'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取礼品卡地区列表
+      tags:
+      - 礼品卡地区
+    post:
+      consumes:
+      - application/json
+      description: 创建礼品卡地区
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardRegionInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建礼品卡地区
+      tags:
+      - 礼品卡地区
+  /api/v1/ord-giftcard-region/{id}:
+    get:
+      description: 获取礼品卡地区
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.OrdGiftcardRegion'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取礼品卡地区
+      tags:
+      - 礼品卡地区
+    put:
+      consumes:
+      - application/json
+      description: 修改礼品卡地区
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardRegionUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改礼品卡地区
+      tags:
+      - 礼品卡地区
+  /api/v1/ord-giftcard-writeoffs:
+    delete:
+      description: 删除礼品卡核销记录表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardWriteoffsDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除礼品卡核销记录表
+      tags:
+      - 礼品卡核销记录表
+    get:
+      description: 获取礼品卡核销记录表列表
+      parameters:
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.OrdGiftcardWriteoffs'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取礼品卡核销记录表列表
+      tags:
+      - 礼品卡核销记录表
+    post:
+      consumes:
+      - application/json
+      description: 创建礼品卡核销记录表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardWriteoffsInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建礼品卡核销记录表
+      tags:
+      - 礼品卡核销记录表
+  /api/v1/ord-giftcard-writeoffs/{id}:
+    get:
+      description: 获取礼品卡核销记录表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.OrdGiftcardWriteoffs'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取礼品卡核销记录表
+      tags:
+      - 礼品卡核销记录表
+    put:
+      consumes:
+      - application/json
+      description: 修改礼品卡核销记录表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardWriteoffsUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改礼品卡核销记录表
+      tags:
+      - 礼品卡核销记录表
+  /api/v1/ord-giftcard/{id}:
+    get:
+      description: 获取礼品卡明细
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.OrdGiftcard'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取礼品卡明细
+      tags:
+      - 礼品卡明细
+    put:
+      consumes:
+      - application/json
+      description: 修改礼品卡明细
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改礼品卡明细
+      tags:
+      - 礼品卡明细
+  /api/v1/ord-order-giftcard-images:
+    delete:
+      description: 删除礼品卡订单图片表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdOrderGiftcardImagesDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除礼品卡订单图片表
+      tags:
+      - 礼品卡订单图片表
+    get:
+      description: 获取礼品卡订单图片表列表
+      parameters:
+      - description: 关联的订单ID
+        in: query
+        name: orderId
+        type: string
+      - description: 礼品卡图片URL
+        in: query
+        name: imageUrl
+        type: string
+      - description: 排序顺序
+        in: query
+        name: sortOrder
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.OrdOrderGiftcardImages'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取礼品卡订单图片表列表
+      tags:
+      - 礼品卡订单图片表
+    post:
+      consumes:
+      - application/json
+      description: 创建礼品卡订单图片表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdOrderGiftcardImagesInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建礼品卡订单图片表
+      tags:
+      - 礼品卡订单图片表
+  /api/v1/ord-order-giftcard-images/{id}:
+    get:
+      description: 获取礼品卡订单图片表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.OrdOrderGiftcardImages'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取礼品卡订单图片表
+      tags:
+      - 礼品卡订单图片表
+    put:
+      consumes:
+      - application/json
+      description: 修改礼品卡订单图片表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdOrderGiftcardImagesUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改礼品卡订单图片表
+      tags:
+      - 礼品卡订单图片表
+  /api/v1/ord-user-orders:
+    delete:
+      description: 删除礼品卡订单表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdUserOrdersDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除礼品卡订单表
+      tags:
+      - 礼品卡订单表
+    get:
+      description: 获取礼品卡订单表列表
+      parameters:
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.OrdUserOrders'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取礼品卡订单表列表
+      tags:
+      - 礼品卡订单表
+    post:
+      consumes:
+      - application/json
+      description: 创建礼品卡订单表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdUserOrdersInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建礼品卡订单表
+      tags:
+      - 礼品卡订单表
+  /api/v1/ord-user-orders/{id}:
+    get:
+      description: 获取礼品卡订单表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.OrdUserOrders'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取礼品卡订单表
+      tags:
+      - 礼品卡订单表 根据新功能，设计新表。用户可以接单处理提现订单。其他人就不能在接单。同时用户有上班状态，在上班状态才能接单。根据现有表结构可以修改或者新增字段
+    put:
+      consumes:
+      - application/json
+      description: 修改礼品卡订单表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdUserOrdersUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改礼品卡订单表
+      tags:
+      - 礼品卡订单表
   /api/v1/post:
     delete:
       description: 删除数据
@@ -1990,19 +9710,6 @@ paths:
       summary: 修改用户角色
       tags:
       - 角色/Role
-  /api/v1/server-monitor:
-    get:
-      description: 获取JSON
-      responses:
-        "200":
-          description: '{"code": 200, "data": [...]}'
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: 系统信息
-      tags:
-      - 系统信息
   /api/v1/set-config:
     get:
       consumes:
@@ -2107,7 +9814,7 @@ paths:
                   - properties:
                       list:
                         items:
-                          $ref: '#/definitions/models.SysApi'
+                          $ref: '#/definitions/go-admin_app_admin_models.SysApi'
                         type: array
                     type: object
               type: object
@@ -2132,7 +9839,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.SysApi'
+                  $ref: '#/definitions/go-admin_app_admin_models.SysApi'
               type: object
       security:
       - Bearer: []
@@ -2221,7 +9928,7 @@ paths:
                   - properties:
                       list:
                         items:
-                          $ref: '#/definitions/models.SysApi'
+                          $ref: '#/definitions/go-admin_app_admin_models.SysApi'
                         type: array
                     type: object
               type: object
@@ -2750,6 +10457,28 @@ paths:
       summary: 修改用户状态
       tags:
       - 用户
+  /api/v1/user/work-status:
+    put:
+      consumes:
+      - application/json
+      description: 管理员切换上班/下班状态
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateSysUserWorkStatusReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "更新成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 更新管理员上下班状态
+      tags:
+      - 个人中心
   /logout:
     post:
       consumes:

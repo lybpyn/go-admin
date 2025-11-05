@@ -25,15 +25,30 @@ type HsInviteRelationsOrder struct {
     CreatedAt string `form:"createdAtOrder"  search:"type:order;column:created_at;table:hs_invite_relations"`
     UpdatedAt string `form:"updatedAtOrder"  search:"type:order;column:updated_at;table:hs_invite_relations"`
     DeletedAt string `form:"deletedAtOrder"  search:"type:order;column:deleted_at;table:hs_invite_relations"`
-    
+
 }
 
 func (m *HsInviteRelationsGetPageReq) GetNeedSearch() interface{} {
 	return *m
 }
 
+// HsInviteRelationsStatsGetPageReq 邀请统计分页查询请求
+type HsInviteRelationsStatsGetPageReq struct {
+	dto.Pagination `search:"-"`
+	InviterUserId  string `form:"inviterUserId" comment:"邀请人ID"`
+	InviteCode     string `form:"inviteCode" comment:"邀请码"`
+}
+
+// HsInviteRelationsStatsResp 邀请统计响应
+type HsInviteRelationsStatsResp struct {
+	InviterUserId    string `json:"inviterUserId" comment:"邀请人ID"`
+	InviteCode       string `json:"inviteCode" comment:"邀请码"`
+	InviteCount      int64  `json:"inviteCount" comment:"邀请人数"`
+	TotalCommission  string `json:"totalCommission" comment:"邀请累计金额"`
+}
+
 type HsInviteRelationsInsertReq struct {
-    Id int `json:"-" comment:""` // 
+    Id int `json:"-" comment:""` //
     UserId string `json:"userId" comment:"用户ID"`
     Level1InviterId string `json:"level1InviterId" comment:"一级邀请人ID"`
     Level2InviterId string `json:"level2InviterId" comment:"二级邀请人ID"`
@@ -55,7 +70,7 @@ func (s *HsInviteRelationsInsertReq) GetId() interface{} {
 }
 
 type HsInviteRelationsUpdateReq struct {
-    Id int `uri:"id" comment:""` // 
+    Id int `uri:"id" comment:""` //
     UserId string `json:"userId" comment:"用户ID"`
     Level1InviterId string `json:"level1InviterId" comment:"一级邀请人ID"`
     Level2InviterId string `json:"level2InviterId" comment:"二级邀请人ID"`

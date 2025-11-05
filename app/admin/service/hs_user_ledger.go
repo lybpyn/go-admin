@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 
     "github.com/go-admin-team/go-admin-core/sdk/service"
 	"gorm.io/gorm"
@@ -33,6 +34,46 @@ func (e *HsUserLedger) GetPage(c *dto.HsUserLedgerGetPageReq, p *actions.DataPer
 		e.Log.Errorf("HsUserLedgerService GetPage error:%s \r\n", err)
 		return err
 	}
+	return nil
+}
+
+// GetFinanceStats 获取财务统计数据
+func (e *HsUserLedger) GetFinanceStats(c *dto.HsUserLedgerFinanceStatsReq, list *[]dto.HsUserLedgerFinanceStatsResp) error {
+	var err error
+	var dateExpr string
+
+	// 根据维度确定分组和格式化方式 - SELECT 和 GROUP BY 使用相同的表达式
+	switch c.Dimension {
+	case "day":
+		dateExpr = "DATE(created_at)"
+	case "week":
+		// 按周统计，返回该周的第一天（周一）
+		// 使用 DATE 函数减去工作日偏移，确保返回周一的日期
+		dateExpr = "DATE(DATE_SUB(created_at, INTERVAL WEEKDAY(created_at) DAY))"
+	case "month":
+		dateExpr = "DATE_FORMAT(created_at, '%Y-%m')"
+	default:
+		return errors.New("invalid dimension, must be day/week/month")
+	}
+
+	query := e.Orm.Table("hs_user_ledger").
+		Select(fmt.Sprintf(`
+			%s AS date_period,
+			COALESCE(SUM(CASE WHEN biz_type = 'withdraw' AND direction = -1 THEN ABS(amount) ELSE 0 END), 0) AS total_withdraw,
+			COALESCE(SUM(CASE WHEN biz_type = 'withdraw_fee' AND direction = -1 THEN ABS(amount) ELSE 0 END), 0) AS total_withdraw_fee,
+			COALESCE(SUM(CASE WHEN biz_type = 'invite_commissions' AND direction = 1 THEN amount ELSE 0 END), 0) AS total_commission
+		`, dateExpr)).
+		Where("created_at >= ? AND created_at <= ?", c.StartDate+" 00:00:00", c.EndDate+" 23:59:59").
+		Where("status = 1"). // 只统计已入账的记录
+		Group(dateExpr).
+		Order(dateExpr)
+
+	err = query.Scan(list).Error
+	if err != nil {
+		e.Log.Errorf("HsUserLedgerService GetFinanceStats error:%s \r\n", err)
+		return err
+	}
+
 	return nil
 }
 
