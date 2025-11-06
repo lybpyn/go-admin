@@ -23,7 +23,18 @@ type HsUserLedger struct {
 // @Description 获取用户余额流水列表
 // @Tags 用户余额流水
 // @Param userId query string false "用户ID"
+// @Param currencyCode query string false "ISO 4217，例如 USD/CNY"
+// @Param direction query string false "1=入账(credit), -1=出账(debit)"
+// @Param amount query string false "本次发生额，>0"
+// @Param balanceBefore query string false "记账前余额"
+// @Param balanceAfter query string false "记账后余额"
+// @Param bizType query string false "业务类型：order_settlement/withdraw/withdraw_fee/withdraw_reversal/manual_adjust_*/freeze, unfreeze等"
 // @Param bizId query string false "业务单号：例如订单号/提现单号"
+// @Param idempotencyKey query string false "用于幂等控制：如 ORDER_SETTLED:{order_no}"
+// @Param refTable query string false "可选：引用表名"
+// @Param refId query string false "可选：引用ID"
+// @Param remark query string false "备注"
+// @Param status query string false "1=已入账，0=待入账，-1=冲正"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
 // @Success 200 {object} response.Response{data=response.Page{list=[]models.HsUserLedger}} "{"code": 200, "data": [...]}"
@@ -54,41 +65,6 @@ func (e HsUserLedger) GetPage(c *gin.Context) {
 	}
 
 	e.PageOK(list, int(count), req.GetPageIndex(), req.GetPageSize(), "查询成功")
-}
-
-// GetFinanceStats 获取财务统计数据
-// @Summary 获取财务统计数据
-// @Description 按日/周/月维度统计总提现金额、总手续费、总佣金
-// @Tags 用户余额流水
-// @Param dimension query string true "统计维度: day/week/month"
-// @Param startDate query string true "开始日期 格式: 2024-01-01"
-// @Param endDate query string true "结束日期 格式: 2024-01-31"
-// @Success 200 {object} response.Response{data=[]dto.HsUserLedgerFinanceStatsResp} "{"code": 200, "data": [...]}"
-// @Router /api/v1/hs-user-ledger/finance-stats [get]
-// @Security Bearer
-func (e HsUserLedger) GetFinanceStats(c *gin.Context) {
-    req := dto.HsUserLedgerFinanceStatsReq{}
-    s := service.HsUserLedger{}
-    err := e.MakeContext(c).
-        MakeOrm().
-        Bind(&req).
-        MakeService(&s.Service).
-        Errors
-   	if err != nil {
-   		e.Logger.Error(err)
-   		e.Error(500, err, err.Error())
-   		return
-   	}
-
-	list := make([]dto.HsUserLedgerFinanceStatsResp, 0)
-
-	err = s.GetFinanceStats(&req, &list)
-	if err != nil {
-		e.Error(500, err, fmt.Sprintf("获取财务统计数据失败，\r\n失败信息 %s", err.Error()))
-        return
-	}
-
-	e.OK(list, "查询成功")
 }
 
 // Get 获取用户余额流水

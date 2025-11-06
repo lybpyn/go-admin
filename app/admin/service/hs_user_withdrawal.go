@@ -36,6 +36,73 @@ func (e *HsUserWithdrawal) GetPage(c *dto.HsUserWithdrawalGetPageReq, p *actions
 	return nil
 }
 
+// GetPageWithStats 获取带统计信息的HsUserWithdrawal列表
+func (e *HsUserWithdrawal) GetPageWithStats(c *dto.HsUserWithdrawalGetPageReq, p *actions.DataPermission, list *[]dto.HsUserWithdrawalWithStats, count *int64) error {
+	var err error
+	var data models.HsUserWithdrawal
+	var withdrawalList []models.HsUserWithdrawal
+
+	// 先获取基础的提现记录列表
+	err = e.Orm.Model(&data).
+		Scopes(
+			cDto.MakeCondition(c.GetNeedSearch()),
+			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
+			actions.Permission(data.TableName(), p),
+		).
+		Find(&withdrawalList).Limit(-1).Offset(-1).
+		Count(count).Error
+	if err != nil {
+		e.Log.Errorf("HsUserWithdrawalService GetPageWithStats error:%s \r\n", err)
+		return err
+	}
+
+	// 为每个提现记录计算统计信息
+	for _, withdrawal := range withdrawalList {
+		statsItem := dto.HsUserWithdrawalWithStats{
+			HsUserWithdrawal: withdrawal,
+		}
+
+		// 计算累计提现金额和笔数（只统计成功的提现）
+		var withdrawStats struct {
+			TotalAmount string
+			Count       int64
+		}
+		err = e.Orm.Model(&models.HsUserWithdrawal{}).
+			Select("COALESCE(SUM(CAST(amount AS DECIMAL(18,2))), 0) as total_amount, COUNT(*) as count").
+			Where("user_id = ? AND status = 'success'", withdrawal.UserId).
+			Scan(&withdrawStats).Error
+		if err != nil {
+			e.Log.Errorf("Failed to calculate withdrawal stats for user %s: %s", withdrawal.UserId, err)
+			withdrawStats.TotalAmount = "0.00"
+			withdrawStats.Count = 0
+		}
+
+		// 计算累计售卖金额和笔数（只统计已完成的订单）
+		var orderStats struct {
+			TotalAmount string
+			Count       int64
+		}
+		err = e.Orm.Model(&models.OrdUserOrders{}).
+			Select("COALESCE(SUM(CAST(balance AS DECIMAL(20,8))), 0) as total_amount, COUNT(*) as count").
+			Where("user_id = ? AND status = 3", withdrawal.UserId). // status=3表示已完成
+			Scan(&orderStats).Error
+		if err != nil {
+			e.Log.Errorf("Failed to calculate order stats for user %s: %s", withdrawal.UserId, err)
+			orderStats.TotalAmount = "0.00"
+			orderStats.Count = 0
+		}
+
+		statsItem.TotalWithdrawn = withdrawStats.TotalAmount
+		statsItem.WithdrawCount = withdrawStats.Count
+		statsItem.TotalSales = orderStats.TotalAmount
+		statsItem.OrderCount = orderStats.Count
+
+		*list = append(*list, statsItem)
+	}
+
+	return nil
+}
+
 // Get 获取HsUserWithdrawal对象
 func (e *HsUserWithdrawal) Get(d *dto.HsUserWithdrawalGetReq, p *actions.DataPermission, model *models.HsUserWithdrawal) error {
 	var data models.HsUserWithdrawal
@@ -107,151 +174,3 @@ func (e *HsUserWithdrawal) Remove(d *dto.HsUserWithdrawalDeleteReq, p *actions.D
     }
 	return nil
 }
-
-// GetAvailable 获取可接单的提现订单列表
-func (e *HsUserWithdrawal) GetAvailable(c *dto.HsUserWithdrawalAvailableReq, list *[]models.HsUserWithdrawal, count *int64) error {
-	var err error
-	var data models.HsUserWithdrawal
-
-	err = e.Orm.Model(&data).
-		Where("is_claimed = ?", 0).
-		Where("status IN ?", []string{"pending", "review"}).
-		Order("requested_at ASC").
-		Scopes(
-			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
-		).
-		Find(list).Limit(-1).Offset(-1).
-		Count(count).Error
-	if err != nil {
-		e.Log.Errorf("HsUserWithdrawalService GetAvailable error:%s \r\n", err)
-		return err
-	}
-	return nil
-}
-
-// GetMyOrders 获取我的处理订单列表
-func (e *HsUserWithdrawal) GetMyOrders(c *dto.HsUserWithdrawalMyOrdersReq, handlerId int, list *[]models.HsUserWithdrawal, count *int64) error {
-	var err error
-	var data models.HsUserWithdrawal
-
-	query := e.Orm.Model(&data).Where("handler_id = ?", handlerId)
-
-	if c.Status != "" {
-		query = query.Where("status = ?", c.Status)
-	}
-
-	err = query.
-		Order("claimed_at DESC").
-		Scopes(
-			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
-		).
-		Find(list).Limit(-1).Offset(-1).
-		Count(count).Error
-	if err != nil {
-		e.Log.Errorf("HsUserWithdrawalService GetMyOrders error:%s \r\n", err)
-		return err
-	}
-	return nil
-}
-
-// Claim 接单
-func (e *HsUserWithdrawal) Claim(orderId int, handlerId int, handlerName string) error {
-	// 1. 先检查管理员的上班状态
-	var sysUser models.SysUser
-	err := e.Orm.Where("user_id = ?", handlerId).First(&sysUser).Error
-	if err != nil {
-		e.Log.Errorf("HsUserWithdrawalService Claim - get user error:%s \r\n", err)
-		return errors.New("获取管理员信息失败")
-	}
-
-	if sysUser.WorkStatus != "on_duty" {
-		return errors.New("您当前不在上班状态，无法接单")
-	}
-
-	// 2. 使用乐观锁更新订单（防止并发接单）
-	result := e.Orm.Model(&models.HsUserWithdrawal{}).
-		Where("id = ?", orderId).
-		Where("is_claimed = ?", 0).
-		Where("status IN ?", []string{"pending", "review"}).
-		Updates(map[string]interface{}{
-			"handler_id":   handlerId,
-			"handler_name": handlerName,
-			"claimed_at":   gorm.Expr("NOW(3)"),
-			"is_claimed":   1,
-			"status":       "processing",
-		})
-
-	if result.Error != nil {
-		e.Log.Errorf("HsUserWithdrawalService Claim error:%s \r\n", result.Error)
-		return result.Error
-	}
-
-	if result.RowsAffected == 0 {
-		return errors.New("接单失败：该订单已被其他管理员接单或状态已变更")
-	}
-
-	return nil
-}
-
-// Release 释放订单（取消接单）
-func (e *HsUserWithdrawal) Release(orderId int, handlerId int) error {
-	result := e.Orm.Model(&models.HsUserWithdrawal{}).
-		Where("id = ?", orderId).
-		Where("handler_id = ?", handlerId).
-		Where("status = ?", "processing").
-		Updates(map[string]interface{}{
-			"handler_id":   nil,
-			"handler_name": nil,
-			"claimed_at":   nil,
-			"is_claimed":   0,
-			"status":       "pending",
-		})
-
-	if result.Error != nil {
-		e.Log.Errorf("HsUserWithdrawalService Release error:%s \r\n", result.Error)
-		return result.Error
-	}
-
-	if result.RowsAffected == 0 {
-		return errors.New("释放订单失败：您没有接单该订单或订单状态已变更")
-	}
-
-	return nil
-}
-
-// Complete 完成订单处理
-func (e *HsUserWithdrawal) Complete(c *dto.HsUserWithdrawalCompleteReq, handlerId int) error {
-	// 验证失败原因
-	if c.Status == "failed" && c.Reason == "" {
-		return errors.New("处理失败时必须填写失败原因")
-	}
-
-	// 更新订单状态
-	updates := map[string]interface{}{
-		"status":       c.Status,
-		"reason":       c.Reason,
-		"processed_at": gorm.Expr("NOW(3)"),
-	}
-
-	if c.ChannelTxnId != "" {
-		updates["channel_txn_id"] = c.ChannelTxnId
-	}
-
-	result := e.Orm.Model(&models.HsUserWithdrawal{}).
-		Where("id = ?", c.Id).
-		Where("handler_id = ?", handlerId).
-		Where("status = ?", "processing").
-		Updates(updates)
-
-	if result.Error != nil {
-		e.Log.Errorf("HsUserWithdrawalService Complete error:%s \r\n", result.Error)
-		return result.Error
-	}
-
-	if result.RowsAffected == 0 {
-		return errors.New("完成订单失败：您没有接单该订单或订单状态已变更")
-	}
-
-	return nil
-}
-

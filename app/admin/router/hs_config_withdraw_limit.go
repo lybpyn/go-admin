@@ -10,13 +10,13 @@ import (
 )
 
 func init() {
-	routerCheckRole = append(routerCheckRole, registerHsUserLedgerRouter)
+	routerCheckRole = append(routerCheckRole, registerHsConfigWithdrawLimitRouter)
 }
 
-// registerHsUserLedgerRouter
-func registerHsUserLedgerRouter(v1 *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddleware) {
-	api := apis.HsUserLedger{}
-	r := v1.Group("/hs-user-ledger").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
+// registerHsConfigWithdrawLimitRouter
+func registerHsConfigWithdrawLimitRouter(v1 *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddleware) {
+	api := apis.HsConfigWithdrawLimit{}
+	r := v1.Group("/hs-config-withdraw-limit").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
 	{
 		r.GET("", actions.PermissionAction(), api.GetPage)
 		r.GET("/:id", actions.PermissionAction(), api.Get)

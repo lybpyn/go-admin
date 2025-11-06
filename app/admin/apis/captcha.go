@@ -5,6 +5,8 @@ import (
 	"github.com/go-admin-team/go-admin-core/sdk/api"
 	"github.com/go-admin-team/go-admin-core/sdk/pkg/captcha"
 	_ "github.com/go-admin-team/go-admin-core/sdk/pkg/response"
+
+	_ "go-admin/common/models"
 )
 
 type System struct {
@@ -15,7 +17,7 @@ type System struct {
 // @Summary 获取验证码
 // @Description 获取验证码
 // @Tags 登陆
-// @Success 200 {object} response.Response{data=string,id=string,msg=string} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=string,id=string,msg=string} "{"code": 200, "data": [...]}"
 // @Router /api/v1/captcha [get]
 func (e System) GenerateCaptchaHandler(c *gin.Context) {
 	if err := e.MakeContext(c).Errors; err != nil {

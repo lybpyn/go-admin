@@ -18,7 +18,7 @@ type HsReceivingAccountsOrder struct {
     BankId string `form:"bankIdOrder"  search:"type:order;column:bank_id;table:hs_receiving_accounts"`
     AccountName string `form:"accountNameOrder"  search:"type:order;column:account_name;table:hs_receiving_accounts"`
     AccountNumber string `form:"accountNumberOrder"  search:"type:order;column:account_number;table:hs_receiving_accounts"`
-    Currency string `form:"currencyOrder"  search:"type:order;column:currency;table:hs_receiving_accounts"`
+    CurrencyCode string `form:"currencyCodeOrder"  search:"type:order;column:currency_code;table:hs_receiving_accounts"`
     MinAmount string `form:"minAmountOrder"  search:"type:order;column:min_amount;table:hs_receiving_accounts"`
     MaxAmount string `form:"maxAmountOrder"  search:"type:order;column:max_amount;table:hs_receiving_accounts"`
     DailyLimit string `form:"dailyLimitOrder"  search:"type:order;column:daily_limit;table:hs_receiving_accounts"`
@@ -49,7 +49,7 @@ type HsReceivingAccountsInsertReq struct {
     BankId string `json:"bankId" comment:"关联 banks.id (如果是银行账户)"`
     AccountName string `json:"accountName" comment:"账户名/收款人名称"`
     AccountNumber string `json:"accountNumber" comment:"账号（可能为卡号/IBAN/虚拟账号）"`
-    Currency string `json:"currency" comment:"货币代码 (USD/CNY/...)"`
+    CurrencyCode string `json:"currencyCode" comment:"货币代码 (USD/CNY/...)"`
     MinAmount string `json:"minAmount" comment:"单次最小收款金额"`
     MaxAmount string `json:"maxAmount" comment:"单次最大收款金额 (NULL 表示无限制)"`
     DailyLimit string `json:"dailyLimit" comment:"每日上限 (平台/风控)"`
@@ -73,7 +73,7 @@ func (s *HsReceivingAccountsInsertReq) Generate(model *models.HsReceivingAccount
     model.BankId = s.BankId
     model.AccountName = s.AccountName
     model.AccountNumber = s.AccountNumber
-    model.Currency = s.Currency
+    model.CurrencyCode = s.CurrencyCode
     model.MinAmount = s.MinAmount
     model.MaxAmount = s.MaxAmount
     model.DailyLimit = s.DailyLimit
@@ -99,7 +99,7 @@ type HsReceivingAccountsUpdateReq struct {
     BankId string `json:"bankId" comment:"关联 banks.id (如果是银行账户)"`
     AccountName string `json:"accountName" comment:"账户名/收款人名称"`
     AccountNumber string `json:"accountNumber" comment:"账号（可能为卡号/IBAN/虚拟账号）"`
-    Currency string `json:"currency" comment:"货币代码 (USD/CNY/...)"`
+    CurrencyCode string `json:"currencyCode" comment:"货币代码 (USD/CNY/...)"`
     MinAmount string `json:"minAmount" comment:"单次最小收款金额"`
     MaxAmount string `json:"maxAmount" comment:"单次最大收款金额 (NULL 表示无限制)"`
     DailyLimit string `json:"dailyLimit" comment:"每日上限 (平台/风控)"`
@@ -123,7 +123,7 @@ func (s *HsReceivingAccountsUpdateReq) Generate(model *models.HsReceivingAccount
     model.BankId = s.BankId
     model.AccountName = s.AccountName
     model.AccountNumber = s.AccountNumber
-    model.Currency = s.Currency
+    model.CurrencyCode = s.CurrencyCode
     model.MinAmount = s.MinAmount
     model.MaxAmount = s.MaxAmount
     model.DailyLimit = s.DailyLimit

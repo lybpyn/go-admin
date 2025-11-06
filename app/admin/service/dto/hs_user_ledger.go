@@ -10,14 +10,25 @@ import (
 type HsUserLedgerGetPageReq struct {
 	dto.Pagination     `search:"-"`
     UserId string `form:"userId"  search:"type:exact;column:user_id;table:hs_user_ledger" comment:""`
+    CurrencyCode string `form:"currencyCode"  search:"type:exact;column:currency_code;table:hs_user_ledger" comment:"ISO 4217，例如 USD/CNY"`
+    Direction string `form:"direction"  search:"type:exact;column:direction;table:hs_user_ledger" comment:"1=入账(credit), -1=出账(debit)"`
+    Amount string `form:"amount"  search:"type:exact;column:amount;table:hs_user_ledger" comment:"本次发生额，>0"`
+    BalanceBefore string `form:"balanceBefore"  search:"type:exact;column:balance_before;table:hs_user_ledger" comment:"记账前余额"`
+    BalanceAfter string `form:"balanceAfter"  search:"type:exact;column:balance_after;table:hs_user_ledger" comment:"记账后余额"`
+    BizType string `form:"bizType"  search:"type:exact;column:biz_type;table:hs_user_ledger" comment:"业务类型：order_settlement/withdraw/withdraw_fee/withdraw_reversal/manual_adjust_*/freeze, unfreeze等"`
     BizId string `form:"bizId"  search:"type:exact;column:biz_id;table:hs_user_ledger" comment:"业务单号：例如订单号/提现单号"`
+    IdempotencyKey string `form:"idempotencyKey"  search:"type:exact;column:idempotency_key;table:hs_user_ledger" comment:"用于幂等控制：如 ORDER_SETTLED:{order_no}"`
+    RefTable string `form:"refTable"  search:"type:exact;column:ref_table;table:hs_user_ledger" comment:"可选：引用表名"`
+    RefId string `form:"refId"  search:"type:exact;column:ref_id;table:hs_user_ledger" comment:"可选：引用ID"`
+    Remark string `form:"remark"  search:"type:exact;column:remark;table:hs_user_ledger" comment:""`
+    Status string `form:"status"  search:"type:exact;column:status;table:hs_user_ledger" comment:"1=已入账，0=待入账，-1=冲正"`
     HsUserLedgerOrder
 }
 
 type HsUserLedgerOrder struct {
     Id string `form:"idOrder"  search:"type:order;column:id;table:hs_user_ledger"`
     UserId string `form:"userIdOrder"  search:"type:order;column:user_id;table:hs_user_ledger"`
-    Currency string `form:"currencyOrder"  search:"type:order;column:currency;table:hs_user_ledger"`
+    CurrencyCode string `form:"currencyCodeOrder"  search:"type:order;column:currency_code;table:hs_user_ledger"`
     Direction string `form:"directionOrder"  search:"type:order;column:direction;table:hs_user_ledger"`
     Amount string `form:"amountOrder"  search:"type:order;column:amount;table:hs_user_ledger"`
     BalanceBefore string `form:"balanceBeforeOrder"  search:"type:order;column:balance_before;table:hs_user_ledger"`
@@ -34,37 +45,22 @@ type HsUserLedgerOrder struct {
     CreatedAt string `form:"createdAtOrder"  search:"type:order;column:created_at;table:hs_user_ledger"`
     UpdatedAt string `form:"updatedAtOrder"  search:"type:order;column:updated_at;table:hs_user_ledger"`
     DeletedAt string `form:"deletedAtOrder"  search:"type:order;column:deleted_at;table:hs_user_ledger"`
-
+    
 }
 
 func (m *HsUserLedgerGetPageReq) GetNeedSearch() interface{} {
 	return *m
 }
 
-// HsUserLedgerFinanceStatsReq 财务统计查询请求
-type HsUserLedgerFinanceStatsReq struct {
-	Dimension string `form:"dimension" binding:"required" comment:"统计维度: day/week/month"`
-	StartDate string `form:"startDate" binding:"required" comment:"开始日期 格式: 2024-01-01"`
-	EndDate   string `form:"endDate" binding:"required" comment:"结束日期 格式: 2024-01-31"`
-}
-
-// HsUserLedgerFinanceStatsResp 财务统计响应
-type HsUserLedgerFinanceStatsResp struct {
-	DatePeriod        string `json:"datePeriod" comment:"日期周期"`
-	TotalWithdraw     string `json:"totalWithdraw" comment:"总提现金额"`
-	TotalWithdrawFee  string `json:"totalWithdrawFee" comment:"总手续费"`
-	TotalCommission   string `json:"totalCommission" comment:"总佣金"`
-}
-
 type HsUserLedgerInsertReq struct {
-    Id int `json:"-" comment:""` //
+    Id int `json:"-" comment:""` // 
     UserId string `json:"userId" comment:""`
-    Currency string `json:"currency" comment:"ISO 4217，例如 USD/CNY"`
+    CurrencyCode string `json:"currencyCode" comment:"ISO 4217，例如 USD/CNY"`
     Direction string `json:"direction" comment:"1=入账(credit), -1=出账(debit)"`
     Amount string `json:"amount" comment:"本次发生额，>0"`
     BalanceBefore string `json:"balanceBefore" comment:"记账前余额"`
     BalanceAfter string `json:"balanceAfter" comment:"记账后余额"`
-    BizType string `json:"bizType" comment:"业务类型：order_settlement/withdraw/withdraw_fee/withdraw_reversal/manual_adjust_* 等"`
+    BizType string `json:"bizType" comment:"业务类型：order_settlement/withdraw/withdraw_fee/withdraw_reversal/manual_adjust_*/freeze, unfreeze等"`
     BizId string `json:"bizId" comment:"业务单号：例如订单号/提现单号"`
     IdempotencyKey string `json:"idempotencyKey" comment:"用于幂等控制：如 ORDER_SETTLED:{order_no}"`
     RefTable string `json:"refTable" comment:"可选：引用表名"`
@@ -79,7 +75,7 @@ func (s *HsUserLedgerInsertReq) Generate(model *models.HsUserLedger)  {
         model.Model = common.Model{ Id: s.Id }
     }
     model.UserId = s.UserId
-    model.Currency = s.Currency
+    model.CurrencyCode = s.CurrencyCode
     model.Direction = s.Direction
     model.Amount = s.Amount
     model.BalanceBefore = s.BalanceBefore
@@ -99,14 +95,14 @@ func (s *HsUserLedgerInsertReq) GetId() interface{} {
 }
 
 type HsUserLedgerUpdateReq struct {
-    Id int `uri:"id" comment:""` //
+    Id int `uri:"id" comment:""` // 
     UserId string `json:"userId" comment:""`
-    Currency string `json:"currency" comment:"ISO 4217，例如 USD/CNY"`
+    CurrencyCode string `json:"currencyCode" comment:"ISO 4217，例如 USD/CNY"`
     Direction string `json:"direction" comment:"1=入账(credit), -1=出账(debit)"`
     Amount string `json:"amount" comment:"本次发生额，>0"`
     BalanceBefore string `json:"balanceBefore" comment:"记账前余额"`
     BalanceAfter string `json:"balanceAfter" comment:"记账后余额"`
-    BizType string `json:"bizType" comment:"业务类型：order_settlement/withdraw/withdraw_fee/withdraw_reversal/manual_adjust_* 等"`
+    BizType string `json:"bizType" comment:"业务类型：order_settlement/withdraw/withdraw_fee/withdraw_reversal/manual_adjust_*/freeze, unfreeze等"`
     BizId string `json:"bizId" comment:"业务单号：例如订单号/提现单号"`
     IdempotencyKey string `json:"idempotencyKey" comment:"用于幂等控制：如 ORDER_SETTLED:{order_no}"`
     RefTable string `json:"refTable" comment:"可选：引用表名"`
@@ -121,7 +117,7 @@ func (s *HsUserLedgerUpdateReq) Generate(model *models.HsUserLedger)  {
         model.Model = common.Model{ Id: s.Id }
     }
     model.UserId = s.UserId
-    model.Currency = s.Currency
+    model.CurrencyCode = s.CurrencyCode
     model.Direction = s.Direction
     model.Amount = s.Amount
     model.BalanceBefore = s.BalanceBefore

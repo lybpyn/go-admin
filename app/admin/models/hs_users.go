@@ -14,9 +14,11 @@ type HsUsers struct {
     Firstname string `json:"firstname" gorm:"type:varchar(20);comment:Firstname"` 
     Lastname string `json:"lastname" gorm:"type:varchar(20);comment:Lastname"` 
     Avatar string `json:"avatar" gorm:"type:varchar(255);comment:头像URL"` 
-    Balance string `json:"balance" gorm:"type:decimal(12,2);comment:Balance"` 
+    Balance string `json:"balance" gorm:"type:decimal(12,2);comment:可用余额"` 
+    FrozenBalance string `json:"frozenBalance" gorm:"type:decimal(12,2);comment:冻结余额"` 
     LevelId string `json:"levelId" gorm:"type:int(11);comment:用户等级ID"` 
     Experience string `json:"experience" gorm:"type:int(11);comment:当前经验"` 
+    RegionId string `json:"regionId" gorm:"type:bigint(20);comment:区域id"` 
     TotalExperience string `json:"totalExperience" gorm:"type:int(11);comment:累计经验"` 
     InviteCode string `json:"inviteCode" gorm:"type:varchar(8);comment:InviteCode"` 
     Status string `json:"status" gorm:"type:tinyint(4);comment:状态：1正常，0封禁"` 

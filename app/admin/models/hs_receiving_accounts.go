@@ -13,7 +13,7 @@ type HsReceivingAccounts struct {
     BankId string `json:"bankId" gorm:"type:bigint(20);comment:关联 banks.id (如果是银行账户)"` 
     AccountName string `json:"accountName" gorm:"type:varchar(128);comment:账户名/收款人名称"` 
     AccountNumber string `json:"accountNumber" gorm:"type:varchar(128);comment:账号（可能为卡号/IBAN/虚拟账号）"` 
-    Currency string `json:"currency" gorm:"type:varchar(8);comment:货币代码 (USD/CNY/...)"` 
+    CurrencyCode string `json:"currencyCode" gorm:"type:varchar(8);comment:货币代码 (USD/CNY/...)"` 
     MinAmount string `json:"minAmount" gorm:"type:decimal(20,4);comment:单次最小收款金额"` 
     MaxAmount string `json:"maxAmount" gorm:"type:decimal(20,4);comment:单次最大收款金额 (NULL 表示无限制)"` 
     DailyLimit string `json:"dailyLimit" gorm:"type:decimal(20,4);comment:每日上限 (平台/风控)"` 

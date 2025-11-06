@@ -23,6 +23,9 @@ type HsConfigRegions struct {
 // @Description 获取系统地区表（注册地区选择）列表
 // @Tags 系统地区表（注册地区选择）
 // @Param name query string false "地区名称"
+// @Param currencyCode query string false "地区货币"
+// @Param code query string false "地区代码，如 CN、US、JP 等"
+// @Param isActive query string false "是否启用：1=启用，0=禁用"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
 // @Success 200 {object} response.Response{data=response.Page{list=[]models.HsConfigRegions}} "{"code": 200, "data": [...]}"

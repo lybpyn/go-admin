@@ -56,7 +56,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -1652,6 +1652,235 @@
                 }
             }
         },
+        "/api/v1/hs-config-frozen-limit": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取用户冻结金额限制配置表列表",
+                "tags": [
+                    "用户冻结金额限制配置表"
+                ],
+                "summary": "获取用户冻结金额限制配置表列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "币种代码，如 USD/CNY/USDT",
+                        "name": "currencyCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "可冻结金额上限 / 提现限制金额",
+                        "name": "frozenLimitAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否启用：1=启用，0=禁用",
+                        "name": "isActive",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageIndex",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.Page"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/models.HsConfigFrozenLimit"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建用户冻结金额限制配置表",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户冻结金额限制配置表"
+                ],
+                "summary": "创建用户冻结金额限制配置表",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigFrozenLimitInsertReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"添加成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除用户冻结金额限制配置表",
+                "tags": [
+                    "用户冻结金额限制配置表"
+                ],
+                "summary": "删除用户冻结金额限制配置表",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigFrozenLimitDeleteReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/hs-config-frozen-limit/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取用户冻结金额限制配置表",
+                "tags": [
+                    "用户冻结金额限制配置表"
+                ],
+                "summary": "获取用户冻结金额限制配置表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.HsConfigFrozenLimit"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "修改用户冻结金额限制配置表",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户冻结金额限制配置表"
+                ],
+                "summary": "修改用户冻结金额限制配置表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigFrozenLimitUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"修改成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/hs-config-regions": {
             "get": {
                 "security": [
@@ -1669,6 +1898,24 @@
                         "type": "string",
                         "description": "地区名称",
                         "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "地区货币",
+                        "name": "currencyCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "地区代码，如 CN、US、JP 等",
+                        "name": "code",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否启用：1=启用，0=禁用",
+                        "name": "isActive",
                         "in": "query"
                     },
                     {
@@ -2067,6 +2314,488 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/dto.HsConfigSupportedChainsCoinUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"修改成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/hs-config-withdraw-fee": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取提现费率与限制配置表列表",
+                "tags": [
+                    "提现费率与限制配置表"
+                ],
+                "summary": "获取提现费率与限制配置表列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "币种代码，如 USD/CNY/USDT",
+                        "name": "currencyCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "最小提现金额",
+                        "name": "minAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "最大提现金额",
+                        "name": "maxAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "手续费率（例如 0.015 表示 1.5%）",
+                        "name": "feeRate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否启用：1=启用，0=禁用",
+                        "name": "isActive",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageIndex",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.Page"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/models.HsConfigWithdrawFee"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建提现费率与限制配置表",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "提现费率与限制配置表"
+                ],
+                "summary": "创建提现费率与限制配置表",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigWithdrawFeeInsertReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"添加成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除提现费率与限制配置表",
+                "tags": [
+                    "提现费率与限制配置表"
+                ],
+                "summary": "删除提现费率与限制配置表",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigWithdrawFeeDeleteReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/hs-config-withdraw-fee/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取提现费率与限制配置表",
+                "tags": [
+                    "提现费率与限制配置表"
+                ],
+                "summary": "获取提现费率与限制配置表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.HsConfigWithdrawFee"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "修改提现费率与限制配置表",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "提现费率与限制配置表"
+                ],
+                "summary": "修改提现费率与限制配置表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigWithdrawFeeUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"修改成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/hs-config-withdraw-limit": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取用户提现限额配置表列表",
+                "tags": [
+                    "用户提现限额配置表"
+                ],
+                "summary": "获取用户提现限额配置表列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "币种代码，如 USD/CNY/USDT",
+                        "name": "currencyCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "单笔提现限额",
+                        "name": "singleLimit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "每日累计提现金额上限",
+                        "name": "dailyLimitAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "每日提现次数上限",
+                        "name": "dailyLimitCount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否启用：1=启用，0=禁用",
+                        "name": "isActive",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageIndex",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.Page"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/models.HsConfigWithdrawLimit"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建用户提现限额配置表",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户提现限额配置表"
+                ],
+                "summary": "创建用户提现限额配置表",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigWithdrawLimitInsertReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"添加成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除用户提现限额配置表",
+                "tags": [
+                    "用户提现限额配置表"
+                ],
+                "summary": "删除用户提现限额配置表",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigWithdrawLimitDeleteReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/hs-config-withdraw-limit/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取用户提现限额配置表",
+                "tags": [
+                    "用户提现限额配置表"
+                ],
+                "summary": "获取用户提现限额配置表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.HsConfigWithdrawLimit"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "修改用户提现限额配置表",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户提现限额配置表"
+                ],
+                "summary": "修改用户提现限额配置表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigWithdrawLimitUpdateReq"
                         }
                     }
                 ],
@@ -4150,6 +4879,283 @@
                 }
             }
         },
+        "/api/v1/hs-user-frozen-ledger": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取用户冻结余额流水列表",
+                "tags": [
+                    "用户冻结余额流水"
+                ],
+                "summary": "获取用户冻结余额流水列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "userId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "币种代码，如 USD/CNY/USDT",
+                        "name": "currencyCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "1=冻结增加，-1=冻结减少(解冻)",
+                        "name": "direction",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "冻结或解冻金额",
+                        "name": "amount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "变动前冻结余额",
+                        "name": "frozenBefore",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "变动后冻结余额",
+                        "name": "frozenAfter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "业务类型：invite_commissions/order_rebate等",
+                        "name": "bizType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "业务单号",
+                        "name": "bizId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "幂等键",
+                        "name": "idempotencyKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "备注",
+                        "name": "remark",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "1=已冻结或解冻，0=待处理，-1=冲正",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageIndex",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.Page"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/models.HsUserFrozenLedger"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建用户冻结余额流水",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户冻结余额流水"
+                ],
+                "summary": "创建用户冻结余额流水",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsUserFrozenLedgerInsertReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"添加成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除用户冻结余额流水",
+                "tags": [
+                    "用户冻结余额流水"
+                ],
+                "summary": "删除用户冻结余额流水",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsUserFrozenLedgerDeleteReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/hs-user-frozen-ledger/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取用户冻结余额流水",
+                "tags": [
+                    "用户冻结余额流水"
+                ],
+                "summary": "获取用户冻结余额流水",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.HsUserFrozenLedger"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "修改用户冻结余额流水",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户冻结余额流水"
+                ],
+                "summary": "修改用户冻结余额流水",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsUserFrozenLedgerUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"修改成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/hs-user-identity": {
             "get": {
                 "security": [
@@ -4406,8 +5412,74 @@
                     },
                     {
                         "type": "string",
+                        "description": "ISO 4217，例如 USD/CNY",
+                        "name": "currencyCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "1=入账(credit), -1=出账(debit)",
+                        "name": "direction",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "本次发生额，\u003e0",
+                        "name": "amount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "记账前余额",
+                        "name": "balanceBefore",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "记账后余额",
+                        "name": "balanceAfter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "业务类型：order_settlement/withdraw/withdraw_fee/withdraw_reversal/manual_adjust_*/freeze, unfreeze等",
+                        "name": "bizType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "业务单号：例如订单号/提现单号",
                         "name": "bizId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "用于幂等控制：如 ORDER_SETTLED:{order_no}",
+                        "name": "idempotencyKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "可选：引用表名",
+                        "name": "refTable",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "可选：引用ID",
+                        "name": "refId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "备注",
+                        "name": "remark",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "1=已入账，0=待入账，-1=冲正",
+                        "name": "status",
                         "in": "query"
                     },
                     {
@@ -4520,66 +5592,6 @@
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/hs-user-ledger/finance-stats": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "按日/周/月维度统计总提现金额、总手续费、总佣金",
-                "tags": [
-                    "用户余额流水"
-                ],
-                "summary": "获取财务统计数据",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "统计维度: day/week/month",
-                        "name": "dimension",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "开始日期 格式: 2024-01-01",
-                        "name": "startDate",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "结束日期 格式: 2024-01-31",
-                        "name": "endDate",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\": 200, \"data\": [...]}",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/dto.HsUserLedgerFinanceStatsResp"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
                         }
                     }
                 }
@@ -5135,6 +6147,72 @@
                     },
                     {
                         "type": "string",
+                        "description": "ISO 4217币种代码，如 USD/CNY",
+                        "name": "currencyCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "提现金额",
+                        "name": "amount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "提现手续费",
+                        "name": "fee",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "实际出账金额（amount - fee）",
+                        "name": "netAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "提现方式：bank/crypto",
+                        "name": "method",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "提现账户信息（脱敏）",
+                        "name": "accountInfo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "状态：pending/review/processing/success/failed/canceled",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "接单管理员ID（关联sys_user.user_id）",
+                        "name": "handlerId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "接单管理员名称（冗余字段）",
+                        "name": "handlerName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否已接单：0=未接单(可接单), 1=已接单(已锁定)",
+                        "name": "isClaimed",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "失败/取消原因",
+                        "name": "reason",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "通道回执流水号",
                         "name": "channelTxnId",
                         "in": "query"
@@ -5174,7 +6252,7 @@
                                                         "list": {
                                                             "type": "array",
                                                             "items": {
-                                                                "$ref": "#/definitions/models.HsUserWithdrawal"
+                                                                "$ref": "#/definitions/dto.HsUserWithdrawalWithStats"
                                                             }
                                                         }
                                                     }
@@ -5249,138 +6327,6 @@
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/hs-user-withdrawal/available": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "获取所有未被接单的提现订单（is_claimed=0, status=pending/review）",
-                "tags": [
-                    "用户余额提现申请表"
-                ],
-                "summary": "获取可接单的提现订单列表",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "页条数",
-                        "name": "pageSize",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "pageIndex",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\": 200, \"data\": [...]}",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/response.Page"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "list": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/models.HsUserWithdrawal"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/hs-user-withdrawal/my-orders": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "获取当前管理员接单处理的订单列表",
-                "tags": [
-                    "用户余额提现申请表"
-                ],
-                "summary": "获取我的处理订单列表",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "订单状态",
-                        "name": "status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页条数",
-                        "name": "pageSize",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "页码",
-                        "name": "pageIndex",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\": 200, \"data\": [...]}",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "allOf": [
-                                                {
-                                                    "$ref": "#/definitions/response.Page"
-                                                },
-                                                {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "list": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "$ref": "#/definitions/models.HsUserWithdrawal"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            ]
                         }
                     }
                 }
@@ -5469,68 +6415,6 @@
                 }
             }
         },
-        "/api/v1/hs-user-withdrawal/{id}/claim": {
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "管理员接单处理提现订单",
-                "tags": [
-                    "用户余额提现申请表"
-                ],
-                "summary": "接单",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "订单ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\": 200, \"message\": \"接单成功\"}",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/hs-user-withdrawal/{id}/release": {
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "管理员取消接单，释放订单",
-                "tags": [
-                    "用户余额提现申请表"
-                ],
-                "summary": "释放订单",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "订单ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\": 200, \"message\": \"释放订单成功\"}",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/hs-users": {
             "get": {
                 "security": [
@@ -5552,20 +6436,80 @@
                     },
                     {
                         "type": "string",
-                        "description": "用户名字",
+                        "description": "密码",
+                        "name": "passwordHash",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "姓",
                         "name": "firstname",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "用户姓氏",
+                        "description": "名",
                         "name": "lastname",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "头像URL",
+                        "name": "avatar",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "可用余额",
+                        "name": "balance",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "冻结余额",
+                        "name": "frozenBalance",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户等级ID",
+                        "name": "levelId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "当前经验",
+                        "name": "experience",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "区域id",
+                        "name": "regionId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "累计经验",
+                        "name": "totalExperience",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "邀请码",
                         "name": "inviteCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "状态：1正常，0封禁",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "版本号",
+                        "name": "version",
                         "in": "query"
                     },
                     {
@@ -7133,6 +8077,259 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/dto.NoSystemNotificationsUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"修改成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ord-config-currency-rates": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取货币汇率表-支持多币种对和地区化配置列表",
+                "tags": [
+                    "货币汇率表-支持多币种对和地区化配置"
+                ],
+                "summary": "获取货币汇率表-支持多币种对和地区化配置列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "基准货币代码 (ISO 4217)",
+                        "name": "baseCurrencyCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "报价货币代码 (ISO 4217)",
+                        "name": "quoteCurrencyCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "汇率: 1 base_currency = rate quote_currency",
+                        "name": "rate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "地区代码,为空表示全局汇率",
+                        "name": "regionCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "汇率类型: standard=标准, buying=买入, selling=卖出",
+                        "name": "rateType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "汇率来源,如 manual, api, coingecko",
+                        "name": "source",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "状态: 1=启用, 0=禁用",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageIndex",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.Page"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/models.OrdConfigCurrencyRates"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建货币汇率表-支持多币种对和地区化配置",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "货币汇率表-支持多币种对和地区化配置"
+                ],
+                "summary": "创建货币汇率表-支持多币种对和地区化配置",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrdConfigCurrencyRatesInsertReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"添加成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除货币汇率表-支持多币种对和地区化配置",
+                "tags": [
+                    "货币汇率表-支持多币种对和地区化配置"
+                ],
+                "summary": "删除货币汇率表-支持多币种对和地区化配置",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrdConfigCurrencyRatesDeleteReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ord-config-currency-rates/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取货币汇率表-支持多币种对和地区化配置",
+                "tags": [
+                    "货币汇率表-支持多币种对和地区化配置"
+                ],
+                "summary": "获取货币汇率表-支持多币种对和地区化配置",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.OrdConfigCurrencyRates"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "修改货币汇率表-支持多币种对和地区化配置",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "货币汇率表-支持多币种对和地区化配置"
+                ],
+                "summary": "修改货币汇率表-支持多币种对和地区化配置",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrdConfigCurrencyRatesUpdateReq"
                         }
                     }
                 ],
@@ -9025,7 +10222,7 @@
                 ],
                 "description": "获取礼品卡订单表",
                 "tags": [
-                    "礼品卡订单表 根据新功能，设计新表。用户可以接单处理提现订单。其他人就不能在接单。同时用户有上班状态，在上班状态才能接单。根据现有表结构可以修改或者新增字段"
+                    "礼品卡订单表"
                 ],
                 "summary": "获取礼品卡订单表",
                 "parameters": [
@@ -11158,6 +12355,61 @@
                 }
             }
         },
+        "dto.HsConfigFrozenLimitDeleteReq": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "dto.HsConfigFrozenLimitInsertReq": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "frozenLimitAmount": {
+                    "type": "string"
+                },
+                "isActive": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.HsConfigFrozenLimitUpdateReq": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "frozenLimitAmount": {
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                },
+                "isActive": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.HsConfigRegionsDeleteReq": {
             "type": "object",
             "properties": {
@@ -11178,6 +12430,9 @@
                 "createBy": {
                     "type": "integer"
                 },
+                "currencyCode": {
+                    "type": "string"
+                },
                 "isActive": {
                     "type": "string"
                 },
@@ -11197,6 +12452,9 @@
                 },
                 "createBy": {
                     "type": "integer"
+                },
+                "currencyCode": {
+                    "type": "string"
                 },
                 "id": {
                     "description": "地区ID",
@@ -11337,6 +12595,140 @@
                 },
                 "withdrawFee": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.HsConfigWithdrawFeeDeleteReq": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "dto.HsConfigWithdrawFeeInsertReq": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "feeRate": {
+                    "type": "string"
+                },
+                "isActive": {
+                    "type": "string"
+                },
+                "maxAmount": {
+                    "type": "string"
+                },
+                "minAmount": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.HsConfigWithdrawFeeUpdateReq": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "feeRate": {
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                },
+                "isActive": {
+                    "type": "string"
+                },
+                "maxAmount": {
+                    "type": "string"
+                },
+                "minAmount": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.HsConfigWithdrawLimitDeleteReq": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "dto.HsConfigWithdrawLimitInsertReq": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "dailyLimitAmount": {
+                    "type": "string"
+                },
+                "dailyLimitCount": {
+                    "type": "string"
+                },
+                "isActive": {
+                    "type": "string"
+                },
+                "singleLimit": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.HsConfigWithdrawLimitUpdateReq": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "dailyLimitAmount": {
+                    "type": "string"
+                },
+                "dailyLimitCount": {
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                },
+                "isActive": {
+                    "type": "string"
+                },
+                "singleLimit": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
                 }
             }
         },
@@ -11668,7 +13060,7 @@
                 "createBy": {
                     "type": "integer"
                 },
-                "currency": {
+                "currencyCode": {
                     "type": "string"
                 },
                 "dailyLimit": {
@@ -11730,7 +13122,7 @@
                 "createBy": {
                     "type": "integer"
                 },
-                "currency": {
+                "currencyCode": {
                     "type": "string"
                 },
                 "dailyLimit": {
@@ -12099,6 +13491,108 @@
                 }
             }
         },
+        "dto.HsUserFrozenLedgerDeleteReq": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "dto.HsUserFrozenLedgerInsertReq": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string"
+                },
+                "bizId": {
+                    "type": "string"
+                },
+                "bizType": {
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "direction": {
+                    "type": "string"
+                },
+                "frozenAfter": {
+                    "type": "string"
+                },
+                "frozenBefore": {
+                    "type": "string"
+                },
+                "idempotencyKey": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.HsUserFrozenLedgerUpdateReq": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string"
+                },
+                "bizId": {
+                    "type": "string"
+                },
+                "bizType": {
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "direction": {
+                    "type": "string"
+                },
+                "frozenAfter": {
+                    "type": "string"
+                },
+                "frozenBefore": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "idempotencyKey": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.HsUserIdentityDeleteReq": {
             "type": "object",
             "properties": {
@@ -12176,23 +13670,6 @@
                 }
             }
         },
-        "dto.HsUserLedgerFinanceStatsResp": {
-            "type": "object",
-            "properties": {
-                "datePeriod": {
-                    "type": "string"
-                },
-                "totalCommission": {
-                    "type": "string"
-                },
-                "totalWithdraw": {
-                    "type": "string"
-                },
-                "totalWithdrawFee": {
-                    "type": "string"
-                }
-            }
-        },
         "dto.HsUserLedgerInsertReq": {
             "type": "object",
             "properties": {
@@ -12214,7 +13691,7 @@
                 "createBy": {
                     "type": "integer"
                 },
-                "currency": {
+                "currencyCode": {
                     "type": "string"
                 },
                 "direction": {
@@ -12264,7 +13741,7 @@
                 "createBy": {
                     "type": "integer"
                 },
-                "currency": {
+                "currencyCode": {
                     "type": "string"
                 },
                 "direction": {
@@ -12482,13 +13959,25 @@
                 "channelTxnId": {
                     "type": "string"
                 },
+                "claimedAt": {
+                    "type": "string"
+                },
                 "createBy": {
                     "type": "integer"
                 },
-                "currency": {
+                "currencyCode": {
                     "type": "string"
                 },
                 "fee": {
+                    "type": "string"
+                },
+                "handlerId": {
+                    "type": "string"
+                },
+                "handlerName": {
+                    "type": "string"
+                },
+                "isClaimed": {
                     "type": "string"
                 },
                 "method": {
@@ -12523,13 +14012,115 @@
         "dto.HsUserWithdrawalUpdateReq": {
             "type": "object",
             "properties": {
+                "accountInfo": {
+                    "type": "string"
+                },
+                "amount": {
+                    "type": "string"
+                },
                 "channelTxnId": {
+                    "type": "string"
+                },
+                "claimedAt": {
                     "type": "string"
                 },
                 "createBy": {
                     "type": "integer"
                 },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "fee": {
+                    "type": "string"
+                },
+                "handlerId": {
+                    "type": "string"
+                },
+                "handlerName": {
+                    "type": "string"
+                },
                 "id": {
+                    "type": "integer"
+                },
+                "isClaimed": {
+                    "type": "string"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "netAmount": {
+                    "type": "string"
+                },
+                "processedAt": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestedAt": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "withdrawNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.HsUserWithdrawalWithStats": {
+            "type": "object",
+            "properties": {
+                "accountInfo": {
+                    "type": "string"
+                },
+                "amount": {
+                    "type": "string"
+                },
+                "channelTxnId": {
+                    "type": "string"
+                },
+                "claimedAt": {
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "fee": {
+                    "type": "string"
+                },
+                "handlerId": {
+                    "type": "string"
+                },
+                "handlerName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isClaimed": {
+                    "type": "string"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "netAmount": {
+                    "type": "string"
+                },
+                "orderCount": {
+                    "description": "订单笔数",
                     "type": "integer"
                 },
                 "processedAt": {
@@ -12538,11 +14129,35 @@
                 "reason": {
                     "type": "string"
                 },
+                "requestedAt": {
+                    "type": "string"
+                },
                 "status": {
+                    "type": "string"
+                },
+                "totalSales": {
+                    "description": "累计售卖金额",
+                    "type": "string"
+                },
+                "totalWithdrawn": {
+                    "description": "累计提现金额",
                     "type": "string"
                 },
                 "updateBy": {
                     "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "withdrawCount": {
+                    "description": "提现笔数",
+                    "type": "integer"
+                },
+                "withdrawNo": {
+                    "type": "string"
                 }
             }
         },
@@ -12575,6 +14190,9 @@
                 "firstname": {
                     "type": "string"
                 },
+                "frozenBalance": {
+                    "type": "string"
+                },
                 "inviteCode": {
                     "type": "string"
                 },
@@ -12585,6 +14203,9 @@
                     "type": "string"
                 },
                 "passwordHash": {
+                    "type": "string"
+                },
+                "regionId": {
                     "type": "string"
                 },
                 "status": {
@@ -12622,6 +14243,9 @@
                 "firstname": {
                     "type": "string"
                 },
+                "frozenBalance": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -12635,6 +14259,9 @@
                     "type": "string"
                 },
                 "passwordHash": {
+                    "type": "string"
+                },
+                "regionId": {
                     "type": "string"
                 },
                 "status": {
@@ -13165,6 +14792,97 @@
                 },
                 "updateBy": {
                     "type": "integer"
+                }
+            }
+        },
+        "dto.OrdConfigCurrencyRatesDeleteReq": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "dto.OrdConfigCurrencyRatesInsertReq": {
+            "type": "object",
+            "properties": {
+                "baseCurrencyCode": {
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "quoteCurrencyCode": {
+                    "type": "string"
+                },
+                "rate": {
+                    "type": "string"
+                },
+                "rateType": {
+                    "type": "string"
+                },
+                "regionCode": {
+                    "type": "string"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "validFrom": {
+                    "type": "string"
+                },
+                "validTo": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.OrdConfigCurrencyRatesUpdateReq": {
+            "type": "object",
+            "properties": {
+                "baseCurrencyCode": {
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                },
+                "quoteCurrencyCode": {
+                    "type": "string"
+                },
+                "rate": {
+                    "type": "string"
+                },
+                "rateType": {
+                    "type": "string"
+                },
+                "regionCode": {
+                    "type": "string"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "validFrom": {
+                    "type": "string"
+                },
+                "validTo": {
+                    "type": "string"
                 }
             }
         },
@@ -15270,6 +16988,35 @@
                 }
             }
         },
+        "models.HsConfigFrozenLimit": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "frozenLimitAmount": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isActive": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "models.HsConfigRegions": {
             "type": "object",
             "properties": {
@@ -15280,6 +17027,9 @@
                     "type": "integer"
                 },
                 "createdAt": {
+                    "type": "string"
+                },
+                "currencyCode": {
                     "type": "string"
                 },
                 "id": {
@@ -15360,6 +17110,76 @@
                     "type": "string"
                 },
                 "withdrawFee": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.HsConfigWithdrawFee": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "feeRate": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isActive": {
+                    "type": "string"
+                },
+                "maxAmount": {
+                    "type": "string"
+                },
+                "minAmount": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.HsConfigWithdrawLimit": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "dailyLimitAmount": {
+                    "type": "string"
+                },
+                "dailyLimitCount": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isActive": {
+                    "type": "string"
+                },
+                "singleLimit": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "updatedAt": {
                     "type": "string"
                 }
             }
@@ -15537,7 +17357,7 @@
                 "createdAt": {
                     "type": "string"
                 },
-                "currency": {
+                "currencyCode": {
                     "type": "string"
                 },
                 "dailyLimit": {
@@ -15751,6 +17571,59 @@
                 }
             }
         },
+        "models.HsUserFrozenLedger": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string"
+                },
+                "bizId": {
+                    "type": "string"
+                },
+                "bizType": {
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "direction": {
+                    "type": "string"
+                },
+                "frozenAfter": {
+                    "type": "string"
+                },
+                "frozenBefore": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "idempotencyKey": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                }
+            }
+        },
         "models.HsUserIdentity": {
             "type": "object",
             "properties": {
@@ -15810,7 +17683,7 @@
                 "createdAt": {
                     "type": "string"
                 },
-                "currency": {
+                "currencyCode": {
                     "type": "string"
                 },
                 "direction": {
@@ -15951,14 +17824,14 @@
                 "createdAt": {
                     "type": "string"
                 },
-                "currency": {
+                "currencyCode": {
                     "type": "string"
                 },
                 "fee": {
                     "type": "string"
                 },
                 "handlerId": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "handlerName": {
                     "type": "string"
@@ -15967,7 +17840,7 @@
                     "type": "integer"
                 },
                 "isClaimed": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "method": {
                     "type": "string"
@@ -16022,6 +17895,9 @@
                 "firstname": {
                     "type": "string"
                 },
+                "frozenBalance": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -16035,6 +17911,9 @@
                     "type": "string"
                 },
                 "passwordHash": {
+                    "type": "string"
+                },
+                "regionId": {
                     "type": "string"
                 },
                 "status": {
@@ -16318,6 +18197,53 @@
                     "type": "integer"
                 },
                 "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.OrdConfigCurrencyRates": {
+            "type": "object",
+            "properties": {
+                "baseCurrencyCode": {
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "quoteCurrencyCode": {
+                    "type": "string"
+                },
+                "rate": {
+                    "type": "string"
+                },
+                "rateType": {
+                    "type": "string"
+                },
+                "regionCode": {
+                    "type": "string"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "validFrom": {
+                    "type": "string"
+                },
+                "validTo": {
                     "type": "string"
                 }
             }
@@ -16672,6 +18598,26 @@
                     "type": "string"
                 },
                 "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Response": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "代码",
+                    "type": "integer",
+                    "example": 200
+                },
+                "data": {
+                    "description": "数据集"
+                },
+                "msg": {
+                    "description": "消息",
+                    "type": "string"
+                },
+                "requestId": {
                     "type": "string"
                 }
             }

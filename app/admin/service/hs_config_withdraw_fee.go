@@ -12,14 +12,14 @@ import (
 	cDto "go-admin/common/dto"
 )
 
-type HsUserLedger struct {
+type HsConfigWithdrawFee struct {
 	service.Service
 }
 
-// GetPage 获取HsUserLedger列表
-func (e *HsUserLedger) GetPage(c *dto.HsUserLedgerGetPageReq, p *actions.DataPermission, list *[]models.HsUserLedger, count *int64) error {
+// GetPage 获取HsConfigWithdrawFee列表
+func (e *HsConfigWithdrawFee) GetPage(c *dto.HsConfigWithdrawFeeGetPageReq, p *actions.DataPermission, list *[]models.HsConfigWithdrawFee, count *int64) error {
 	var err error
-	var data models.HsUserLedger
+	var data models.HsConfigWithdrawFee
 
 	err = e.Orm.Model(&data).
 		Scopes(
@@ -30,15 +30,15 @@ func (e *HsUserLedger) GetPage(c *dto.HsUserLedgerGetPageReq, p *actions.DataPer
 		Find(list).Limit(-1).Offset(-1).
 		Count(count).Error
 	if err != nil {
-		e.Log.Errorf("HsUserLedgerService GetPage error:%s \r\n", err)
+		e.Log.Errorf("HsConfigWithdrawFeeService GetPage error:%s \r\n", err)
 		return err
 	}
 	return nil
 }
 
-// Get 获取HsUserLedger对象
-func (e *HsUserLedger) Get(d *dto.HsUserLedgerGetReq, p *actions.DataPermission, model *models.HsUserLedger) error {
-	var data models.HsUserLedger
+// Get 获取HsConfigWithdrawFee对象
+func (e *HsConfigWithdrawFee) Get(d *dto.HsConfigWithdrawFeeGetReq, p *actions.DataPermission, model *models.HsConfigWithdrawFee) error {
+	var data models.HsConfigWithdrawFee
 
 	err := e.Orm.Model(&data).
 		Scopes(
@@ -47,7 +47,7 @@ func (e *HsUserLedger) Get(d *dto.HsUserLedgerGetReq, p *actions.DataPermission,
 		First(model, d.GetId()).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		err = errors.New("查看对象不存在或无权查看")
-		e.Log.Errorf("Service GetHsUserLedger error:%s \r\n", err)
+		e.Log.Errorf("Service GetHsConfigWithdrawFee error:%s \r\n", err)
 		return err
 	}
 	if err != nil {
@@ -57,23 +57,23 @@ func (e *HsUserLedger) Get(d *dto.HsUserLedgerGetReq, p *actions.DataPermission,
 	return nil
 }
 
-// Insert 创建HsUserLedger对象
-func (e *HsUserLedger) Insert(c *dto.HsUserLedgerInsertReq) error {
+// Insert 创建HsConfigWithdrawFee对象
+func (e *HsConfigWithdrawFee) Insert(c *dto.HsConfigWithdrawFeeInsertReq) error {
     var err error
-    var data models.HsUserLedger
+    var data models.HsConfigWithdrawFee
     c.Generate(&data)
 	err = e.Orm.Create(&data).Error
 	if err != nil {
-		e.Log.Errorf("HsUserLedgerService Insert error:%s \r\n", err)
+		e.Log.Errorf("HsConfigWithdrawFeeService Insert error:%s \r\n", err)
 		return err
 	}
 	return nil
 }
 
-// Update 修改HsUserLedger对象
-func (e *HsUserLedger) Update(c *dto.HsUserLedgerUpdateReq, p *actions.DataPermission) error {
+// Update 修改HsConfigWithdrawFee对象
+func (e *HsConfigWithdrawFee) Update(c *dto.HsConfigWithdrawFeeUpdateReq, p *actions.DataPermission) error {
     var err error
-    var data = models.HsUserLedger{}
+    var data = models.HsConfigWithdrawFee{}
     e.Orm.Scopes(
             actions.Permission(data.TableName(), p),
         ).First(&data, c.GetId())
@@ -81,7 +81,7 @@ func (e *HsUserLedger) Update(c *dto.HsUserLedgerUpdateReq, p *actions.DataPermi
 
     db := e.Orm.Save(&data)
     if err = db.Error; err != nil {
-        e.Log.Errorf("HsUserLedgerService Save error:%s \r\n", err)
+        e.Log.Errorf("HsConfigWithdrawFeeService Save error:%s \r\n", err)
         return err
     }
     if db.RowsAffected == 0 {
@@ -90,16 +90,16 @@ func (e *HsUserLedger) Update(c *dto.HsUserLedgerUpdateReq, p *actions.DataPermi
     return nil
 }
 
-// Remove 删除HsUserLedger
-func (e *HsUserLedger) Remove(d *dto.HsUserLedgerDeleteReq, p *actions.DataPermission) error {
-	var data models.HsUserLedger
+// Remove 删除HsConfigWithdrawFee
+func (e *HsConfigWithdrawFee) Remove(d *dto.HsConfigWithdrawFeeDeleteReq, p *actions.DataPermission) error {
+	var data models.HsConfigWithdrawFee
 
 	db := e.Orm.Model(&data).
 		Scopes(
 			actions.Permission(data.TableName(), p),
 		).Delete(&data, d.GetId())
 	if err := db.Error; err != nil {
-        e.Log.Errorf("Service RemoveHsUserLedger error:%s \r\n", err)
+        e.Log.Errorf("Service RemoveHsConfigWithdrawFee error:%s \r\n", err)
         return err
     }
     if db.RowsAffected == 0 {
