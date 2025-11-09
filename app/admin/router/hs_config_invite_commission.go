@@ -10,18 +10,17 @@ import (
 )
 
 func init() {
-	routerCheckRole = append(routerCheckRole, registerOrdGiftcardWriteoffsRouter)
+	routerCheckRole = append(routerCheckRole, registerHsConfigInviteCommissionRouter)
 }
 
-// registerOrdGiftcardWriteoffsRouter
-func registerOrdGiftcardWriteoffsRouter(v1 *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddleware) {
-	api := apis.OrdGiftcardWriteoffs{}
-	r := v1.Group("/ord-giftcard-writeoffs").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
+// registerHsConfigInviteCommissionRouter
+func registerHsConfigInviteCommissionRouter(v1 *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddleware) {
+	api := apis.HsConfigInviteCommission{}
+	r := v1.Group("/hs-config-invite-commission").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
 	{
 		r.GET("", actions.PermissionAction(), api.GetPage)
 		r.GET("/:id", actions.PermissionAction(), api.Get)
 		r.POST("", api.Insert)
-		r.POST("/batch", api.BatchInsert)
 		r.PUT("/:id", actions.PermissionAction(), api.Update)
 		r.DELETE("", api.Delete)
 	}

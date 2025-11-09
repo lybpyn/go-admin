@@ -31,7 +31,7 @@ type SysRole struct {
 // @Param roleKey query string false "roleKey"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/role [get]
 // @Security Bearer
 func (e SysRole) GetPage(c *gin.Context) {
@@ -65,7 +65,7 @@ func (e SysRole) GetPage(c *gin.Context) {
 // @Description 获取JSON
 // @Tags 角色/Role
 // @Param roleId path string false "roleId"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/role/{id} [get]
 // @Security Bearer
 func (e SysRole) Get(c *gin.Context) {
@@ -100,7 +100,7 @@ func (e SysRole) Get(c *gin.Context) {
 // @Accept  application/json
 // @Product application/json
 // @Param data body dto.SysRoleInsertReq true "data"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/role [post]
 // @Security Bearer
 func (e SysRole) Insert(c *gin.Context) {
@@ -145,7 +145,7 @@ func (e SysRole) Insert(c *gin.Context) {
 // @Accept  application/json
 // @Product application/json
 // @Param data body dto.SysRoleUpdateReq true "body"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/role/{id} [put]
 // @Security Bearer
 func (e SysRole) Update(c *gin.Context) {
@@ -186,7 +186,7 @@ func (e SysRole) Update(c *gin.Context) {
 // @Description 删除数据
 // @Tags 角色/Role
 // @Param data body dto.SysRoleDeleteReq true "body"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/role [delete]
 // @Security Bearer
 func (e SysRole) Delete(c *gin.Context) {
@@ -221,7 +221,7 @@ func (e SysRole) Delete(c *gin.Context) {
 // @Accept  application/json
 // @Product application/json
 // @Param data body dto.UpdateStatusReq true "body"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/role-status/{id} [put]
 // @Security Bearer
 func (e SysRole) Update2Status(c *gin.Context) {
@@ -253,7 +253,7 @@ func (e SysRole) Update2Status(c *gin.Context) {
 // @Accept  application/json
 // @Product application/json
 // @Param data body dto.RoleDataScopeReq true "body"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/role-status/{id} [put]
 // @Security Bearer
 func (e SysRole) Update2DataScope(c *gin.Context) {

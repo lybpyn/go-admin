@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 
     "github.com/go-admin-team/go-admin-core/sdk/service"
 	"gorm.io/gorm"
@@ -17,7 +18,7 @@ type OrdOrderGiftcardImages struct {
 }
 
 // GetPage 获取OrdOrderGiftcardImages列表
-func (e *OrdOrderGiftcardImages) GetPage(c *dto.OrdOrderGiftcardImagesGetPageReq, p *actions.DataPermission, list *[]models.OrdOrderGiftcardImages, count *int64) error {
+func (e *OrdOrderGiftcardImages) GetPage(c *dto.OrdOrderGiftcardImagesGetPageReq, p *actions.DataPermission, adminId int, list *[]models.OrdOrderGiftcardImages, count *int64) error {
 	var err error
 	var data models.OrdOrderGiftcardImages
 
@@ -33,11 +34,20 @@ func (e *OrdOrderGiftcardImages) GetPage(c *dto.OrdOrderGiftcardImagesGetPageReq
 		e.Log.Errorf("OrdOrderGiftcardImagesService GetPage error:%s \r\n", err)
 		return err
 	}
+
+	// 检查权限：对每个图片检查对应订单的状态和接单人
+	for i := range *list {
+		err = e.checkImagePermission(&(*list)[i], adminId)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
 // Get 获取OrdOrderGiftcardImages对象
-func (e *OrdOrderGiftcardImages) Get(d *dto.OrdOrderGiftcardImagesGetReq, p *actions.DataPermission, model *models.OrdOrderGiftcardImages) error {
+func (e *OrdOrderGiftcardImages) Get(d *dto.OrdOrderGiftcardImagesGetReq, p *actions.DataPermission, adminId int, model *models.OrdOrderGiftcardImages) error {
 	var data models.OrdOrderGiftcardImages
 
 	err := e.Orm.Model(&data).
@@ -54,6 +64,41 @@ func (e *OrdOrderGiftcardImages) Get(d *dto.OrdOrderGiftcardImagesGetReq, p *act
 		e.Log.Errorf("db error:%s", err)
 		return err
 	}
+
+	// 检查权限：未完成订单只有接单人可以查看
+	err = e.checkImagePermission(model, adminId)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// checkImagePermission 检查图片查看权限
+func (e *OrdOrderGiftcardImages) checkImagePermission(image *models.OrdOrderGiftcardImages, adminId int) error {
+	// 查询对应的订单信息
+	var order models.OrdUserOrders
+	err := e.Orm.Model(&order).Where("id = ?", image.OrderId).First(&order).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			e.Log.Errorf("Order not found for image, orderId:%s", image.OrderId)
+			return errors.New("订单不存在")
+		}
+		e.Log.Errorf("Query order error:%s", err)
+		return err
+	}
+
+	// 如果订单已完成（status=3），所有人都可以查看
+	if order.Status == "3" {
+		return nil
+	}
+
+	// 如果订单未完成，只有接单人可以查看
+	if order.AssignBy != fmt.Sprintf("%d", adminId) {
+		e.Log.Errorf("Permission denied: order not completed and not assigned to current admin, orderId:%s, assignBy:%s, currentAdmin:%d", image.OrderId, order.AssignBy, adminId)
+		return errors.New("无权查看该订单图片，只有接单人或已完成订单可以查看")
+	}
+
 	return nil
 }
 

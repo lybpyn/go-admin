@@ -27,7 +27,7 @@ type HsInviteRelations struct {
 // @Param level2InviterId query string false "二级邀请人ID"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.HsInviteRelations}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]models.HsInviteRelations}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-invite-relations [get]
 // @Security Bearer
 func (e HsInviteRelations) GetPage(c *gin.Context) {
@@ -65,7 +65,7 @@ func (e HsInviteRelations) GetPage(c *gin.Context) {
 // @Param inviteCode query string false "邀请码"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]dto.HsInviteRelationsStatsResp}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]dto.HsInviteRelationsStatsResp}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-invite-relations/stats [get]
 // @Security Bearer
 func (e HsInviteRelations) GetStatsPage(c *gin.Context) {
@@ -99,7 +99,7 @@ func (e HsInviteRelations) GetStatsPage(c *gin.Context) {
 // @Description 获取用户邀请关系冗余表
 // @Tags 用户邀请关系冗余表
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.HsInviteRelations} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.HsInviteRelations} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-invite-relations/{id} [get]
 // @Security Bearer
 func (e HsInviteRelations) Get(c *gin.Context) {
@@ -134,7 +134,7 @@ func (e HsInviteRelations) Get(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.HsInviteRelationsInsertReq true "data"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "添加成功"}"
 // @Router /api/v1/hs-invite-relations [post]
 // @Security Bearer
 func (e HsInviteRelations) Insert(c *gin.Context) {
@@ -170,7 +170,7 @@ func (e HsInviteRelations) Insert(c *gin.Context) {
 // @Product application/json
 // @Param id path int true "id"
 // @Param data body dto.HsInviteRelationsUpdateReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/hs-invite-relations/{id} [put]
 // @Security Bearer
 func (e HsInviteRelations) Update(c *gin.Context) {
@@ -202,7 +202,7 @@ func (e HsInviteRelations) Update(c *gin.Context) {
 // @Description 删除用户邀请关系冗余表
 // @Tags 用户邀请关系冗余表
 // @Param data body dto.HsInviteRelationsDeleteReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/hs-invite-relations [delete]
 // @Security Bearer
 func (e HsInviteRelations) Delete(c *gin.Context) {

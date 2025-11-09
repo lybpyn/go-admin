@@ -25,7 +25,7 @@ type OrdCurrencyRates struct {
 // @Param quoteCurrency query string false "计价货币 ISO4217，例如 CNY"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.OrdCurrencyRates}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]models.OrdCurrencyRates}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/ord-currency-rates [get]
 // @Security Bearer
 func (e OrdCurrencyRates) GetPage(c *gin.Context) {
@@ -60,7 +60,7 @@ func (e OrdCurrencyRates) GetPage(c *gin.Context) {
 // @Description 获取货币对汇率表
 // @Tags 货币对汇率表
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.OrdCurrencyRates} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.OrdCurrencyRates} "{"code": 200, "data": [...]}"
 // @Router /api/v1/ord-currency-rates/{id} [get]
 // @Security Bearer
 func (e OrdCurrencyRates) Get(c *gin.Context) {
@@ -95,7 +95,7 @@ func (e OrdCurrencyRates) Get(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.OrdCurrencyRatesInsertReq true "data"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "添加成功"}"
 // @Router /api/v1/ord-currency-rates [post]
 // @Security Bearer
 func (e OrdCurrencyRates) Insert(c *gin.Context) {
@@ -131,7 +131,7 @@ func (e OrdCurrencyRates) Insert(c *gin.Context) {
 // @Product application/json
 // @Param id path int true "id"
 // @Param data body dto.OrdCurrencyRatesUpdateReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/ord-currency-rates/{id} [put]
 // @Security Bearer
 func (e OrdCurrencyRates) Update(c *gin.Context) {
@@ -163,7 +163,7 @@ func (e OrdCurrencyRates) Update(c *gin.Context) {
 // @Description 删除货币对汇率表
 // @Tags 货币对汇率表
 // @Param data body dto.OrdCurrencyRatesDeleteReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/ord-currency-rates [delete]
 // @Security Bearer
 func (e OrdCurrencyRates) Delete(c *gin.Context) {

@@ -24,7 +24,7 @@ type HsConfigSupportedChainsCoin struct {
 // @Tags 系统支持的区块链网络配置表
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.HsConfigSupportedChainsCoin}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]models.HsConfigSupportedChainsCoin}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-config-supported-chains-coin [get]
 // @Security Bearer
 func (e HsConfigSupportedChainsCoin) GetPage(c *gin.Context) {
@@ -59,7 +59,7 @@ func (e HsConfigSupportedChainsCoin) GetPage(c *gin.Context) {
 // @Description 获取系统支持的区块链网络配置表
 // @Tags 系统支持的区块链网络配置表
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.HsConfigSupportedChainsCoin} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.HsConfigSupportedChainsCoin} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-config-supported-chains-coin/{id} [get]
 // @Security Bearer
 func (e HsConfigSupportedChainsCoin) Get(c *gin.Context) {
@@ -94,7 +94,7 @@ func (e HsConfigSupportedChainsCoin) Get(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.HsConfigSupportedChainsCoinInsertReq true "data"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "添加成功"}"
 // @Router /api/v1/hs-config-supported-chains-coin [post]
 // @Security Bearer
 func (e HsConfigSupportedChainsCoin) Insert(c *gin.Context) {
@@ -130,7 +130,7 @@ func (e HsConfigSupportedChainsCoin) Insert(c *gin.Context) {
 // @Product application/json
 // @Param id path int true "id"
 // @Param data body dto.HsConfigSupportedChainsCoinUpdateReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/hs-config-supported-chains-coin/{id} [put]
 // @Security Bearer
 func (e HsConfigSupportedChainsCoin) Update(c *gin.Context) {
@@ -162,7 +162,7 @@ func (e HsConfigSupportedChainsCoin) Update(c *gin.Context) {
 // @Description 删除系统支持的区块链网络配置表
 // @Tags 系统支持的区块链网络配置表
 // @Param data body dto.HsConfigSupportedChainsCoinDeleteReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/hs-config-supported-chains-coin [delete]
 // @Security Bearer
 func (e HsConfigSupportedChainsCoin) Delete(c *gin.Context) {

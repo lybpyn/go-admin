@@ -27,7 +27,7 @@ type SysApi struct {
 // @Param action query string false "类型"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.SysApi}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]models.SysApi}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/sys-api [get]
 // @Security Bearer
 func (e SysApi) GetPage(c *gin.Context) {
@@ -60,7 +60,7 @@ func (e SysApi) GetPage(c *gin.Context) {
 // @Description 获取接口管理
 // @Tags 接口管理
 // @Param id path string false "id"
-// @Success 200 {object} response.Response{data=models.SysApi} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.SysApi} "{"code": 200, "data": [...]}"
 // @Router /api/v1/sys-api/{id} [get]
 // @Security Bearer
 func (e SysApi) Get(c *gin.Context) {
@@ -93,7 +93,7 @@ func (e SysApi) Get(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.SysApiUpdateReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/sys-api/{id} [put]
 // @Security Bearer
 func (e SysApi) Update(c *gin.Context) {
@@ -123,7 +123,7 @@ func (e SysApi) Update(c *gin.Context) {
 // @Description 删除接口管理
 // @Tags 接口管理
 // @Param data body dto.SysApiDeleteReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/sys-api [delete]
 // @Security Bearer
 func (e SysApi) DeleteSysApi(c *gin.Context) {

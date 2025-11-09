@@ -26,7 +26,7 @@ type SysUser struct {
 // @Description 获取JSON
 // @Tags 用户
 // @Param username query string false "username"
-// @Success 200 {string} {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {string} {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/sys-user [get]
 // @Security Bearer
 func (e SysUser) GetPage(c *gin.Context) {
@@ -63,7 +63,7 @@ func (e SysUser) GetPage(c *gin.Context) {
 // @Description 获取JSON
 // @Tags 用户
 // @Param userId path int true "用户编码"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/sys-user/{userId} [get]
 // @Security Bearer
 func (e SysUser) Get(c *gin.Context) {
@@ -97,7 +97,7 @@ func (e SysUser) Get(c *gin.Context) {
 // @Accept  application/json
 // @Product application/json
 // @Param data body dto.SysUserInsertReq true "用户数据"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/sys-user [post]
 // @Security Bearer
 func (e SysUser) Insert(c *gin.Context) {
@@ -132,7 +132,7 @@ func (e SysUser) Insert(c *gin.Context) {
 // @Accept  application/json
 // @Product application/json
 // @Param data body dto.SysUserUpdateReq true "body"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/sys-user/{userId} [put]
 // @Security Bearer
 func (e SysUser) Update(c *gin.Context) {
@@ -167,7 +167,7 @@ func (e SysUser) Update(c *gin.Context) {
 // @Description 删除数据
 // @Tags 用户
 // @Param userId path int true "userId"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/sys-user/{userId} [delete]
 // @Security Bearer
 func (e SysUser) Delete(c *gin.Context) {
@@ -204,7 +204,7 @@ func (e SysUser) Delete(c *gin.Context) {
 // @Tags 个人中心
 // @Accept multipart/form-data
 // @Param file formData file true "file"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/user/avatar [post]
 // @Security Bearer
 func (e SysUser) InsetAvatar(c *gin.Context) {
@@ -253,7 +253,7 @@ func (e SysUser) InsetAvatar(c *gin.Context) {
 // @Accept  application/json
 // @Product application/json
 // @Param data body dto.UpdateSysUserStatusReq true "body"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/user/status [put]
 // @Security Bearer
 func (e SysUser) UpdateStatus(c *gin.Context) {
@@ -290,7 +290,7 @@ func (e SysUser) UpdateStatus(c *gin.Context) {
 // @Accept  application/json
 // @Product application/json
 // @Param data body dto.ResetSysUserPwdReq true "body"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/user/pwd/reset [put]
 // @Security Bearer
 func (e SysUser) ResetPwd(c *gin.Context) {
@@ -327,7 +327,7 @@ func (e SysUser) ResetPwd(c *gin.Context) {
 // @Accept  application/json
 // @Product application/json
 // @Param data body dto.PassWord true "body"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/user/pwd/set [put]
 // @Security Bearer
 func (e SysUser) UpdatePwd(c *gin.Context) {
@@ -365,7 +365,7 @@ func (e SysUser) UpdatePwd(c *gin.Context) {
 // @Summary 获取个人中心用户
 // @Description 获取JSON
 // @Tags 个人中心
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/user/profile [get]
 // @Security Bearer
 func (e SysUser) GetProfile(c *gin.Context) {
@@ -403,7 +403,7 @@ func (e SysUser) GetProfile(c *gin.Context) {
 // @Summary 获取个人信息
 // @Description 获取JSON
 // @Tags 个人中心
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/getinfo [get]
 // @Security Bearer
 func (e SysUser) GetInfo(c *gin.Context) {
@@ -465,7 +465,7 @@ func (e SysUser) GetInfo(c *gin.Context) {
 // @Accept  application/json
 // @Product application/json
 // @Param data body dto.UpdateSysUserWorkStatusReq true "body"
-// @Success 200 {object} response.Response "{"code": 200, "message": "更新成功"}"
+// @Success 200 {object} models.Response "{"code": 200, "message": "更新成功"}"
 // @Router /api/v1/user/work-status [put]
 // @Security Bearer
 func (e SysUser) UpdateWorkStatus(c *gin.Context) {

@@ -9,6 +9,8 @@ import (
 
 type HsConfgiUserLevelsGetPageReq struct {
 	dto.Pagination     `search:"-"`
+    SortOrder string `form:"sortOrder"  search:"type:exact;column:sort_order;table:hs_confgi_user_levels" comment:"排序顺序"`
+    IsActive string `form:"isActive"  search:"type:exact;column:is_active;table:hs_confgi_user_levels" comment:"是否启用"`
     HsConfgiUserLevelsOrder
 }
 
@@ -18,8 +20,6 @@ type HsConfgiUserLevelsOrder struct {
     UpExperience string `form:"upExperienceOrder"  search:"type:order;column:up_experience;table:hs_confgi_user_levels"`
     LevelIcon string `form:"levelIconOrder"  search:"type:order;column:level_icon;table:hs_confgi_user_levels"`
     LevelPrivileges string `form:"levelPrivilegesOrder"  search:"type:order;column:level_privileges;table:hs_confgi_user_levels"`
-    FirstInviteCommossions string `form:"firstInviteCommossionsOrder"  search:"type:order;column:first_invite_commossions;table:hs_confgi_user_levels"`
-    SecondInviteCommossions string `form:"secondInviteCommossionsOrder"  search:"type:order;column:second_invite_commossions;table:hs_confgi_user_levels"`
     SortOrder string `form:"sortOrderOrder"  search:"type:order;column:sort_order;table:hs_confgi_user_levels"`
     IsActive string `form:"isActiveOrder"  search:"type:order;column:is_active;table:hs_confgi_user_levels"`
     CreateBy string `form:"createByOrder"  search:"type:order;column:create_by;table:hs_confgi_user_levels"`
@@ -40,8 +40,6 @@ type HsConfgiUserLevelsInsertReq struct {
     UpExperience string `json:"upExperience" comment:"升级所需经验值"`
     LevelIcon string `json:"levelIcon" comment:"等级图标URL"`
     LevelPrivileges string `json:"levelPrivileges" comment:"等级特权配置(JSON格式)"`
-    FirstInviteCommossions string `json:"firstInviteCommossions" comment:"一级分成奖励"`
-    SecondInviteCommossions string `json:"secondInviteCommossions" comment:"二级分成奖励"`
     SortOrder string `json:"sortOrder" comment:"排序顺序"`
     IsActive string `json:"isActive" comment:"是否启用"`
     common.ControlBy
@@ -55,8 +53,6 @@ func (s *HsConfgiUserLevelsInsertReq) Generate(model *models.HsConfgiUserLevels)
     model.UpExperience = s.UpExperience
     model.LevelIcon = s.LevelIcon
     model.LevelPrivileges = s.LevelPrivileges
-    model.FirstInviteCommossions = s.FirstInviteCommossions
-    model.SecondInviteCommossions = s.SecondInviteCommossions
     model.SortOrder = s.SortOrder
     model.IsActive = s.IsActive
     model.CreateBy = s.CreateBy // 添加这而，需要记录是被谁创建的
@@ -72,8 +68,6 @@ type HsConfgiUserLevelsUpdateReq struct {
     UpExperience string `json:"upExperience" comment:"升级所需经验值"`
     LevelIcon string `json:"levelIcon" comment:"等级图标URL"`
     LevelPrivileges string `json:"levelPrivileges" comment:"等级特权配置(JSON格式)"`
-    FirstInviteCommossions string `json:"firstInviteCommossions" comment:"一级分成奖励"`
-    SecondInviteCommossions string `json:"secondInviteCommossions" comment:"二级分成奖励"`
     SortOrder string `json:"sortOrder" comment:"排序顺序"`
     IsActive string `json:"isActive" comment:"是否启用"`
     common.ControlBy
@@ -87,8 +81,6 @@ func (s *HsConfgiUserLevelsUpdateReq) Generate(model *models.HsConfgiUserLevels)
     model.UpExperience = s.UpExperience
     model.LevelIcon = s.LevelIcon
     model.LevelPrivileges = s.LevelPrivileges
-    model.FirstInviteCommossions = s.FirstInviteCommossions
-    model.SecondInviteCommossions = s.SecondInviteCommossions
     model.SortOrder = s.SortOrder
     model.IsActive = s.IsActive
     model.UpdateBy = s.UpdateBy // 添加这而，需要记录是被谁更新的

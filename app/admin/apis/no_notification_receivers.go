@@ -27,7 +27,7 @@ type NoNotificationReceivers struct {
 // @Param readAt query time.Time false "读取时间"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.NoNotificationReceivers}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]models.NoNotificationReceivers}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/no-notification-receivers [get]
 // @Security Bearer
 func (e NoNotificationReceivers) GetPage(c *gin.Context) {
@@ -62,7 +62,7 @@ func (e NoNotificationReceivers) GetPage(c *gin.Context) {
 // @Description 获取系统消息接收人表
 // @Tags 系统消息接收人表
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.NoNotificationReceivers} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.NoNotificationReceivers} "{"code": 200, "data": [...]}"
 // @Router /api/v1/no-notification-receivers/{id} [get]
 // @Security Bearer
 func (e NoNotificationReceivers) Get(c *gin.Context) {
@@ -97,7 +97,7 @@ func (e NoNotificationReceivers) Get(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.NoNotificationReceiversInsertReq true "data"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "添加成功"}"
 // @Router /api/v1/no-notification-receivers [post]
 // @Security Bearer
 func (e NoNotificationReceivers) Insert(c *gin.Context) {
@@ -133,7 +133,7 @@ func (e NoNotificationReceivers) Insert(c *gin.Context) {
 // @Product application/json
 // @Param id path int true "id"
 // @Param data body dto.NoNotificationReceiversUpdateReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/no-notification-receivers/{id} [put]
 // @Security Bearer
 func (e NoNotificationReceivers) Update(c *gin.Context) {
@@ -165,7 +165,7 @@ func (e NoNotificationReceivers) Update(c *gin.Context) {
 // @Description 删除系统消息接收人表
 // @Tags 系统消息接收人表
 // @Param data body dto.NoNotificationReceiversDeleteReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/no-notification-receivers [delete]
 // @Security Bearer
 func (e NoNotificationReceivers) Delete(c *gin.Context) {

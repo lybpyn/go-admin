@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "基于Gin + Vue + Element UI的前后端分离权限管理系统的接口文档\n添加qq群: 521386980 进入技术交流群 请先star，谢谢！",
+        "description": "基于Gin + Vue + Element UI的前后端分离权限管理系统的接口文档",
         "title": "go-admin API",
         "contact": {},
         "license": {
@@ -24,7 +24,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -109,7 +109,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -146,7 +146,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -188,7 +188,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -283,7 +283,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -357,7 +357,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -424,7 +424,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -458,7 +458,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -489,7 +489,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -520,7 +520,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -554,7 +554,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -608,7 +608,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -642,7 +642,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -673,7 +673,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -715,7 +715,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -746,7 +746,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -780,7 +780,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -802,7 +802,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -840,7 +840,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -848,7 +848,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -899,7 +899,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -930,7 +930,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -962,7 +962,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -1013,7 +1013,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -1051,7 +1051,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -1059,7 +1059,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -1110,7 +1110,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -1141,7 +1141,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -1173,7 +1173,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -1224,7 +1224,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -1244,6 +1244,18 @@
                 "summary": "获取用户等级配置表列表",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "排序顺序",
+                        "name": "sortOrder",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "是否启用",
+                        "name": "isActive",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "页条数",
                         "name": "pageSize",
@@ -1262,7 +1274,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -1270,7 +1282,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -1321,7 +1333,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -1352,7 +1364,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -1384,7 +1396,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -1435,7 +1447,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -1473,7 +1485,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -1481,7 +1493,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -1532,7 +1544,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -1563,7 +1575,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -1595,7 +1607,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -1646,7 +1658,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -1702,7 +1714,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -1710,7 +1722,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -1761,7 +1773,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -1792,7 +1804,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -1824,7 +1836,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -1875,7 +1887,230 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/hs-config-invite-commission": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取邀请分成比例配置表列表",
+                "tags": [
+                    "邀请分成比例配置表"
+                ],
+                "summary": "获取邀请分成比例配置表列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "配置名称",
+                        "name": "configName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "状态：1=启用，0=禁用",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageIndex",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/models.Page"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/models.HsConfigInviteCommission"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建邀请分成比例配置表",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "邀请分成比例配置表"
+                ],
+                "summary": "创建邀请分成比例配置表",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigInviteCommissionInsertReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"添加成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除邀请分成比例配置表",
+                "tags": [
+                    "邀请分成比例配置表"
+                ],
+                "summary": "删除邀请分成比例配置表",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigInviteCommissionDeleteReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/hs-config-invite-commission/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取邀请分成比例配置表",
+                "tags": [
+                    "邀请分成比例配置表"
+                ],
+                "summary": "获取邀请分成比例配置表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.HsConfigInviteCommission"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "修改邀请分成比例配置表",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "邀请分成比例配置表"
+                ],
+                "summary": "修改邀请分成比例配置表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigInviteCommissionUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"修改成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -1937,7 +2172,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -1945,7 +2180,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -1996,7 +2231,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -2027,7 +2262,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -2059,7 +2294,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -2110,7 +2345,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -2148,7 +2383,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -2156,7 +2391,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -2207,7 +2442,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -2238,7 +2473,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -2270,7 +2505,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -2321,7 +2556,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -2389,7 +2624,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -2397,7 +2632,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -2448,7 +2683,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -2479,7 +2714,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -2511,7 +2746,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -2562,7 +2797,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -2630,7 +2865,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -2638,7 +2873,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -2689,7 +2924,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -2720,7 +2955,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -2752,7 +2987,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -2803,7 +3038,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -2853,7 +3088,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -2861,7 +3096,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -2912,7 +3147,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -2943,7 +3178,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -2975,7 +3210,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -3026,7 +3261,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -3082,7 +3317,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -3090,7 +3325,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -3141,7 +3376,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -3172,7 +3407,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -3222,7 +3457,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -3230,7 +3465,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -3279,7 +3514,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -3330,7 +3565,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -3386,7 +3621,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -3394,7 +3629,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -3445,7 +3680,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -3476,7 +3711,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -3508,7 +3743,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -3559,7 +3794,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -3597,7 +3832,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -3605,7 +3840,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -3656,7 +3891,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -3687,7 +3922,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -3719,7 +3954,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -3770,7 +4005,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -3808,7 +4043,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -3816,7 +4051,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -3867,7 +4102,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -3898,7 +4133,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -3930,7 +4165,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -3981,7 +4216,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -4043,7 +4278,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -4051,7 +4286,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -4102,7 +4337,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -4133,7 +4368,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -4165,7 +4400,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -4216,7 +4451,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -4260,7 +4495,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -4268,7 +4503,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -4319,7 +4554,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -4350,7 +4585,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -4382,7 +4617,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -4433,7 +4668,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -4477,7 +4712,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -4485,7 +4720,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -4536,7 +4771,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -4567,7 +4802,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -4599,7 +4834,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -4650,7 +4885,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -4700,7 +4935,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -4708,7 +4943,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -4759,7 +4994,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -4790,7 +5025,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -4822,7 +5057,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -4873,7 +5108,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -4977,7 +5212,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -4985,7 +5220,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -5036,7 +5271,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -5067,7 +5302,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -5099,7 +5334,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -5150,7 +5385,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -5212,7 +5447,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -5220,7 +5455,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -5271,7 +5506,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -5302,7 +5537,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -5334,7 +5569,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -5385,7 +5620,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -5501,7 +5736,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -5509,7 +5744,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -5560,7 +5795,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -5591,7 +5826,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -5623,7 +5858,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -5674,7 +5909,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -5718,7 +5953,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -5726,7 +5961,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -5777,7 +6012,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -5808,7 +6043,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -5840,7 +6075,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -5891,7 +6126,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -5941,7 +6176,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -5949,7 +6184,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -6000,7 +6235,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -6031,7 +6266,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -6063,7 +6298,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -6114,7 +6349,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -6236,7 +6471,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -6244,7 +6479,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -6295,7 +6530,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -6326,7 +6561,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -6358,7 +6593,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -6409,7 +6644,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -6531,7 +6766,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -6539,7 +6774,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -6590,7 +6825,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -6621,7 +6856,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -6653,7 +6888,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -6704,7 +6939,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -6779,7 +7014,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -6787,7 +7022,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -6838,7 +7073,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -6869,7 +7104,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -6901,7 +7136,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -6952,7 +7187,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -7026,7 +7261,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -7034,7 +7269,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -7085,7 +7320,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -7116,7 +7351,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -7148,7 +7383,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -7199,7 +7434,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -7249,7 +7484,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -7257,7 +7492,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -7308,7 +7543,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -7339,7 +7574,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -7371,7 +7606,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -7422,7 +7657,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -7452,7 +7687,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -7486,7 +7721,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -7517,7 +7752,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -7547,7 +7782,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -7588,7 +7823,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -7622,7 +7857,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -7644,7 +7879,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -7694,7 +7929,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -7702,7 +7937,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -7753,7 +7988,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -7784,7 +8019,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -7816,7 +8051,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -7867,7 +8102,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -7911,7 +8146,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -7919,7 +8154,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -7970,7 +8205,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -8001,7 +8236,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -8033,7 +8268,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -8084,7 +8319,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -8164,7 +8399,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -8172,7 +8407,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -8223,7 +8458,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -8254,7 +8489,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -8286,7 +8521,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -8337,7 +8572,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -8381,7 +8616,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -8389,7 +8624,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -8440,7 +8675,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -8471,7 +8706,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -8503,7 +8738,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -8554,7 +8789,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -8622,7 +8857,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -8630,7 +8865,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -8681,7 +8916,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -8712,7 +8947,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -8744,7 +8979,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -8795,7 +9030,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -8833,7 +9068,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -8841,7 +9076,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -8892,7 +9127,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -8923,7 +9158,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -8961,7 +9196,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -8969,7 +9204,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -9020,7 +9255,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -9051,7 +9286,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -9083,7 +9318,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -9134,7 +9369,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -9172,7 +9407,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -9180,7 +9415,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -9231,7 +9466,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -9262,7 +9497,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -9294,7 +9529,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -9345,7 +9580,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -9383,7 +9618,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -9391,7 +9626,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -9442,7 +9677,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -9473,7 +9708,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -9505,7 +9740,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -9556,7 +9791,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -9594,7 +9829,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -9602,7 +9837,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -9653,7 +9888,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -9684,7 +9919,43 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ord-giftcard-writeoffs/batch": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "管理员批量核销礼品卡订单，可以针对同一个订单创建多条核销记录",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "礼品卡核销记录表"
+                ],
+                "summary": "批量创建礼品卡核销记录",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrdGiftcardWriteoffsBatchInsertReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"批量核销成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -9716,7 +9987,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -9767,7 +10038,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -9799,7 +10070,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -9850,7 +10121,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -9906,7 +10177,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -9914,7 +10185,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -9965,7 +10236,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -9996,7 +10267,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10028,7 +10299,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -10079,7 +10350,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10117,7 +10388,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -10125,7 +10396,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -10176,7 +10447,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10207,7 +10478,88 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ord-user-orders/my-assigned": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "根据当前登录用户作为接单人，查询不同状态的订单列表",
+                "tags": [
+                    "礼品卡订单表"
+                ],
+                "summary": "根据接单人和状态查询订单列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "订单状态",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageIndex",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "开始时间",
+                        "name": "beginTime",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "结束时间",
+                        "name": "endTime",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/models.Page"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/models.OrdUserOrders"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -10239,7 +10591,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -10290,7 +10642,78 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ord-user-orders/{id}/accept": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "管理员接单，将订单分配给当前登录的管理员",
+                "tags": [
+                    "礼品卡订单表"
+                ],
+                "summary": "管理员接单",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "订单ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"接单成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ord-user-orders/{id}/cancel-accept": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "管理员取消接单，只能取消自己接的单",
+                "tags": [
+                    "礼品卡订单表"
+                ],
+                "summary": "取消接单",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "订单ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrdUserOrdersCancelAcceptReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"取消接单成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10338,7 +10761,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10372,7 +10795,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10403,7 +10826,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10439,7 +10862,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10470,7 +10893,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10565,7 +10988,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10599,7 +11022,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10630,7 +11053,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10666,7 +11089,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10696,7 +11119,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10730,7 +11153,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10757,7 +11180,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -10805,7 +11228,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10867,7 +11290,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -10875,7 +11298,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -10923,7 +11346,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10955,7 +11378,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -10999,7 +11422,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11061,7 +11484,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -11069,7 +11492,7 @@
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -11120,7 +11543,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"创建成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11153,7 +11576,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11185,7 +11608,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -11229,7 +11652,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11289,7 +11712,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11320,7 +11743,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11350,7 +11773,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11422,7 +11845,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11453,7 +11876,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11483,7 +11906,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11547,7 +11970,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11578,7 +12001,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11612,7 +12035,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11641,7 +12064,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11739,7 +12162,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11800,7 +12223,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11834,7 +12257,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11856,7 +12279,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11892,7 +12315,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11928,7 +12351,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -11964,7 +12387,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"data\": [...]}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -12000,7 +12423,7 @@
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"更新成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -12226,9 +12649,6 @@
                 "createBy": {
                     "type": "integer"
                 },
-                "firstInviteCommossions": {
-                    "type": "string"
-                },
                 "isActive": {
                     "type": "string"
                 },
@@ -12239,9 +12659,6 @@
                     "type": "string"
                 },
                 "levelPrivileges": {
-                    "type": "string"
-                },
-                "secondInviteCommossions": {
                     "type": "string"
                 },
                 "sortOrder": {
@@ -12261,9 +12678,6 @@
                 "createBy": {
                     "type": "integer"
                 },
-                "firstInviteCommossions": {
-                    "type": "string"
-                },
                 "id": {
                     "description": "等级ID",
                     "type": "integer"
@@ -12278,9 +12692,6 @@
                     "type": "string"
                 },
                 "levelPrivileges": {
-                    "type": "string"
-                },
-                "secondInviteCommossions": {
                     "type": "string"
                 },
                 "sortOrder": {
@@ -12403,6 +12814,73 @@
                     "type": "integer"
                 },
                 "isActive": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.HsConfigInviteCommissionDeleteReq": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "dto.HsConfigInviteCommissionInsertReq": {
+            "type": "object",
+            "properties": {
+                "configName": {
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "firstLevelRate": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "secondLevelRate": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.HsConfigInviteCommissionUpdateReq": {
+            "type": "object",
+            "properties": {
+                "configName": {
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "firstLevelRate": {
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "secondLevelRate": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 },
                 "updateBy": {
@@ -15305,6 +15783,73 @@
                 }
             }
         },
+        "dto.OrdGiftcardWriteoffsBatchInsertReq": {
+            "type": "object",
+            "required": [
+                "orderId",
+                "userId",
+                "writeoffList"
+            ],
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "giftCardId": {
+                    "type": "string"
+                },
+                "orderId": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "writeoffList": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/dto.OrdGiftcardWriteoffsBatchItem"
+                    }
+                }
+            }
+        },
+        "dto.OrdGiftcardWriteoffsBatchItem": {
+            "type": "object",
+            "required": [
+                "adminRecognizedCode"
+            ],
+            "properties": {
+                "adminRecognizedCode": {
+                    "type": "string"
+                },
+                "failureImageUrl": {
+                    "type": "string"
+                },
+                "platformSaleRate": {
+                    "type": "string"
+                },
+                "platformSettlementAmount": {
+                    "type": "string"
+                },
+                "platformSettlementCurrency": {
+                    "type": "string"
+                },
+                "recognizedCardValue": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "supplierId": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.OrdGiftcardWriteoffsDeleteReq": {
             "type": "object",
             "properties": {
@@ -15319,10 +15864,13 @@
         "dto.OrdGiftcardWriteoffsInsertReq": {
             "type": "object",
             "properties": {
+                "adminRecognizedCode": {
+                    "type": "string"
+                },
                 "createBy": {
                     "type": "integer"
                 },
-                "giftCardCode": {
+                "failureImageUrl": {
                     "type": "string"
                 },
                 "giftCardId": {
@@ -15331,10 +15879,19 @@
                 "orderId": {
                     "type": "string"
                 },
+                "platformSaleRate": {
+                    "type": "string"
+                },
+                "recognizedCardValue": {
+                    "type": "string"
+                },
                 "remark": {
                     "type": "string"
                 },
                 "status": {
+                    "type": "string"
+                },
+                "supplierId": {
                     "type": "string"
                 },
                 "updateBy": {
@@ -15348,10 +15905,13 @@
         "dto.OrdGiftcardWriteoffsUpdateReq": {
             "type": "object",
             "properties": {
+                "adminRecognizedCode": {
+                    "type": "string"
+                },
                 "createBy": {
                     "type": "integer"
                 },
-                "giftCardCode": {
+                "failureImageUrl": {
                     "type": "string"
                 },
                 "giftCardId": {
@@ -15364,10 +15924,19 @@
                 "orderId": {
                     "type": "string"
                 },
+                "platformSaleRate": {
+                    "type": "string"
+                },
+                "recognizedCardValue": {
+                    "type": "string"
+                },
                 "remark": {
                     "type": "string"
                 },
                 "status": {
+                    "type": "string"
+                },
+                "supplierId": {
                     "type": "string"
                 },
                 "updateBy": {
@@ -15433,6 +16002,17 @@
                 }
             }
         },
+        "dto.OrdUserOrdersCancelAcceptReq": {
+            "type": "object",
+            "properties": {
+                "adminRemark": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.OrdUserOrdersDeleteReq": {
             "type": "object",
             "properties": {
@@ -15468,7 +16048,7 @@
                 "createBy": {
                     "type": "integer"
                 },
-                "currency": {
+                "currencyCode": {
                     "type": "string"
                 },
                 "discountRate": {
@@ -15478,9 +16058,6 @@
                     "type": "string"
                 },
                 "giftcardId": {
-                    "type": "string"
-                },
-                "orderNo": {
                     "type": "string"
                 },
                 "rate": {
@@ -15527,7 +16104,7 @@
                 "createBy": {
                     "type": "integer"
                 },
-                "currency": {
+                "currencyCode": {
                     "type": "string"
                 },
                 "discountRate": {
@@ -15542,9 +16119,6 @@
                 "id": {
                     "description": "订单ID",
                     "type": "integer"
-                },
-                "orderNo": {
-                    "type": "string"
                 },
                 "rate": {
                     "type": "string"
@@ -16921,9 +17495,6 @@
                 "createdAt": {
                     "type": "string"
                 },
-                "firstInviteCommossions": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
@@ -16937,9 +17508,6 @@
                     "type": "string"
                 },
                 "levelPrivileges": {
-                    "type": "string"
-                },
-                "secondInviteCommossions": {
                     "type": "string"
                 },
                 "sortOrder": {
@@ -17007,6 +17575,41 @@
                     "type": "integer"
                 },
                 "isActive": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.HsConfigInviteCommission": {
+            "type": "object",
+            "properties": {
+                "configName": {
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "firstLevelRate": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "secondLevelRate": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 },
                 "updateBy": {
@@ -17889,6 +18492,12 @@
                 "createdAt": {
                     "type": "string"
                 },
+                "cryptoBalance": {
+                    "type": "string"
+                },
+                "cryptoFrozenBalance": {
+                    "type": "string"
+                },
                 "experience": {
                     "type": "string"
                 },
@@ -18470,13 +19079,20 @@
         "models.OrdGiftcardWriteoffs": {
             "type": "object",
             "properties": {
+                "adminRecognizedCode": {
+                    "description": "新增字段",
+                    "type": "string"
+                },
+                "configRate": {
+                    "type": "string"
+                },
                 "createBy": {
                     "type": "integer"
                 },
                 "createdAt": {
                     "type": "string"
                 },
-                "giftCardCode": {
+                "failureImageUrl": {
                     "type": "string"
                 },
                 "giftCardId": {
@@ -18488,10 +19104,29 @@
                 "orderId": {
                     "type": "string"
                 },
+                "platformSaleRate": {
+                    "type": "string"
+                },
+                "platformSettlementAmount": {
+                    "description": "平台入账相关字段",
+                    "type": "string"
+                },
+                "platformSettlementCurrency": {
+                    "type": "string"
+                },
+                "platformToUsdRate": {
+                    "type": "string"
+                },
+                "recognizedCardValue": {
+                    "type": "string"
+                },
                 "remark": {
                     "type": "string"
                 },
                 "status": {
+                    "type": "string"
+                },
+                "supplierId": {
                     "type": "string"
                 },
                 "updateBy": {
@@ -18500,7 +19135,13 @@
                 "updatedAt": {
                     "type": "string"
                 },
+                "userCurrencyCode": {
+                    "type": "string"
+                },
                 "userId": {
+                    "type": "string"
+                },
+                "userLocalCurrencyAmount": {
                     "type": "string"
                 }
             }
@@ -18537,8 +19178,23 @@
         "models.OrdUserOrders": {
             "type": "object",
             "properties": {
+                "adminRemark": {
+                    "type": "string"
+                },
+                "assignBy": {
+                    "type": "string"
+                },
+                "assignName": {
+                    "type": "string"
+                },
+                "assignType": {
+                    "type": "string"
+                },
                 "balance": {
                     "type": "string"
+                },
+                "balanceType": {
+                    "type": "integer"
                 },
                 "canceledAt": {
                     "type": "string"
@@ -18561,7 +19217,7 @@
                 "createdAt": {
                     "type": "string"
                 },
-                "currency": {
+                "currencyCode": {
                     "type": "string"
                 },
                 "discountRate": {
@@ -18576,7 +19232,13 @@
                 "id": {
                     "type": "integer"
                 },
-                "orderNo": {
+                "processingDuration": {
+                    "type": "integer"
+                },
+                "processingStartedAt": {
+                    "type": "string"
+                },
+                "processingStartedEnd": {
                     "type": "string"
                 },
                 "rate": {
@@ -18599,6 +19261,24 @@
                 },
                 "userId": {
                     "type": "string"
+                },
+                "verifySpeed": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Page": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "list": {},
+                "pageIndex": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
                 }
             }
         },
@@ -18618,38 +19298,6 @@
                     "type": "string"
                 },
                 "requestId": {
-                    "type": "string"
-                }
-            }
-        },
-        "response.Page": {
-            "type": "object",
-            "properties": {
-                "count": {
-                    "type": "integer"
-                },
-                "pageIndex": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                }
-            }
-        },
-        "response.Response": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "msg": {
-                    "type": "string"
-                },
-                "requestId": {
-                    "description": "数据集",
-                    "type": "string"
-                },
-                "status": {
                     "type": "string"
                 }
             }

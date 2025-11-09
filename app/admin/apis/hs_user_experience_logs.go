@@ -26,7 +26,7 @@ type HsUserExperienceLogs struct {
 // @Param sourceType query string false "经验来源类型(checkin,gift_card_exchange,order_complete等)"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.HsUserExperienceLogs}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]models.HsUserExperienceLogs}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-user-experience-logs [get]
 // @Security Bearer
 func (e HsUserExperienceLogs) GetPage(c *gin.Context) {
@@ -61,7 +61,7 @@ func (e HsUserExperienceLogs) GetPage(c *gin.Context) {
 // @Description 获取用户经验值流水表
 // @Tags 用户经验值流水表
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.HsUserExperienceLogs} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.HsUserExperienceLogs} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-user-experience-logs/{id} [get]
 // @Security Bearer
 func (e HsUserExperienceLogs) Get(c *gin.Context) {
@@ -96,7 +96,7 @@ func (e HsUserExperienceLogs) Get(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.HsUserExperienceLogsInsertReq true "data"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "添加成功"}"
 // @Router /api/v1/hs-user-experience-logs [post]
 // @Security Bearer
 func (e HsUserExperienceLogs) Insert(c *gin.Context) {
@@ -132,7 +132,7 @@ func (e HsUserExperienceLogs) Insert(c *gin.Context) {
 // @Product application/json
 // @Param id path int true "id"
 // @Param data body dto.HsUserExperienceLogsUpdateReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/hs-user-experience-logs/{id} [put]
 // @Security Bearer
 func (e HsUserExperienceLogs) Update(c *gin.Context) {
@@ -164,7 +164,7 @@ func (e HsUserExperienceLogs) Update(c *gin.Context) {
 // @Description 删除用户经验值流水表
 // @Tags 用户经验值流水表
 // @Param data body dto.HsUserExperienceLogsDeleteReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/hs-user-experience-logs [delete]
 // @Security Bearer
 func (e HsUserExperienceLogs) Delete(c *gin.Context) {

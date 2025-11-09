@@ -26,7 +26,7 @@ type MdUserDeviceTab struct {
 // @Param userId query string false "用户ID（未绑定为0）"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.MdUserDeviceTab}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]models.MdUserDeviceTab}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/md-user-device-tab [get]
 // @Security Bearer
 func (e MdUserDeviceTab) GetPage(c *gin.Context) {
@@ -61,7 +61,7 @@ func (e MdUserDeviceTab) GetPage(c *gin.Context) {
 // @Description 获取用户设备信息表
 // @Tags 用户设备信息表
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.MdUserDeviceTab} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.MdUserDeviceTab} "{"code": 200, "data": [...]}"
 // @Router /api/v1/md-user-device-tab/{id} [get]
 // @Security Bearer
 func (e MdUserDeviceTab) Get(c *gin.Context) {
@@ -96,7 +96,7 @@ func (e MdUserDeviceTab) Get(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.MdUserDeviceTabInsertReq true "data"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "添加成功"}"
 // @Router /api/v1/md-user-device-tab [post]
 // @Security Bearer
 func (e MdUserDeviceTab) Insert(c *gin.Context) {
@@ -132,7 +132,7 @@ func (e MdUserDeviceTab) Insert(c *gin.Context) {
 // @Product application/json
 // @Param id path int true "id"
 // @Param data body dto.MdUserDeviceTabUpdateReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/md-user-device-tab/{id} [put]
 // @Security Bearer
 func (e MdUserDeviceTab) Update(c *gin.Context) {
@@ -164,7 +164,7 @@ func (e MdUserDeviceTab) Update(c *gin.Context) {
 // @Description 删除用户设备信息表
 // @Tags 用户设备信息表
 // @Param data body dto.MdUserDeviceTabDeleteReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/md-user-device-tab [delete]
 // @Security Bearer
 func (e MdUserDeviceTab) Delete(c *gin.Context) {

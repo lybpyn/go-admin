@@ -27,7 +27,7 @@ type HsInvitesBind struct {
 // @Param level query string false "层级: 1=一级, 2=二级"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.HsInvitesBind}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]models.HsInvitesBind}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-invites-bind [get]
 // @Security Bearer
 func (e HsInvitesBind) GetPage(c *gin.Context) {
@@ -62,7 +62,7 @@ func (e HsInvitesBind) GetPage(c *gin.Context) {
 // @Description 获取用户邀请关系表
 // @Tags 用户邀请关系表
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.HsInvitesBind} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.HsInvitesBind} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-invites-bind/{id} [get]
 // @Security Bearer
 func (e HsInvitesBind) Get(c *gin.Context) {
@@ -97,7 +97,7 @@ func (e HsInvitesBind) Get(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.HsInvitesBindInsertReq true "data"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "添加成功"}"
 // @Router /api/v1/hs-invites-bind [post]
 // @Security Bearer
 func (e HsInvitesBind) Insert(c *gin.Context) {
@@ -133,7 +133,7 @@ func (e HsInvitesBind) Insert(c *gin.Context) {
 // @Product application/json
 // @Param id path int true "id"
 // @Param data body dto.HsInvitesBindUpdateReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/hs-invites-bind/{id} [put]
 // @Security Bearer
 func (e HsInvitesBind) Update(c *gin.Context) {
@@ -165,7 +165,7 @@ func (e HsInvitesBind) Update(c *gin.Context) {
 // @Description 删除用户邀请关系表
 // @Tags 用户邀请关系表
 // @Param data body dto.HsInvitesBindDeleteReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/hs-invites-bind [delete]
 // @Security Bearer
 func (e HsInvitesBind) Delete(c *gin.Context) {

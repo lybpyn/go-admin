@@ -37,7 +37,7 @@ type HsUserLedger struct {
 // @Param status query string false "1=已入账，0=待入账，-1=冲正"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.HsUserLedger}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]models.HsUserLedger}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-user-ledger [get]
 // @Security Bearer
 func (e HsUserLedger) GetPage(c *gin.Context) {
@@ -72,7 +72,7 @@ func (e HsUserLedger) GetPage(c *gin.Context) {
 // @Description 获取用户余额流水
 // @Tags 用户余额流水
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.HsUserLedger} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.HsUserLedger} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-user-ledger/{id} [get]
 // @Security Bearer
 func (e HsUserLedger) Get(c *gin.Context) {
@@ -107,7 +107,7 @@ func (e HsUserLedger) Get(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.HsUserLedgerInsertReq true "data"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "添加成功"}"
 // @Router /api/v1/hs-user-ledger [post]
 // @Security Bearer
 func (e HsUserLedger) Insert(c *gin.Context) {
@@ -143,7 +143,7 @@ func (e HsUserLedger) Insert(c *gin.Context) {
 // @Product application/json
 // @Param id path int true "id"
 // @Param data body dto.HsUserLedgerUpdateReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/hs-user-ledger/{id} [put]
 // @Security Bearer
 func (e HsUserLedger) Update(c *gin.Context) {
@@ -175,7 +175,7 @@ func (e HsUserLedger) Update(c *gin.Context) {
 // @Description 删除用户余额流水
 // @Tags 用户余额流水
 // @Param data body dto.HsUserLedgerDeleteReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/hs-user-ledger [delete]
 // @Security Bearer
 func (e HsUserLedger) Delete(c *gin.Context) {

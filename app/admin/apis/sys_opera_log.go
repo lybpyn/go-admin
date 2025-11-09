@@ -26,7 +26,7 @@ type SysOperaLog struct {
 // @Param status query string false "status"
 // @Param beginTime query string false "beginTime"
 // @Param endTime query string false "endTime"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/sys-opera-log [get]
 // @Security Bearer
 func (e SysOperaLog) GetPage(c *gin.Context) {
@@ -60,7 +60,7 @@ func (e SysOperaLog) GetPage(c *gin.Context) {
 // @Description 获取JSON
 // @Tags 操作日志
 // @Param id path string false "id"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/sys-opera-log/{id} [get]
 // @Security Bearer
 func (e SysOperaLog) Get(c *gin.Context) {
@@ -91,7 +91,7 @@ func (e SysOperaLog) Get(c *gin.Context) {
 // @Description 删除数据
 // @Tags 操作日志
 // @Param data body dto.SysOperaLogDeleteReq true "body"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/sys-opera-log [delete]
 // @Security Bearer
 func (e SysOperaLog) Delete(c *gin.Context) {

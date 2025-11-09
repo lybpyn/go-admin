@@ -24,7 +24,7 @@ type SysLoginLog struct {
 // @Param status query string false "状态"
 // @Param beginTime query string false "开始时间"
 // @Param endTime query string false "结束时间"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/sys-login-log [get]
 // @Security Bearer
 func (e SysLoginLog) GetPage(c *gin.Context) {
@@ -55,7 +55,7 @@ func (e SysLoginLog) GetPage(c *gin.Context) {
 // @Description 获取JSON
 // @Tags 登录日志
 // @Param id path string false "id"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/sys-login-log/{id} [get]
 // @Security Bearer
 func (e SysLoginLog) Get(c *gin.Context) {
@@ -85,7 +85,7 @@ func (e SysLoginLog) Get(c *gin.Context) {
 // @Description 登录日志删除
 // @Tags 登录日志
 // @Param data body dto.SysLoginLogDeleteReq true "body"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/sys-login-log [delete]
 // @Security Bearer
 func (e SysLoginLog) Delete(c *gin.Context) {

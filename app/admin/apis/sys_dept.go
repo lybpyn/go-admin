@@ -24,7 +24,7 @@ type SysDept struct {
 // @Param deptName query string false "deptName"
 // @Param deptId query string false "deptId"
 // @Param position query string false "position"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/dept [get]
 // @Security Bearer
 func (e SysDept) GetPage(c *gin.Context) {
@@ -54,7 +54,7 @@ func (e SysDept) GetPage(c *gin.Context) {
 // @Description 获取JSON
 // @Tags 部门
 // @Param deptId path string false "deptId"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/dept/{deptId} [get]
 // @Security Bearer
 func (e SysDept) Get(c *gin.Context) {

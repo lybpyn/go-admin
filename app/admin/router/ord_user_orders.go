@@ -19,8 +19,11 @@ func registerOrdUserOrdersRouter(v1 *gin.RouterGroup, authMiddleware *jwt.GinJWT
 	r := v1.Group("/ord-user-orders").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
 	{
 		r.GET("", actions.PermissionAction(), api.GetPage)
+		r.GET("/my-assigned", actions.PermissionAction(), api.GetPageByAssign)
 		r.GET("/:id", actions.PermissionAction(), api.Get)
 		r.POST("", api.Insert)
+		r.POST("/:id/accept", actions.PermissionAction(), api.AcceptOrder)
+		r.POST("/:id/cancel-accept", actions.PermissionAction(), api.CancelAcceptOrder)
 		r.PUT("/:id", actions.PermissionAction(), api.Update)
 		r.DELETE("", api.Delete)
 	}

@@ -25,7 +25,7 @@ type HsUserCheckinStats struct {
 // @Param userId query string false "用户ID"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.HsUserCheckinStats}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]models.HsUserCheckinStats}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-user-checkin-stats [get]
 // @Security Bearer
 func (e HsUserCheckinStats) GetPage(c *gin.Context) {
@@ -60,7 +60,7 @@ func (e HsUserCheckinStats) GetPage(c *gin.Context) {
 // @Description 获取用户签到统计表
 // @Tags 用户签到统计表
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.HsUserCheckinStats} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.HsUserCheckinStats} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-user-checkin-stats/{id} [get]
 // @Security Bearer
 func (e HsUserCheckinStats) Get(c *gin.Context) {
@@ -95,7 +95,7 @@ func (e HsUserCheckinStats) Get(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.HsUserCheckinStatsInsertReq true "data"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "添加成功"}"
 // @Router /api/v1/hs-user-checkin-stats [post]
 // @Security Bearer
 func (e HsUserCheckinStats) Insert(c *gin.Context) {
@@ -131,7 +131,7 @@ func (e HsUserCheckinStats) Insert(c *gin.Context) {
 // @Product application/json
 // @Param id path int true "id"
 // @Param data body dto.HsUserCheckinStatsUpdateReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/hs-user-checkin-stats/{id} [put]
 // @Security Bearer
 func (e HsUserCheckinStats) Update(c *gin.Context) {
@@ -163,7 +163,7 @@ func (e HsUserCheckinStats) Update(c *gin.Context) {
 // @Description 删除用户签到统计表
 // @Tags 用户签到统计表
 // @Param data body dto.HsUserCheckinStatsDeleteReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/hs-user-checkin-stats [delete]
 // @Security Bearer
 func (e HsUserCheckinStats) Delete(c *gin.Context) {

@@ -26,7 +26,7 @@ type HsInviteCommissions struct {
 // @Param userId query string false "分成获得者ID"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.HsInviteCommissions}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]models.HsInviteCommissions}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-invite-commissions [get]
 // @Security Bearer
 func (e HsInviteCommissions) GetPage(c *gin.Context) {
@@ -61,7 +61,7 @@ func (e HsInviteCommissions) GetPage(c *gin.Context) {
 // @Description 获取订单分成流水表
 // @Tags 订单分成流水表
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.HsInviteCommissions} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.HsInviteCommissions} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-invite-commissions/{id} [get]
 // @Security Bearer
 func (e HsInviteCommissions) Get(c *gin.Context) {
@@ -96,7 +96,7 @@ func (e HsInviteCommissions) Get(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.HsInviteCommissionsInsertReq true "data"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "添加成功"}"
 // @Router /api/v1/hs-invite-commissions [post]
 // @Security Bearer
 func (e HsInviteCommissions) Insert(c *gin.Context) {
@@ -132,7 +132,7 @@ func (e HsInviteCommissions) Insert(c *gin.Context) {
 // @Product application/json
 // @Param id path int true "id"
 // @Param data body dto.HsInviteCommissionsUpdateReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/hs-invite-commissions/{id} [put]
 // @Security Bearer
 func (e HsInviteCommissions) Update(c *gin.Context) {
@@ -164,7 +164,7 @@ func (e HsInviteCommissions) Update(c *gin.Context) {
 // @Description 删除订单分成流水表
 // @Tags 订单分成流水表
 // @Param data body dto.HsInviteCommissionsDeleteReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/hs-invite-commissions [delete]
 // @Security Bearer
 func (e HsInviteCommissions) Delete(c *gin.Context) {

@@ -24,7 +24,7 @@ type HsConfigCheckinRewards struct {
 // @Tags 签到奖励配置表
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.HsConfigCheckinRewards}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]models.HsConfigCheckinRewards}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-config-checkin-rewards [get]
 // @Security Bearer
 func (e HsConfigCheckinRewards) GetPage(c *gin.Context) {
@@ -59,7 +59,7 @@ func (e HsConfigCheckinRewards) GetPage(c *gin.Context) {
 // @Description 获取签到奖励配置表
 // @Tags 签到奖励配置表
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.HsConfigCheckinRewards} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.HsConfigCheckinRewards} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-config-checkin-rewards/{id} [get]
 // @Security Bearer
 func (e HsConfigCheckinRewards) Get(c *gin.Context) {
@@ -94,7 +94,7 @@ func (e HsConfigCheckinRewards) Get(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.HsConfigCheckinRewardsInsertReq true "data"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "添加成功"}"
 // @Router /api/v1/hs-config-checkin-rewards [post]
 // @Security Bearer
 func (e HsConfigCheckinRewards) Insert(c *gin.Context) {
@@ -130,7 +130,7 @@ func (e HsConfigCheckinRewards) Insert(c *gin.Context) {
 // @Product application/json
 // @Param id path int true "id"
 // @Param data body dto.HsConfigCheckinRewardsUpdateReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/hs-config-checkin-rewards/{id} [put]
 // @Security Bearer
 func (e HsConfigCheckinRewards) Update(c *gin.Context) {
@@ -162,7 +162,7 @@ func (e HsConfigCheckinRewards) Update(c *gin.Context) {
 // @Description 删除签到奖励配置表
 // @Tags 签到奖励配置表
 // @Param data body dto.HsConfigCheckinRewardsDeleteReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/hs-config-checkin-rewards [delete]
 // @Security Bearer
 func (e HsConfigCheckinRewards) Delete(c *gin.Context) {

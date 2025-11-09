@@ -20,7 +20,7 @@ type SysMenu struct {
 // @Description 获取JSON
 // @Tags 菜单
 // @Param menuName query string false "menuName"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/menu [get]
 // @Security Bearer
 func (e SysMenu) GetPage(c *gin.Context) {
@@ -50,7 +50,7 @@ func (e SysMenu) GetPage(c *gin.Context) {
 // @Description 获取JSON
 // @Tags 菜单
 // @Param id path string false "id"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/menu/{id} [get]
 // @Security Bearer
 func (e SysMenu) Get(c *gin.Context) {
@@ -83,7 +83,7 @@ func (e SysMenu) Get(c *gin.Context) {
 // @Accept  application/json
 // @Product application/json
 // @Param data body dto.SysMenuInsertReq true "data"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/menu [post]
 // @Security Bearer
 func (e SysMenu) Insert(c *gin.Context) {
@@ -117,7 +117,7 @@ func (e SysMenu) Insert(c *gin.Context) {
 // @Product application/json
 // @Param id path int true "id"
 // @Param data body dto.SysMenuUpdateReq true "body"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/menu/{id} [put]
 // @Security Bearer
 func (e SysMenu) Update(c *gin.Context) {
@@ -148,7 +148,7 @@ func (e SysMenu) Update(c *gin.Context) {
 // @Description 删除数据
 // @Tags 菜单
 // @Param data body dto.SysMenuDeleteReq true "body"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/menu [delete]
 // @Security Bearer
 func (e SysMenu) Delete(c *gin.Context) {
@@ -177,7 +177,7 @@ func (e SysMenu) Delete(c *gin.Context) {
 // @Summary 根据登录角色名称获取菜单列表数据（左菜单使用）
 // @Description 获取JSON
 // @Tags 菜单
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/menurole [get]
 // @Security Bearer
 func (e SysMenu) GetMenuRole(c *gin.Context) {
@@ -209,7 +209,7 @@ func (e SysMenu) GetMenuRole(c *gin.Context) {
 // @Accept  application/json
 // @Product application/json
 // @Param roleId path int true "roleId"
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response "{"code": 200, "data": [...]}"
 // @Router /api/v1/menuTreeselect/{roleId} [get]
 // @Security Bearer
 func (e SysMenu) GetMenuTreeSelect(c *gin.Context) {

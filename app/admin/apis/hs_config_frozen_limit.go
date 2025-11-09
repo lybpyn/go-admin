@@ -27,7 +27,7 @@ type HsConfigFrozenLimit struct {
 // @Param isActive query string false "是否启用：1=启用，0=禁用"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.HsConfigFrozenLimit}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]models.HsConfigFrozenLimit}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-config-frozen-limit [get]
 // @Security Bearer
 func (e HsConfigFrozenLimit) GetPage(c *gin.Context) {
@@ -62,7 +62,7 @@ func (e HsConfigFrozenLimit) GetPage(c *gin.Context) {
 // @Description 获取用户冻结金额限制配置表
 // @Tags 用户冻结金额限制配置表
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.HsConfigFrozenLimit} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.HsConfigFrozenLimit} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-config-frozen-limit/{id} [get]
 // @Security Bearer
 func (e HsConfigFrozenLimit) Get(c *gin.Context) {
@@ -97,7 +97,7 @@ func (e HsConfigFrozenLimit) Get(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.HsConfigFrozenLimitInsertReq true "data"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "添加成功"}"
 // @Router /api/v1/hs-config-frozen-limit [post]
 // @Security Bearer
 func (e HsConfigFrozenLimit) Insert(c *gin.Context) {
@@ -133,7 +133,7 @@ func (e HsConfigFrozenLimit) Insert(c *gin.Context) {
 // @Product application/json
 // @Param id path int true "id"
 // @Param data body dto.HsConfigFrozenLimitUpdateReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/hs-config-frozen-limit/{id} [put]
 // @Security Bearer
 func (e HsConfigFrozenLimit) Update(c *gin.Context) {
@@ -165,7 +165,7 @@ func (e HsConfigFrozenLimit) Update(c *gin.Context) {
 // @Description 删除用户冻结金额限制配置表
 // @Tags 用户冻结金额限制配置表
 // @Param data body dto.HsConfigFrozenLimitDeleteReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/hs-config-frozen-limit [delete]
 // @Security Bearer
 func (e HsConfigFrozenLimit) Delete(c *gin.Context) {

@@ -26,7 +26,7 @@ type HsUserWithdrawAddresses struct {
 // @Param address query string false "钱包提现地址"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.HsUserWithdrawAddresses}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]models.HsUserWithdrawAddresses}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-user-withdraw-addresses [get]
 // @Security Bearer
 func (e HsUserWithdrawAddresses) GetPage(c *gin.Context) {
@@ -61,7 +61,7 @@ func (e HsUserWithdrawAddresses) GetPage(c *gin.Context) {
 // @Description 获取用户虚拟币提现地址表
 // @Tags 用户虚拟币提现地址表
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.HsUserWithdrawAddresses} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.HsUserWithdrawAddresses} "{"code": 200, "data": [...]}"
 // @Router /api/v1/hs-user-withdraw-addresses/{id} [get]
 // @Security Bearer
 func (e HsUserWithdrawAddresses) Get(c *gin.Context) {
@@ -96,7 +96,7 @@ func (e HsUserWithdrawAddresses) Get(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.HsUserWithdrawAddressesInsertReq true "data"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "添加成功"}"
 // @Router /api/v1/hs-user-withdraw-addresses [post]
 // @Security Bearer
 func (e HsUserWithdrawAddresses) Insert(c *gin.Context) {
@@ -132,7 +132,7 @@ func (e HsUserWithdrawAddresses) Insert(c *gin.Context) {
 // @Product application/json
 // @Param id path int true "id"
 // @Param data body dto.HsUserWithdrawAddressesUpdateReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/hs-user-withdraw-addresses/{id} [put]
 // @Security Bearer
 func (e HsUserWithdrawAddresses) Update(c *gin.Context) {
@@ -164,7 +164,7 @@ func (e HsUserWithdrawAddresses) Update(c *gin.Context) {
 // @Description 删除用户虚拟币提现地址表
 // @Tags 用户虚拟币提现地址表
 // @Param data body dto.HsUserWithdrawAddressesDeleteReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/hs-user-withdraw-addresses [delete]
 // @Security Bearer
 func (e HsUserWithdrawAddresses) Delete(c *gin.Context) {

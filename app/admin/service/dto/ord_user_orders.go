@@ -11,7 +11,6 @@ import (
 type OrdUserOrdersGetPageReq struct {
 	dto.Pagination     `search:"-"`
 	UserId string `form:"userId" search:"type:exact;column:user_id;table:ord_user_orders" comment:"用户ID"`
-	OrderNo string `form:"orderNo" search:"type:exact;column:order_no;table:ord_user_orders" comment:"订单号"`
 	Status string `form:"status" search:"type:exact;column:status;table:ord_user_orders" comment:"订单状态"`
 	BeginTime string `form:"beginTime" search:"type:gte;column:created_at;table:ord_user_orders" comment:"开始时间"`
 	EndTime string `form:"endTime" search:"type:lte;column:created_at;table:ord_user_orders" comment:"结束时间"`
@@ -23,12 +22,11 @@ type OrdUserOrdersOrder struct {
     UserId string `form:"userIdOrder"  search:"type:order;column:user_id;table:ord_user_orders"`
     RegionId string `form:"regionIdOrder"  search:"type:order;column:region_id;table:ord_user_orders"`
     CategoryId string `form:"categoryIdOrder"  search:"type:order;column:category_id;table:ord_user_orders"`
-    OrderNo string `form:"orderNoOrder"  search:"type:order;column:order_no;table:ord_user_orders"`
     GiftcardId string `form:"giftcardIdOrder"  search:"type:order;column:giftcard_id;table:ord_user_orders"`
     CardType string `form:"cardTypeOrder"  search:"type:order;column:card_type;table:ord_user_orders"`
     GiftCardCode string `form:"giftCardCodeOrder"  search:"type:order;column:gift_card_code;table:ord_user_orders"`
     Balance string `form:"balanceOrder"  search:"type:order;column:balance;table:ord_user_orders"`
-    Currency string `form:"currencyOrder"  search:"type:order;column:currency;table:ord_user_orders"`
+    CurrencyCode string `form:"currencyCodeOrder"  search:"type:order;column:currency_code;table:ord_user_orders"`
     DiscountRate string `form:"discountRateOrder"  search:"type:order;column:discount_rate;table:ord_user_orders"`
     Rate string `form:"rateOrder"  search:"type:order;column:rate;table:ord_user_orders"`
     Status string `form:"statusOrder"  search:"type:order;column:status;table:ord_user_orders"`
@@ -40,7 +38,7 @@ type OrdUserOrdersOrder struct {
     CreatedAt string `form:"createdAtOrder"  search:"type:order;column:created_at;table:ord_user_orders"`
     UpdatedAt string `form:"updatedAtOrder"  search:"type:order;column:updated_at;table:ord_user_orders"`
     DeletedAt string `form:"deletedAtOrder"  search:"type:order;column:deleted_at;table:ord_user_orders"`
-    
+
 }
 
 func (m *OrdUserOrdersGetPageReq) GetNeedSearch() interface{} {
@@ -52,19 +50,18 @@ type OrdUserOrdersInsertReq struct {
     UserId string `json:"userId" comment:"用户ID"`
     RegionId string `json:"regionId" comment:"地区ID"`
     CategoryId string `json:"categoryId" comment:"分类ID"`
-    OrderNo string `json:"orderNo" comment:"订单号"`
     GiftcardId string `json:"giftcardId" comment:"礼品卡id"`
     CardType string `json:"cardType" comment:"卡片类型(Physical,Code,Receipy,Cash Receipt)"`
     GiftCardCode string `json:"giftCardCode" comment:"礼品卡卡号验证码"`
     Balance string `json:"balance" comment:"卡余额"`
-    Currency string `json:"currency" comment:"币种，例如 USD, CNY"`
+    CurrencyCode string `json:"currencyCode" comment:"币种，例如 USD, CNY"`
     DiscountRate string `json:"discountRate" comment:"折扣"`
     Rate string `json:"rate" comment:"汇率"`
     Status string `json:"status" comment:"订单状态: 0=待支付,1=已支付,2=已发卡,3=已完成,4=已取消"`
     CardExtra string `json:"cardExtra" comment:""`
     CompletedAt time.Time `json:"completedAt" comment:"完成时间"`
     CanceledAt time.Time `json:"canceledAt" comment:"取消时间"`
-    Remark time.Time `json:"remark" comment:"备注"`
+    Remark string `json:"remark" comment:"备注"`
     common.ControlBy
 }
 
@@ -75,12 +72,11 @@ func (s *OrdUserOrdersInsertReq) Generate(model *models.OrdUserOrders)  {
     model.UserId = s.UserId
     model.RegionId = s.RegionId
     model.CategoryId = s.CategoryId
-    model.OrderNo = s.OrderNo
     model.GiftcardId = s.GiftcardId
     model.CardType = s.CardType
     model.GiftCardCode = s.GiftCardCode
     model.Balance = s.Balance
-    model.Currency = s.Currency
+    model.CurrencyCode = s.CurrencyCode
     model.DiscountRate = s.DiscountRate
     model.Rate = s.Rate
     model.Status = s.Status
@@ -100,19 +96,18 @@ type OrdUserOrdersUpdateReq struct {
     UserId string `json:"userId" comment:"用户ID"`
     RegionId string `json:"regionId" comment:"地区ID"`
     CategoryId string `json:"categoryId" comment:"分类ID"`
-    OrderNo string `json:"orderNo" comment:"订单号"`
     GiftcardId string `json:"giftcardId" comment:"礼品卡id"`
     CardType string `json:"cardType" comment:"卡片类型(Physical,Code,Receipy,Cash Receipt)"`
     GiftCardCode string `json:"giftCardCode" comment:"礼品卡卡号验证码"`
     Balance string `json:"balance" comment:"卡余额"`
-    Currency string `json:"currency" comment:"币种，例如 USD, CNY"`
+    CurrencyCode string `json:"currencyCode" comment:"币种，例如 USD, CNY"`
     DiscountRate string `json:"discountRate" comment:"折扣"`
     Rate string `json:"rate" comment:"汇率"`
     Status string `json:"status" comment:"订单状态: 0=待支付,1=已支付,2=已发卡,3=已完成,4=已取消"`
     CardExtra string `json:"cardExtra" comment:""`
     CompletedAt time.Time `json:"completedAt" comment:"完成时间"`
     CanceledAt time.Time `json:"canceledAt" comment:"取消时间"`
-    Remark time.Time `json:"remark" comment:"备注"`
+    Remark string `json:"remark" comment:"备注"`
     common.ControlBy
 }
 
@@ -123,12 +118,11 @@ func (s *OrdUserOrdersUpdateReq) Generate(model *models.OrdUserOrders)  {
     model.UserId = s.UserId
     model.RegionId = s.RegionId
     model.CategoryId = s.CategoryId
-    model.OrderNo = s.OrderNo
     model.GiftcardId = s.GiftcardId
     model.CardType = s.CardType
     model.GiftCardCode = s.GiftCardCode
     model.Balance = s.Balance
-    model.Currency = s.Currency
+    model.CurrencyCode = s.CurrencyCode
     model.DiscountRate = s.DiscountRate
     model.Rate = s.Rate
     model.Status = s.Status
@@ -158,4 +152,37 @@ type OrdUserOrdersDeleteReq struct {
 
 func (s *OrdUserOrdersDeleteReq) GetId() interface{} {
 	return s.Ids
+}
+
+// OrdUserOrdersGetByAssignReq 根据接单人和状态查询订单请求参数
+type OrdUserOrdersGetByAssignReq struct {
+	dto.Pagination `search:"-"`
+	Status string `form:"status" search:"type:exact;column:status;table:ord_user_orders" comment:"订单状态"`
+	BeginTime string `form:"beginTime" search:"type:gte;column:created_at;table:ord_user_orders" comment:"开始时间"`
+	EndTime string `form:"endTime" search:"type:lte;column:created_at;table:ord_user_orders" comment:"结束时间"`
+	AssignBy string `search:"type:exact;column:assign_by;table:ord_user_orders" comment:"接单人ID"`
+	OrdUserOrdersOrder
+}
+
+func (m *OrdUserOrdersGetByAssignReq) GetNeedSearch() interface{} {
+	return *m
+}
+
+// OrdUserOrdersAcceptReq 管理员接单请求参数
+type OrdUserOrdersAcceptReq struct {
+	Id int `uri:"id" comment:"订单ID"`
+}
+
+func (s *OrdUserOrdersAcceptReq) GetId() interface{} {
+	return s.Id
+}
+
+// OrdUserOrdersCancelAcceptReq 取消接单请求参数
+type OrdUserOrdersCancelAcceptReq struct {
+	Id int `uri:"id" comment:"订单ID"`
+	AdminRemark string `json:"adminRemark" comment:"管理员备注"`
+}
+
+func (s *OrdUserOrdersCancelAcceptReq) GetId() interface{} {
+	return s.Id
 }

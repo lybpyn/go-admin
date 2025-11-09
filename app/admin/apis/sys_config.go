@@ -25,7 +25,7 @@ type SysConfig struct {
 // @Param isFrontend query int false "是否前端"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.SysApi}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]models.SysApi}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/sys-config [get]
 // @Security Bearer
 func (e SysConfig) GetPage(c *gin.Context) {
@@ -56,7 +56,7 @@ func (e SysConfig) GetPage(c *gin.Context) {
 // @Description 获取配置管理
 // @Tags 配置管理
 // @Param id path string false "id"
-// @Success 200 {object} response.Response{data=models.SysConfig} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.SysConfig} "{"code": 200, "data": [...]}"
 // @Router /api/v1/sys-config/{id} [get]
 // @Security Bearer
 func (e SysConfig) Get(c *gin.Context) {
@@ -90,7 +90,7 @@ func (e SysConfig) Get(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.SysConfigControl true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "创建成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "创建成功"}"
 // @Router /api/v1/sys-config [post]
 // @Security Bearer
 func (e SysConfig) Insert(c *gin.Context) {
@@ -123,7 +123,7 @@ func (e SysConfig) Insert(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.SysConfigControl true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/sys-config/{id} [put]
 // @Security Bearer
 func (e SysConfig) Update(c *gin.Context) {
@@ -153,7 +153,7 @@ func (e SysConfig) Update(c *gin.Context) {
 // @Description 删除配置管理
 // @Tags 配置管理
 // @Param ids body []int false "ids"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/sys-config [delete]
 // @Security Bearer
 func (e SysConfig) Delete(c *gin.Context) {
@@ -183,7 +183,7 @@ func (e SysConfig) Delete(c *gin.Context) {
 // @Summary 获取系统前台配置信息，主要注意这里不在验证权限
 // @Description 获取系统配置信息，主要注意这里不在验证权限
 // @Tags 配置管理
-// @Success 200 {object} response.Response{data=map[string]string} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=map[string]string} "{"code": 200, "data": [...]}"
 // @Router /api/v1/app-config [get]
 func (e SysConfig) Get2SysApp(c *gin.Context) {
 	req := dto.SysConfigGetToSysAppReq{}
@@ -221,7 +221,7 @@ func (e SysConfig) Get2SysApp(c *gin.Context) {
 // @Tags 配置管理
 // @Accept application/json
 // @Product application/json
-// @Success 200 {object} response.Response{data=map[string]interface{}}	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response{data=map[string]interface{}}	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/set-config [get]
 // @Security Bearer
 func (e SysConfig) Get2Set(c *gin.Context) {
@@ -255,7 +255,7 @@ func (e SysConfig) Get2Set(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body []dto.GetSetSysConfigReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/set-config [put]
 // @Security Bearer
 func (e SysConfig) Update2Set(c *gin.Context) {
@@ -286,7 +286,7 @@ func (e SysConfig) Update2Set(c *gin.Context) {
 // @Description 根据Key获取SysConfig的Service
 // @Tags 配置管理
 // @Param configKey path string false "configKey"
-// @Success 200 {object} response.Response{data=dto.SysConfigByKeyReq} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=dto.SysConfigByKeyReq} "{"code": 200, "data": [...]}"
 // @Router /api/v1/sys-config/{id} [get]
 // @Security Bearer
 func (e SysConfig) GetSysConfigByKEYForService(c *gin.Context) {

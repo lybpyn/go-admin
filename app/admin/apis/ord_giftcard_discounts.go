@@ -24,7 +24,7 @@ type OrdGiftcardDiscounts struct {
 // @Tags 礼品卡不同类型折扣
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.OrdGiftcardDiscounts}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]models.OrdGiftcardDiscounts}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/ord-giftcard-discounts [get]
 // @Security Bearer
 func (e OrdGiftcardDiscounts) GetPage(c *gin.Context) {
@@ -59,7 +59,7 @@ func (e OrdGiftcardDiscounts) GetPage(c *gin.Context) {
 // @Description 获取礼品卡不同类型折扣
 // @Tags 礼品卡不同类型折扣
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.OrdGiftcardDiscounts} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.OrdGiftcardDiscounts} "{"code": 200, "data": [...]}"
 // @Router /api/v1/ord-giftcard-discounts/{id} [get]
 // @Security Bearer
 func (e OrdGiftcardDiscounts) Get(c *gin.Context) {
@@ -94,7 +94,7 @@ func (e OrdGiftcardDiscounts) Get(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.OrdGiftcardDiscountsInsertReq true "data"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "添加成功"}"
 // @Router /api/v1/ord-giftcard-discounts [post]
 // @Security Bearer
 func (e OrdGiftcardDiscounts) Insert(c *gin.Context) {
@@ -130,7 +130,7 @@ func (e OrdGiftcardDiscounts) Insert(c *gin.Context) {
 // @Product application/json
 // @Param id path int true "id"
 // @Param data body dto.OrdGiftcardDiscountsUpdateReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/ord-giftcard-discounts/{id} [put]
 // @Security Bearer
 func (e OrdGiftcardDiscounts) Update(c *gin.Context) {
@@ -162,7 +162,7 @@ func (e OrdGiftcardDiscounts) Update(c *gin.Context) {
 // @Description 删除礼品卡不同类型折扣
 // @Tags 礼品卡不同类型折扣
 // @Param data body dto.OrdGiftcardDiscountsDeleteReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/ord-giftcard-discounts [delete]
 // @Security Bearer
 func (e OrdGiftcardDiscounts) Delete(c *gin.Context) {

@@ -30,7 +30,7 @@ type MdEventLogTab struct {
 // @Param deviceId query string false "设备唯一标识（IDFA/GAID等）"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.MdEventLogTab}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]models.MdEventLogTab}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/md-event-log-tab [get]
 // @Security Bearer
 func (e MdEventLogTab) GetPage(c *gin.Context) {
@@ -65,7 +65,7 @@ func (e MdEventLogTab) GetPage(c *gin.Context) {
 // @Description 获取埋点事件日志表
 // @Tags 埋点事件日志表
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.MdEventLogTab} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.MdEventLogTab} "{"code": 200, "data": [...]}"
 // @Router /api/v1/md-event-log-tab/{id} [get]
 // @Security Bearer
 func (e MdEventLogTab) Get(c *gin.Context) {
@@ -100,7 +100,7 @@ func (e MdEventLogTab) Get(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.MdEventLogTabInsertReq true "data"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "添加成功"}"
 // @Router /api/v1/md-event-log-tab [post]
 // @Security Bearer
 func (e MdEventLogTab) Insert(c *gin.Context) {
@@ -136,7 +136,7 @@ func (e MdEventLogTab) Insert(c *gin.Context) {
 // @Product application/json
 // @Param id path int true "id"
 // @Param data body dto.MdEventLogTabUpdateReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/md-event-log-tab/{id} [put]
 // @Security Bearer
 func (e MdEventLogTab) Update(c *gin.Context) {
@@ -168,7 +168,7 @@ func (e MdEventLogTab) Update(c *gin.Context) {
 // @Description 删除埋点事件日志表
 // @Tags 埋点事件日志表
 // @Param data body dto.MdEventLogTabDeleteReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/md-event-log-tab [delete]
 // @Security Bearer
 func (e MdEventLogTab) Delete(c *gin.Context) {

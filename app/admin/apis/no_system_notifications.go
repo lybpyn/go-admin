@@ -25,7 +25,7 @@ type NoSystemNotifications struct {
 // @Param targetUserId query string false "目标用户ID（仅 target_type=user 时有效）"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
-// @Success 200 {object} response.Response{data=response.Page{list=[]models.NoSystemNotifications}} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.Page{list=[]models.NoSystemNotifications}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/no-system-notifications [get]
 // @Security Bearer
 func (e NoSystemNotifications) GetPage(c *gin.Context) {
@@ -60,7 +60,7 @@ func (e NoSystemNotifications) GetPage(c *gin.Context) {
 // @Description 获取系统消息提醒表
 // @Tags 系统消息提醒表
 // @Param id path int false "id"
-// @Success 200 {object} response.Response{data=models.NoSystemNotifications} "{"code": 200, "data": [...]}"
+// @Success 200 {object} models.Response{data=models.NoSystemNotifications} "{"code": 200, "data": [...]}"
 // @Router /api/v1/no-system-notifications/{id} [get]
 // @Security Bearer
 func (e NoSystemNotifications) Get(c *gin.Context) {
@@ -95,7 +95,7 @@ func (e NoSystemNotifications) Get(c *gin.Context) {
 // @Accept application/json
 // @Product application/json
 // @Param data body dto.NoSystemNotificationsInsertReq true "data"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "添加成功"}"
 // @Router /api/v1/no-system-notifications [post]
 // @Security Bearer
 func (e NoSystemNotifications) Insert(c *gin.Context) {
@@ -131,7 +131,7 @@ func (e NoSystemNotifications) Insert(c *gin.Context) {
 // @Product application/json
 // @Param id path int true "id"
 // @Param data body dto.NoSystemNotificationsUpdateReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "修改成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "修改成功"}"
 // @Router /api/v1/no-system-notifications/{id} [put]
 // @Security Bearer
 func (e NoSystemNotifications) Update(c *gin.Context) {
@@ -163,7 +163,7 @@ func (e NoSystemNotifications) Update(c *gin.Context) {
 // @Description 删除系统消息提醒表
 // @Tags 系统消息提醒表
 // @Param data body dto.NoSystemNotificationsDeleteReq true "body"
-// @Success 200 {object} response.Response	"{"code": 200, "message": "删除成功"}"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "删除成功"}"
 // @Router /api/v1/no-system-notifications [delete]
 // @Security Bearer
 func (e NoSystemNotifications) Delete(c *gin.Context) {
