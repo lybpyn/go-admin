@@ -160,7 +160,7 @@ type OrdUserOrdersGetByAssignReq struct {
 	Status string `form:"status" search:"type:exact;column:status;table:ord_user_orders" comment:"订单状态"`
 	BeginTime string `form:"beginTime" search:"type:gte;column:created_at;table:ord_user_orders" comment:"开始时间"`
 	EndTime string `form:"endTime" search:"type:lte;column:created_at;table:ord_user_orders" comment:"结束时间"`
-	AssignBy string `search:"type:exact;column:assign_by;table:ord_user_orders" comment:"接单人ID"`
+	AssignBy string `json:"-" search:"type:exact;column:assign_by;table:ord_user_orders" comment:"接单人ID（从context自动获取）"`
 	OrdUserOrdersOrder
 }
 
