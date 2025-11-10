@@ -1,14 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "基于Gin + Vue + Element UI的前后端分离权限管理系统的接口文档",
-        "title": "go-admin API",
-        "contact": {},
-        "license": {
-            "name": "MIT",
-            "url": "https://github.com/go-admin-team/go-admin/blob/master/LICENSE.md"
-        },
-        "version": "2.0.0"
+        "contact": {}
     },
     "paths": {
         "/api/v1/app-config": {
@@ -15843,7 +15836,7 @@
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "supplierId": {
                     "type": "string"
@@ -15889,7 +15882,7 @@
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "supplierId": {
                     "type": "string"
@@ -15934,7 +15927,7 @@
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "supplierId": {
                     "type": "string"
@@ -16008,13 +16001,7 @@
                 "adminRemark": {
                     "type": "string"
                 },
-                "createBy": {
-                    "type": "integer"
-                },
                 "id": {
-                    "type": "integer"
-                },
-                "updateBy": {
                     "type": "integer"
                 }
             }
@@ -19130,7 +19117,7 @@
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "supplierId": {
                     "type": "string"
@@ -19200,7 +19187,7 @@
                     "type": "string"
                 },
                 "balanceType": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "canceledAt": {
                     "type": "string"
@@ -19565,13 +19552,6 @@
                     "type": "string"
                 }
             }
-        }
-    },
-    "securityDefinitions": {
-        "Bearer": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
         }
     }
 }

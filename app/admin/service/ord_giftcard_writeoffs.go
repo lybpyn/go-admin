@@ -200,7 +200,7 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 					convertedAmount = fmt.Sprintf("%.8f", amount)
 
 					// 只累加状态为"已核销"（status=1）的金额
-					if item.Status == "1" {
+					if item.Status == 1 {
 						totalAmount += amount
 					}
 				}

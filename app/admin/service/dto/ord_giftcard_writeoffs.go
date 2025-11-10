@@ -36,7 +36,7 @@ type OrdGiftcardWriteoffsInsertReq struct {
     UserId string `json:"userId" comment:"用户ID，表示提交/使用礼品卡的用户"`
     OrderId string `json:"orderId" comment:"订单ID，关联 ord_user_orders.id，用于核销对应的订单"`
     GiftCardId string `json:"giftCardId" comment:"礼品卡ID，关联礼品卡主表（若有）"`
-    Status string `json:"status" comment:"核销状态：0=待核销，1=已核销，2=失败"`
+    Status int `json:"status" comment:"核销状态：0=待核销，1=已核销，2=失败"`
     Remark string `json:"remark" comment:"备注信息，例如失败原因、核销说明"`
     AdminRecognizedCode string `json:"adminRecognizedCode" comment:"管理员识别的兑换码"`
     PlatformSaleRate string `json:"platformSaleRate" comment:"平台售卡汇率"`
@@ -72,7 +72,7 @@ type OrdGiftcardWriteoffsUpdateReq struct {
     UserId string `json:"userId" comment:"用户ID，表示提交/使用礼品卡的用户"`
     OrderId string `json:"orderId" comment:"订单ID，关联 ord_user_orders.id，用于核销对应的订单"`
     GiftCardId string `json:"giftCardId" comment:"礼品卡ID，关联礼品卡主表（若有）"`
-    Status string `json:"status" comment:"核销状态：0=待核销，1=已核销，2=失败"`
+    Status int `json:"status" comment:"核销状态：0=待核销，1=已核销，2=失败"`
     Remark string `json:"remark" comment:"备注信息，例如失败原因、核销说明"`
     AdminRecognizedCode string `json:"adminRecognizedCode" comment:"管理员识别的兑换码"`
     PlatformSaleRate string `json:"platformSaleRate" comment:"平台售卡汇率"`
@@ -132,7 +132,7 @@ type OrdGiftcardWriteoffsBatchInsertReq struct {
 // OrdGiftcardWriteoffsBatchItem 批量核销项
 type OrdGiftcardWriteoffsBatchItem struct {
 	AdminRecognizedCode        string `json:"adminRecognizedCode" binding:"required" comment:"管理员识别的兑换码"`
-	Status                     string `json:"status" comment:"核销状态：0=待核销，1=已核销，2=失败"`
+	Status                     int    `json:"status" comment:"核销状态：0=待核销，1=已核销，2=失败"`
 	Remark                     string `json:"remark" comment:"备注信息"`
 	PlatformSaleRate           string `json:"platformSaleRate" comment:"平台售卡汇率"`
 	RecognizedCardValue        string `json:"recognizedCardValue" comment:"识别的卡片面值"`

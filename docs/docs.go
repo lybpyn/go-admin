@@ -10,10 +10,6 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {},
-        "license": {
-            "name": "MIT",
-            "url": "https://github.com/go-admin-team/go-admin/blob/master/LICENSE.md"
-        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -15851,7 +15847,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "supplierId": {
                     "type": "string"
@@ -15897,7 +15893,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "supplierId": {
                     "type": "string"
@@ -15942,7 +15938,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "supplierId": {
                     "type": "string"
@@ -16016,13 +16012,7 @@ const docTemplate = `{
                 "adminRemark": {
                     "type": "string"
                 },
-                "createBy": {
-                    "type": "integer"
-                },
                 "id": {
-                    "type": "integer"
-                },
-                "updateBy": {
                     "type": "integer"
                 }
             }
@@ -19138,7 +19128,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "supplierId": {
                     "type": "string"
@@ -19208,7 +19198,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "balanceType": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "canceledAt": {
                     "type": "string"
@@ -19574,24 +19564,17 @@ const docTemplate = `{
                 }
             }
         }
-    },
-    "securityDefinitions": {
-        "Bearer": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
-        }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "2.0.0",
+	Version:          "",
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "go-admin API",
-	Description:      "基于Gin + Vue + Element UI的前后端分离权限管理系统的接口文档",
+	Title:            "",
+	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
