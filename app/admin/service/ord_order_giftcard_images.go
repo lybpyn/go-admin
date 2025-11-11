@@ -78,7 +78,7 @@ func (e *OrdOrderGiftcardImages) Get(d *dto.OrdOrderGiftcardImagesGetReq, p *act
 func (e *OrdOrderGiftcardImages) checkImagePermission(image *models.OrdOrderGiftcardImages, adminId int) error {
 	// 查询对应的订单信息
 	var order models.OrdUserOrders
-	err := e.Orm.Model(&order).Where("id = ?", image.OrderId).First(&order).Error
+	err := e.Orm.Model(&order).Where("order_id = ?", image.OrderId).First(&order).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			e.Log.Errorf("Order not found for image, orderId:%s", image.OrderId)
