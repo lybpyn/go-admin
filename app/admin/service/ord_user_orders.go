@@ -118,9 +118,16 @@ func (e *OrdUserOrders) Remove(d *dto.OrdUserOrdersDeleteReq, p *actions.DataPer
 }
 
 // GetPageByAssign 根据接单人ID和状态查询订单列表
+// 只返回当前接单人的订单，并包含兑换码信息
 func (e *OrdUserOrders) GetPageByAssign(c *dto.OrdUserOrdersGetByAssignReq, p *actions.DataPermission, list *[]models.OrdUserOrders, count *int64) error {
 	var err error
 	var data models.OrdUserOrders
+
+	// 确保AssignBy参数不为空（必须由API层从context自动设置）
+	if c.AssignBy == "" || c.AssignBy == "0" {
+		e.Log.Errorf("GetPageByAssign error: AssignBy is required")
+		return errors.New("接单人ID不能为空")
+	}
 
 	err = e.Orm.Model(&data).
 		Scopes(
@@ -128,7 +135,6 @@ func (e *OrdUserOrders) GetPageByAssign(c *dto.OrdUserOrdersGetByAssignReq, p *a
 			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
 			actions.Permission(data.TableName(), p),
 		).
-		Omit("gift_card_code").
 		Order("created_at DESC").
 		Find(list).Limit(-1).Offset(-1).
 		Count(count).Error

@@ -4713,6 +4713,12 @@ definitions:
     type: object
 info:
   contact: {}
+  description: 基于Gin + Vue + Element UI的前后端分离权限管理系统的接口文档
+  license:
+    name: MIT
+    url: https://github.com/go-admin-team/go-admin/blob/master/LICENSE.md
+  title: go-admin API
+  version: 2.0.0
 paths:
   /api/v1/app-config:
     get:
@@ -11017,7 +11023,7 @@ paths:
       - 礼品卡订单表
   /api/v1/ord-user-orders/my-assigned:
     get:
-      description: 根据当前登录用户作为接单人，查询不同状态的订单列表
+      description: 根据当前登录用户作为接单人，查询不同状态的订单列表（包含兑换码信息，仅接单人可访问）
       parameters:
       - description: 订单状态
         in: query
@@ -12115,4 +12121,9 @@ paths:
       security:
       - Bearer: []
       summary: 退出登录
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

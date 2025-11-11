@@ -10,6 +10,10 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {},
+        "license": {
+            "name": "MIT",
+            "url": "https://github.com/go-admin-team/go-admin/blob/master/LICENSE.md"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -10495,7 +10499,7 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
-                "description": "根据当前登录用户作为接单人，查询不同状态的订单列表",
+                "description": "根据当前登录用户作为接单人，查询不同状态的订单列表（包含兑换码信息，仅接单人可访问）",
                 "tags": [
                     "礼品卡订单表"
                 ],
@@ -19564,17 +19568,24 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
+	Version:          "2.0.0",
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "go-admin API",
+	Description:      "基于Gin + Vue + Element UI的前后端分离权限管理系统的接口文档",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

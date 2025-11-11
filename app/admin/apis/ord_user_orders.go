@@ -192,7 +192,7 @@ func (e OrdUserOrders) Delete(c *gin.Context) {
 
 // GetPageByAssign 根据接单人和状态查询订单列表
 // @Summary 根据接单人和状态查询订单列表
-// @Description 根据当前登录用户作为接单人，查询不同状态的订单列表
+// @Description 根据当前登录用户作为接单人，查询不同状态的订单列表（包含兑换码信息，仅接单人可访问）
 // @Tags 礼品卡订单表
 // @Param status query string false "订单状态"
 // @Param pageSize query int false "页条数"
@@ -216,7 +216,7 @@ func (e OrdUserOrders) GetPageByAssign(c *gin.Context) {
    		return
    	}
 
-	// 自动设置接单人ID为当前登录用户ID
+	// 自动设置接单人ID为当前登录用户ID，确保只能查询自己接的单
 	req.AssignBy = fmt.Sprintf("%d", user.GetUserId(c))
 
 	p := actions.GetPermissionFromContext(c)
