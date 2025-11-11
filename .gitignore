@@ -29,6 +29,6 @@ nohup.out
 .github
 database/
 
-# Debug files and logs
-__debug_bin
+# Log and deployment files
 access.log
+deploy.sh
