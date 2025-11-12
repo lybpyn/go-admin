@@ -29,9 +29,9 @@ type OrdGiftcardWriteoffs struct {
 	PlatformToUsdRate          string `json:"platformToUsdRate" gorm:"type:decimal(20,8);comment:平台入账货币对应美元汇率"`
 
 	// 关联字段（不存储到数据库，仅用于返回）
-	OrderNo      string `json:"orderNo" gorm:"-" comment:"订单号"`
-	UserName     string `json:"userName" gorm:"-" comment:"用户名"`
-	GiftCardName string `json:"giftCardName" gorm:"-" comment:"礼品卡名称"`
+	OrderNo      string `json:"orderNo" gorm:"column:order_no" comment:"订单号"`
+	UserName     string `json:"userName" gorm:"column:user_name" comment:"用户名"`
+	GiftCardName string `json:"giftCardName" gorm:"column:gift_card_name" comment:"礼品卡名称"`
 
 	models.ModelTime
 	models.ControlBy
