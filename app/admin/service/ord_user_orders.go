@@ -86,14 +86,35 @@ func (e *OrdUserOrders) Update(c *dto.OrdUserOrdersUpdateReq, p *actions.DataPer
             actions.Permission(data.TableName(), p),
         ).First(&data, c.GetId())
 
-    // 记录原始状态
+    // 记录原始状态和开始处理时间
     oldStatus := data.Status
+    processingStartedAt := data.ProcessingStartedAt
 
     c.Generate(&data)
 
-    // 如果订单状态从非完成状态变更为完成状态（3），自动设置 ProcessingStatus = 3
+    // 如果订单状态从非完成状态变更为完成状态（3），自动设置相关字段
     if oldStatus != 3 && data.Status == 3 {
         data.ProcessingStatus = 3
+
+        // 计算处理耗时（秒）：从开始处理时间到现在
+        if !processingStartedAt.IsZero() {
+            // 使用数据库的 TIMESTAMPDIFF 函数计算秒数差异
+            db := e.Orm.Model(&data).
+                Where("id = ?", c.GetId()).
+                Updates(map[string]interface{}{
+                    "processing_status":      3,
+                    "processing_started_end": gorm.Expr("NOW()"),
+                    "processing_duration":    gorm.Expr("TIMESTAMPDIFF(SECOND, processing_started_at, NOW())"),
+                })
+
+            if err = db.Error; err != nil {
+                e.Log.Errorf("OrdUserOrdersService Update processing fields error:%s \r\n", err)
+                return err
+            }
+
+            // 继续保存其他字段
+            data.ProcessingStatus = 3
+        }
     }
 
     db := e.Orm.Save(&data)

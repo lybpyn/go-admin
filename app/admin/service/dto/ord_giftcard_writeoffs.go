@@ -17,6 +17,7 @@ type OrdGiftcardWriteoffsOrder struct {
     UserId string `form:"userIdOrder"  search:"type:order;column:user_id;table:ord_giftcard_writeoffs"`
     OrderId string `form:"orderIdOrder"  search:"type:order;column:order_id;table:ord_giftcard_writeoffs"`
     GiftCardId string `form:"giftCardIdOrder"  search:"type:order;column:gift_card_id;table:ord_giftcard_writeoffs"`
+    GiftCardCode string `form:"giftCardCodeOrder"  search:"type:order;column:gift_card_code;table:ord_giftcard_writeoffs"`
     Status string `form:"statusOrder"  search:"type:order;column:status;table:ord_giftcard_writeoffs"`
     Remark string `form:"remarkOrder"  search:"type:order;column:remark;table:ord_giftcard_writeoffs"`
     CreateBy string `form:"createByOrder"  search:"type:order;column:create_by;table:ord_giftcard_writeoffs"`
@@ -36,13 +37,9 @@ type OrdGiftcardWriteoffsInsertReq struct {
     UserId string `json:"userId" comment:"用户ID，表示提交/使用礼品卡的用户"`
     OrderId string `json:"orderId" comment:"订单ID，关联 ord_user_orders.id，用于核销对应的订单"`
     GiftCardId string `json:"giftCardId" comment:"礼品卡ID，关联礼品卡主表（若有）"`
-    Status int `json:"status" comment:"核销状态：0=待核销，1=已核销，2=失败"`
+    GiftCardCode string `json:"giftCardCode" comment:"礼品卡卡号/兑换码，保证唯一性"`
+    Status string `json:"status" comment:"核销状态：0=待核销，1=已核销，2=失败"`
     Remark string `json:"remark" comment:"备注信息，例如失败原因、核销说明"`
-    AdminRecognizedCode string `json:"adminRecognizedCode" comment:"管理员识别的兑换码"`
-    PlatformSaleRate string `json:"platformSaleRate" comment:"平台售卡汇率"`
-    RecognizedCardValue string `json:"recognizedCardValue" comment:"识别的卡片面值"`
-    FailureImageUrl string `json:"failureImageUrl" comment:"失败时的截图URL"`
-    SupplierId string `json:"supplierId" comment:"收卡品牌商ID"`
     common.ControlBy
 }
 
@@ -53,13 +50,9 @@ func (s *OrdGiftcardWriteoffsInsertReq) Generate(model *models.OrdGiftcardWriteo
     model.UserId = s.UserId
     model.OrderId = s.OrderId
     model.GiftCardId = s.GiftCardId
+    model.GiftCardCode = s.GiftCardCode
     model.Status = s.Status
     model.Remark = s.Remark
-    model.AdminRecognizedCode = s.AdminRecognizedCode
-    model.PlatformSaleRate = s.PlatformSaleRate
-    model.RecognizedCardValue = s.RecognizedCardValue
-    model.FailureImageUrl = s.FailureImageUrl
-    model.SupplierId = s.SupplierId
     model.CreateBy = s.CreateBy // 添加这而，需要记录是被谁创建的
 }
 
@@ -72,13 +65,9 @@ type OrdGiftcardWriteoffsUpdateReq struct {
     UserId string `json:"userId" comment:"用户ID，表示提交/使用礼品卡的用户"`
     OrderId string `json:"orderId" comment:"订单ID，关联 ord_user_orders.id，用于核销对应的订单"`
     GiftCardId string `json:"giftCardId" comment:"礼品卡ID，关联礼品卡主表（若有）"`
-    Status int `json:"status" comment:"核销状态：0=待核销，1=已核销，2=失败"`
+    GiftCardCode string `json:"giftCardCode" comment:"礼品卡卡号/兑换码，保证唯一性"`
+    Status string `json:"status" comment:"核销状态：0=待核销，1=已核销，2=失败"`
     Remark string `json:"remark" comment:"备注信息，例如失败原因、核销说明"`
-    AdminRecognizedCode string `json:"adminRecognizedCode" comment:"管理员识别的兑换码"`
-    PlatformSaleRate string `json:"platformSaleRate" comment:"平台售卡汇率"`
-    RecognizedCardValue string `json:"recognizedCardValue" comment:"识别的卡片面值"`
-    FailureImageUrl string `json:"failureImageUrl" comment:"失败时的截图URL"`
-    SupplierId string `json:"supplierId" comment:"收卡品牌商ID"`
     common.ControlBy
 }
 
@@ -89,13 +78,9 @@ func (s *OrdGiftcardWriteoffsUpdateReq) Generate(model *models.OrdGiftcardWriteo
     model.UserId = s.UserId
     model.OrderId = s.OrderId
     model.GiftCardId = s.GiftCardId
+    model.GiftCardCode = s.GiftCardCode
     model.Status = s.Status
     model.Remark = s.Remark
-    model.AdminRecognizedCode = s.AdminRecognizedCode
-    model.PlatformSaleRate = s.PlatformSaleRate
-    model.RecognizedCardValue = s.RecognizedCardValue
-    model.FailureImageUrl = s.FailureImageUrl
-    model.SupplierId = s.SupplierId
     model.UpdateBy = s.UpdateBy // 添加这而，需要记录是被谁更新的
 }
 
@@ -118,26 +103,4 @@ type OrdGiftcardWriteoffsDeleteReq struct {
 
 func (s *OrdGiftcardWriteoffsDeleteReq) GetId() interface{} {
 	return s.Ids
-}
-
-// OrdGiftcardWriteoffsBatchInsertReq 批量核销请求参数
-type OrdGiftcardWriteoffsBatchInsertReq struct {
-	OrderId      string                           `json:"orderId" binding:"required" comment:"订单ID"`
-	UserId       string                           `json:"userId" binding:"required" comment:"用户ID"`
-	GiftCardId   string                           `json:"giftCardId" comment:"礼品卡ID"`
-	WriteoffList []OrdGiftcardWriteoffsBatchItem `json:"writeoffList" binding:"required,min=1" comment:"核销列表"`
-	common.ControlBy
-}
-
-// OrdGiftcardWriteoffsBatchItem 批量核销项
-type OrdGiftcardWriteoffsBatchItem struct {
-	AdminRecognizedCode        string `json:"adminRecognizedCode" binding:"required" comment:"管理员识别的兑换码"`
-	Status                     int    `json:"status" comment:"核销状态：0=待核销，1=已核销，2=失败"`
-	Remark                     string `json:"remark" comment:"备注信息"`
-	PlatformSaleRate           string `json:"platformSaleRate" comment:"平台售卡汇率"`
-	RecognizedCardValue        string `json:"recognizedCardValue" comment:"识别的卡片面值"`
-	FailureImageUrl            string `json:"failureImageUrl" comment:"失败时的截图URL"`
-	SupplierId                 string `json:"supplierId" comment:"收卡品牌商ID"`
-	PlatformSettlementAmount   string `json:"platformSettlementAmount" comment:"平台入账货币金额"`
-	PlatformSettlementCurrency string `json:"platformSettlementCurrency" comment:"平台入账货币代码"`
 }

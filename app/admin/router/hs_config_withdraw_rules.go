@@ -10,13 +10,13 @@ import (
 )
 
 func init() {
-	routerCheckRole = append(routerCheckRole, registerOrdGiftcardWriteoffsRouter)
+	routerCheckRole = append(routerCheckRole, registerHsConfigWithdrawRulesRouter)
 }
 
-// registerOrdGiftcardWriteoffsRouter
-func registerOrdGiftcardWriteoffsRouter(v1 *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddleware) {
-	api := apis.OrdGiftcardWriteoffs{}
-	r := v1.Group("/ord-giftcard-writeoffs").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
+// registerHsConfigWithdrawRulesRouter
+func registerHsConfigWithdrawRulesRouter(v1 *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddleware) {
+	api := apis.HsConfigWithdrawRules{}
+	r := v1.Group("/hs-config-withdraw-rules").Use(authMiddleware.MiddlewareFunc()).Use(middleware.AuthCheckRole())
 	{
 		r.GET("", actions.PermissionAction(), api.GetPage)
 		r.GET("/:id", actions.PermissionAction(), api.Get)
