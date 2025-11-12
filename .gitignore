@@ -32,3 +32,4 @@ database/
 # Log and deployment files
 access.log
 deploy.sh
+__debug_bin
