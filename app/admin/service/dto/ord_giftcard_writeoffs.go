@@ -120,7 +120,7 @@ func (s *OrdGiftcardWriteoffsDeleteReq) GetId() interface{} {
 	return s.Ids
 }
 
-// OrdGiftcardWriteoffsBatchInsertReq 批量核销请求参数
+// OrdGiftcardWriteoffsBatchInsertReq 批量核销请求参数  
 type OrdGiftcardWriteoffsBatchInsertReq struct {
 	OrderId      string                           `json:"orderId" binding:"required" comment:"订单ID"`
 	UserId       string                           `json:"userId" binding:"required" comment:"用户ID"`

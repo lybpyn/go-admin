@@ -10066,7 +10066,7 @@ const docTemplateadmin = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -10074,7 +10074,7 @@ const docTemplateadmin = `{
                                         "data": {
                                             "allOf": [
                                                 {
-                                                    "$ref": "#/definitions/response.Page"
+                                                    "$ref": "#/definitions/models.Page"
                                                 },
                                                 {
                                                     "type": "object",
@@ -10125,7 +10125,7 @@ const docTemplateadmin = `{
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"添加成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10156,7 +10156,43 @@ const docTemplateadmin = `{
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ord-giftcard-writeoffs/batch": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "管理员批量核销礼品卡订单，可以针对同一个订单创建多条核销记录",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "礼品卡核销记录表"
+                ],
+                "summary": "批量创建礼品卡核销记录",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrdGiftcardWriteoffsBatchInsertReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"批量核销成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -10188,7 +10224,7 @@ const docTemplateadmin = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/models.Response"
                                 },
                                 {
                                     "type": "object",
@@ -10239,7 +10275,7 @@ const docTemplateadmin = `{
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/models.Response"
                         }
                     }
                 }
@@ -16099,6 +16135,73 @@ const docTemplateadmin = `{
                 }
             }
         },
+        "dto.OrdGiftcardWriteoffsBatchInsertReq": {
+            "type": "object",
+            "required": [
+                "orderId",
+                "userId",
+                "writeoffList"
+            ],
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "giftCardId": {
+                    "type": "string"
+                },
+                "orderId": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "writeoffList": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/dto.OrdGiftcardWriteoffsBatchItem"
+                    }
+                }
+            }
+        },
+        "dto.OrdGiftcardWriteoffsBatchItem": {
+            "type": "object",
+            "required": [
+                "adminRecognizedCode"
+            ],
+            "properties": {
+                "adminRecognizedCode": {
+                    "type": "string"
+                },
+                "failureImageUrl": {
+                    "type": "string"
+                },
+                "platformSaleRate": {
+                    "type": "string"
+                },
+                "platformSettlementAmount": {
+                    "type": "string"
+                },
+                "platformSettlementCurrency": {
+                    "type": "string"
+                },
+                "recognizedCardValue": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "supplierId": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.OrdGiftcardWriteoffsDeleteReq": {
             "type": "object",
             "properties": {
@@ -16113,10 +16216,13 @@ const docTemplateadmin = `{
         "dto.OrdGiftcardWriteoffsInsertReq": {
             "type": "object",
             "properties": {
+                "adminRecognizedCode": {
+                    "type": "string"
+                },
                 "createBy": {
                     "type": "integer"
                 },
-                "giftCardCode": {
+                "failureImageUrl": {
                     "type": "string"
                 },
                 "giftCardId": {
@@ -16125,10 +16231,19 @@ const docTemplateadmin = `{
                 "orderId": {
                     "type": "string"
                 },
+                "platformSaleRate": {
+                    "type": "string"
+                },
+                "recognizedCardValue": {
+                    "type": "string"
+                },
                 "remark": {
                     "type": "string"
                 },
                 "status": {
+                    "type": "integer"
+                },
+                "supplierId": {
                     "type": "string"
                 },
                 "updateBy": {
@@ -16142,10 +16257,13 @@ const docTemplateadmin = `{
         "dto.OrdGiftcardWriteoffsUpdateReq": {
             "type": "object",
             "properties": {
+                "adminRecognizedCode": {
+                    "type": "string"
+                },
                 "createBy": {
                     "type": "integer"
                 },
-                "giftCardCode": {
+                "failureImageUrl": {
                     "type": "string"
                 },
                 "giftCardId": {
@@ -16158,10 +16276,19 @@ const docTemplateadmin = `{
                 "orderId": {
                     "type": "string"
                 },
+                "platformSaleRate": {
+                    "type": "string"
+                },
+                "recognizedCardValue": {
+                    "type": "string"
+                },
                 "remark": {
                     "type": "string"
                 },
                 "status": {
+                    "type": "integer"
+                },
+                "supplierId": {
                     "type": "string"
                 },
                 "updateBy": {
@@ -19363,13 +19490,20 @@ const docTemplateadmin = `{
         "models.OrdGiftcardWriteoffs": {
             "type": "object",
             "properties": {
+                "adminRecognizedCode": {
+                    "description": "新增字段",
+                    "type": "string"
+                },
+                "configRate": {
+                    "type": "string"
+                },
                 "createBy": {
                     "type": "integer"
                 },
                 "createdAt": {
                     "type": "string"
                 },
-                "giftCardCode": {
+                "failureImageUrl": {
                     "type": "string"
                 },
                 "giftCardId": {
@@ -19381,10 +19515,29 @@ const docTemplateadmin = `{
                 "orderId": {
                     "type": "string"
                 },
+                "platformSaleRate": {
+                    "type": "string"
+                },
+                "platformSettlementAmount": {
+                    "description": "平台入账相关字段",
+                    "type": "string"
+                },
+                "platformSettlementCurrency": {
+                    "type": "string"
+                },
+                "platformToUsdRate": {
+                    "type": "string"
+                },
+                "recognizedCardValue": {
+                    "type": "string"
+                },
                 "remark": {
                     "type": "string"
                 },
                 "status": {
+                    "type": "integer"
+                },
+                "supplierId": {
                     "type": "string"
                 },
                 "updateBy": {
@@ -19393,7 +19546,13 @@ const docTemplateadmin = `{
                 "updatedAt": {
                     "type": "string"
                 },
+                "userCurrencyCode": {
+                    "type": "string"
+                },
                 "userId": {
+                    "type": "string"
+                },
+                "userLocalCurrencyAmount": {
                     "type": "string"
                 }
             }
