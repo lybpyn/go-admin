@@ -15812,6 +15812,9 @@ const docTemplateadmin = `{
                 "name": {
                     "type": "string"
                 },
+                "settlementCurrencyCode": {
+                    "type": "string"
+                },
                 "settlementRate": {
                     "type": "string"
                 },
@@ -15855,6 +15858,9 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "settlementCurrencyCode": {
                     "type": "string"
                 },
                 "settlementRate": {
@@ -19333,6 +19339,9 @@ const docTemplateadmin = `{
                 "name": {
                     "type": "string"
                 },
+                "settlementCurrencyCode": {
+                    "type": "string"
+                },
                 "settlementRate": {
                     "type": "string"
                 },
@@ -19490,6 +19499,9 @@ const docTemplateadmin = `{
         "models.OrdGiftcardWriteoffs": {
             "type": "object",
             "properties": {
+                "Name": {
+                    "type": "string"
+                },
                 "adminRecognizedCode": {
                     "description": "新增字段",
                     "type": "string"
@@ -19513,6 +19525,10 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "orderId": {
+                    "type": "string"
+                },
+                "orderNo": {
+                    "description": "关联字段（不存储到数据库，仅用于返回）",
                     "type": "string"
                 },
                 "platformSaleRate": {
@@ -19553,6 +19569,9 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "userLocalCurrencyAmount": {
+                    "type": "string"
+                },
+                "userName": {
                     "type": "string"
                 }
             }

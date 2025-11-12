@@ -2054,6 +2054,8 @@ definitions:
         type: integer
       name:
         type: string
+      settlementCurrencyCode:
+        type: string
       settlementRate:
         type: string
       status:
@@ -2083,6 +2085,8 @@ definitions:
         description: 主键ID
         type: integer
       name:
+        type: string
+      settlementCurrencyCode:
         type: string
       settlementRate:
         type: string
@@ -4401,6 +4405,8 @@ definitions:
         type: integer
       name:
         type: string
+      settlementCurrencyCode:
+        type: string
       settlementRate:
         type: string
       status:
@@ -4504,6 +4510,8 @@ definitions:
     type: object
   models.OrdGiftcardWriteoffs:
     properties:
+      Name:
+        type: string
       adminRecognizedCode:
         description: 新增字段
         type: string
@@ -4520,6 +4528,9 @@ definitions:
       id:
         type: integer
       orderId:
+        type: string
+      orderNo:
+        description: 关联字段（不存储到数据库，仅用于返回）
         type: string
       platformSaleRate:
         type: string
@@ -4547,6 +4558,8 @@ definitions:
       userId:
         type: string
       userLocalCurrencyAmount:
+        type: string
+      userName:
         type: string
     type: object
   models.OrdOrderGiftcardImages:
