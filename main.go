@@ -12,6 +12,10 @@ import (
 // @license.name MIT
 // @license.url https://github.com/go-admin-team/go-admin/blob/master/LICENSE.md
 
+// @host adminapi.cardpartner.io
+// @schemes https
+// @BasePath /
+
 // @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization
