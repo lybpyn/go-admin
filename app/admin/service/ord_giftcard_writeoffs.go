@@ -28,8 +28,7 @@ func (e *OrdGiftcardWriteoffs) GetPage(c *dto.OrdGiftcardWriteoffsGetPageReq, p 
 	err = e.Orm.Model(&data).
 		Select("ord_giftcard_writeoffs.*, "+
 			"ord_user_orders.order_no as order_no, "+
-			"hs_users.first_name as user_first_name, "+
-			"hs_users.second_name as user_second_name, "+
+			"hs_users.username as user_name, "+
 			"ord_giftcard.name as gift_card_name").
 		Joins("LEFT JOIN ord_user_orders ON ord_giftcard_writeoffs.order_id = ord_user_orders.id").
 		Joins("LEFT JOIN hs_users ON ord_giftcard_writeoffs.user_id = hs_users.id").
