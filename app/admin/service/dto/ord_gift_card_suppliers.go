@@ -11,6 +11,7 @@ type OrdGiftCardSuppliersGetPageReq struct {
 	dto.Pagination     `search:"-"`
     Name string `form:"name"  search:"type:exact;column:name;table:ord_gift_card_suppliers" comment:"供应商名称"`
     Code string `form:"code"  search:"type:exact;column:code;table:ord_gift_card_suppliers" comment:"供应商代码"`
+    SettlementCurrencyCode string `form:"settlementCurrencyCode"  search:"type:exact;column:settlement_currency_code;table:ord_gift_card_suppliers" comment:"结算货币代码"`
     ContactPerson string `form:"contactPerson"  search:"type:exact;column:contact_person;table:ord_gift_card_suppliers" comment:"联系人"`
     ContactEmail string `form:"contactEmail"  search:"type:exact;column:contact_email;table:ord_gift_card_suppliers" comment:"联系邮箱"`
     ContactPhone string `form:"contactPhone"  search:"type:exact;column:contact_phone;table:ord_gift_card_suppliers" comment:"联系电话"`
@@ -21,6 +22,7 @@ type OrdGiftCardSuppliersOrder struct {
     Id string `form:"idOrder"  search:"type:order;column:id;table:ord_gift_card_suppliers"`
     Name string `form:"nameOrder"  search:"type:order;column:name;table:ord_gift_card_suppliers"`
     Code string `form:"codeOrder"  search:"type:order;column:code;table:ord_gift_card_suppliers"`
+    SettlementCurrencyCode string `form:"settlementCurrencyCodeOrder"  search:"type:order;column:settlement_currency_code;table:ord_gift_card_suppliers"`
     ContactPerson string `form:"contactPersonOrder"  search:"type:order;column:contact_person;table:ord_gift_card_suppliers"`
     ContactEmail string `form:"contactEmailOrder"  search:"type:order;column:contact_email;table:ord_gift_card_suppliers"`
     ContactPhone string `form:"contactPhoneOrder"  search:"type:order;column:contact_phone;table:ord_gift_card_suppliers"`
@@ -34,7 +36,7 @@ type OrdGiftCardSuppliersOrder struct {
     CreatedAt string `form:"createdAtOrder"  search:"type:order;column:created_at;table:ord_gift_card_suppliers"`
     UpdatedAt string `form:"updatedAtOrder"  search:"type:order;column:updated_at;table:ord_gift_card_suppliers"`
     DeletedAt string `form:"deletedAtOrder"  search:"type:order;column:deleted_at;table:ord_gift_card_suppliers"`
-    
+
 }
 
 func (m *OrdGiftCardSuppliersGetPageReq) GetNeedSearch() interface{} {
@@ -45,6 +47,7 @@ type OrdGiftCardSuppliersInsertReq struct {
     Id int `json:"-" comment:"主键ID"` // 主键ID
     Name string `json:"name" comment:"供应商名称"`
     Code string `json:"code" comment:"供应商代码"`
+    SettlementCurrencyCode string `json:"settlementCurrencyCode" comment:"结算货币代码"`
     ContactPerson string `json:"contactPerson" comment:"联系人"`
     ContactEmail string `json:"contactEmail" comment:"联系邮箱"`
     ContactPhone string `json:"contactPhone" comment:"联系电话"`
@@ -62,6 +65,7 @@ func (s *OrdGiftCardSuppliersInsertReq) Generate(model *models.OrdGiftCardSuppli
     }
     model.Name = s.Name
     model.Code = s.Code
+    model.SettlementCurrencyCode = s.SettlementCurrencyCode
     model.ContactPerson = s.ContactPerson
     model.ContactEmail = s.ContactEmail
     model.ContactPhone = s.ContactPhone
@@ -81,6 +85,7 @@ type OrdGiftCardSuppliersUpdateReq struct {
     Id int `uri:"id" comment:"主键ID"` // 主键ID
     Name string `json:"name" comment:"供应商名称"`
     Code string `json:"code" comment:"供应商代码"`
+    SettlementCurrencyCode string `json:"settlementCurrencyCode" comment:"结算货币代码"`
     ContactPerson string `json:"contactPerson" comment:"联系人"`
     ContactEmail string `json:"contactEmail" comment:"联系邮箱"`
     ContactPhone string `json:"contactPhone" comment:"联系电话"`
@@ -98,6 +103,7 @@ func (s *OrdGiftCardSuppliersUpdateReq) Generate(model *models.OrdGiftCardSuppli
     }
     model.Name = s.Name
     model.Code = s.Code
+    model.SettlementCurrencyCode = s.SettlementCurrencyCode
     model.ContactPerson = s.ContactPerson
     model.ContactEmail = s.ContactEmail
     model.ContactPhone = s.ContactPhone
