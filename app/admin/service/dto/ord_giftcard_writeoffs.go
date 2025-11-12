@@ -121,9 +121,9 @@ func (s *OrdGiftcardWriteoffsDeleteReq) GetId() interface{} {
 
 // OrdGiftcardWriteoffsBatchInsertReq 批量核销请求参数
 type OrdGiftcardWriteoffsBatchInsertReq struct {
-	OrderId      int                             `json:"orderId" binding:"required" comment:"订单ID"`
-	UserId       int                             `json:"userId" binding:"required" comment:"用户ID"`
-	GiftCardId   int                             `json:"giftCardId" comment:"礼品卡ID"`
+	OrderId      string                           `json:"orderId" binding:"required" comment:"订单ID"`
+	UserId       string                           `json:"userId" binding:"required" comment:"用户ID"`
+	GiftCardId   string                           `json:"giftCardId" comment:"礼品卡ID"`
 	WriteoffList []OrdGiftcardWriteoffsBatchItem `json:"writeoffList" binding:"required,min=1" comment:"核销列表"`
 	common.ControlBy
 }
@@ -136,7 +136,7 @@ type OrdGiftcardWriteoffsBatchItem struct {
 	PlatformSaleRate           string `json:"platformSaleRate" comment:"平台售卡汇率"`
 	RecognizedCardValue        string `json:"recognizedCardValue" comment:"识别的卡片面值"`
 	FailureImageUrl            string `json:"failureImageUrl" comment:"失败时的截图URL"`
-	SupplierId                 int    `json:"supplierId" comment:"收卡品牌商ID"`
+	SupplierId                 string `json:"supplierId" comment:"收卡品牌商ID"`
 	PlatformSettlementAmount   string `json:"platformSettlementAmount" comment:"平台入账货币金额"`
 	PlatformSettlementCurrency string `json:"platformSettlementCurrency" comment:"平台入账货币代码"`
 }
