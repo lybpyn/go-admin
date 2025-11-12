@@ -26,6 +26,14 @@ func (e *OrdGiftcardWriteoffs) GetPage(c *dto.OrdGiftcardWriteoffsGetPageReq, p 
 	var data models.OrdGiftcardWriteoffs
 
 	err = e.Orm.Model(&data).
+		Select("ord_giftcard_writeoffs.*, "+
+			"ord_user_orders.order_no as order_no, "+
+			"hs_users.first_name as user_first_name, "+
+			"hs_users.second_name as user_second_name, "+
+			"ord_giftcard.name as gift_card_name").
+		Joins("LEFT JOIN ord_user_orders ON ord_giftcard_writeoffs.order_id = ord_user_orders.id").
+		Joins("LEFT JOIN hs_users ON ord_giftcard_writeoffs.user_id = hs_users.id").
+		Joins("LEFT JOIN ord_giftcard ON ord_giftcard_writeoffs.gift_card_id = ord_giftcard.id").
 		Scopes(
 			cDto.MakeCondition(c.GetNeedSearch()),
 			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
@@ -45,6 +53,14 @@ func (e *OrdGiftcardWriteoffs) Get(d *dto.OrdGiftcardWriteoffsGetReq, p *actions
 	var data models.OrdGiftcardWriteoffs
 
 	err := e.Orm.Model(&data).
+		Select("ord_giftcard_writeoffs.*, "+
+			"ord_user_orders.order_no as order_no, "+
+			"hs_users.first_name as user_first_name, "+
+			"hs_users.second_name as user_second_name, "+
+			"ord_giftcard.name as gift_card_name").
+		Joins("LEFT JOIN ord_user_orders ON ord_giftcard_writeoffs.order_id = ord_user_orders.id").
+		Joins("LEFT JOIN hs_users ON ord_giftcard_writeoffs.user_id = hs_users.id").
+		Joins("LEFT JOIN ord_giftcard ON ord_giftcard_writeoffs.gift_card_id = ord_giftcard.id").
 		Scopes(
 			actions.Permission(data.TableName(), p),
 		).

@@ -30,6 +30,12 @@ type OrdGiftcardWriteoffs struct {
     PlatformSettlementCurrency string `json:"platformSettlementCurrency" gorm:"type:varchar(10);comment:平台入账货币代码"`
     PlatformToUsdRate string `json:"platformToUsdRate" gorm:"type:decimal(20,8);comment:平台入账货币对应美元汇率"`
 
+    // 关联字段（不存储到数据库，仅用于返回）
+    OrderNo string `json:"orderNo" gorm:"-" comment:"订单号"`
+    UserFirstName string `json:"userFirstName" gorm:"-" comment:"用户名"`
+    UserSecondName string `json:"userSecondName" gorm:"-" comment:"用户姓"`
+    GiftCardName string `json:"giftCardName" gorm:"-" comment:"礼品卡名称"`
+
     models.ModelTime
     models.ControlBy
 }
