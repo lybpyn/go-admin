@@ -10499,7 +10499,7 @@ const docTemplateadmin = `{
                         "Bearer": []
                     }
                 ],
-                "description": "根据当前登录用户作为接单人，查询不同状态的订单列表",
+                "description": "根据当前登录用户作为接单人，查询不同状态的订单列表（包含兑换码信息，仅接单人可访问）",
                 "tags": [
                     "礼品卡订单表"
                 ],
@@ -15851,7 +15851,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "supplierId": {
                     "type": "string"
@@ -15897,7 +15897,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "supplierId": {
                     "type": "string"
@@ -15942,7 +15942,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "supplierId": {
                     "type": "string"
@@ -16078,7 +16078,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -16138,7 +16138,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -19132,7 +19132,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "supplierId": {
                     "type": "string"
@@ -19186,17 +19186,20 @@ const docTemplateadmin = `{
         "models.OrdUserOrders": {
             "type": "object",
             "properties": {
+                "OrderNo": {
+                    "type": "string"
+                },
                 "adminRemark": {
                     "type": "string"
                 },
                 "assignBy": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "assignName": {
                     "type": "string"
                 },
                 "assignType": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "balance": {
                     "type": "string"
@@ -19249,6 +19252,9 @@ const docTemplateadmin = `{
                 "processingStartedEnd": {
                     "type": "string"
                 },
+                "processingStatus": {
+                    "type": "integer"
+                },
                 "rate": {
                     "type": "string"
                 },
@@ -19259,7 +19265,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"

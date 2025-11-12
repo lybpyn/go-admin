@@ -28,3 +28,7 @@ nohup.out
 # GitHub templates and workflows
 .github
 database/
+
+# Debug files and logs
+__debug_bin
+access.log

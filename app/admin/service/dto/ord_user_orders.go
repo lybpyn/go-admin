@@ -10,8 +10,9 @@ import (
 
 type OrdUserOrdersGetPageReq struct {
 	dto.Pagination     `search:"-"`
+	OrderNo string `form:"orderNo" search:"type:exact;column:order_no;table:ord_user_orders" comment:"订单号"`
 	UserId string `form:"userId" search:"type:exact;column:user_id;table:ord_user_orders" comment:"用户ID"`
-	Status string `form:"status" search:"type:exact;column:status;table:ord_user_orders" comment:"订单状态"`
+	Status int `form:"status" search:"type:exact;column:status;table:ord_user_orders" comment:"订单状态"`
 	BeginTime string `form:"beginTime" search:"type:gte;column:created_at;table:ord_user_orders" comment:"开始时间"`
 	EndTime string `form:"endTime" search:"type:lte;column:created_at;table:ord_user_orders" comment:"结束时间"`
     OrdUserOrdersOrder
@@ -19,6 +20,7 @@ type OrdUserOrdersGetPageReq struct {
 
 type OrdUserOrdersOrder struct {
     Id string `form:"idOrder"  search:"type:order;column:id;table:ord_user_orders"`
+    OrderNo string `form:"orderNoOrder"  search:"type:order;column:order_no;table:ord_user_orders"`
     UserId string `form:"userIdOrder"  search:"type:order;column:user_id;table:ord_user_orders"`
     RegionId string `form:"regionIdOrder"  search:"type:order;column:region_id;table:ord_user_orders"`
     CategoryId string `form:"categoryIdOrder"  search:"type:order;column:category_id;table:ord_user_orders"`
@@ -57,7 +59,7 @@ type OrdUserOrdersInsertReq struct {
     CurrencyCode string `json:"currencyCode" comment:"币种，例如 USD, CNY"`
     DiscountRate string `json:"discountRate" comment:"折扣"`
     Rate string `json:"rate" comment:"汇率"`
-    Status string `json:"status" comment:"订单状态: 0=待支付,1=已支付,2=已发卡,3=已完成,4=已取消"`
+    Status int `json:"status" comment:"订单状态: 0=待支付,1=已支付,2=已发卡,3=已完成,4=已取消"`
     CardExtra string `json:"cardExtra" comment:""`
     CompletedAt time.Time `json:"completedAt" comment:"完成时间"`
     CanceledAt time.Time `json:"canceledAt" comment:"取消时间"`
@@ -103,7 +105,7 @@ type OrdUserOrdersUpdateReq struct {
     CurrencyCode string `json:"currencyCode" comment:"币种，例如 USD, CNY"`
     DiscountRate string `json:"discountRate" comment:"折扣"`
     Rate string `json:"rate" comment:"汇率"`
-    Status string `json:"status" comment:"订单状态: 0=待支付,1=已支付,2=已发卡,3=已完成,4=已取消"`
+    Status int `json:"status" comment:"订单状态: 0=待支付,1=已支付,2=已发卡,3=已完成,4=已取消"`
     CardExtra string `json:"cardExtra" comment:""`
     CompletedAt time.Time `json:"completedAt" comment:"完成时间"`
     CanceledAt time.Time `json:"canceledAt" comment:"取消时间"`
@@ -157,10 +159,11 @@ func (s *OrdUserOrdersDeleteReq) GetId() interface{} {
 // OrdUserOrdersGetByAssignReq 根据接单人和状态查询订单请求参数
 type OrdUserOrdersGetByAssignReq struct {
 	dto.Pagination `search:"-"`
-	Status string `form:"status" search:"type:exact;column:status;table:ord_user_orders" comment:"订单状态"`
+	OrderNo string `form:"orderNo" search:"type:exact;column:order_no;table:ord_user_orders" comment:"订单号"`
+	Status int `form:"status" search:"type:exact;column:status;table:ord_user_orders" comment:"订单状态"`
 	BeginTime string `form:"beginTime" search:"type:gte;column:created_at;table:ord_user_orders" comment:"开始时间"`
 	EndTime string `form:"endTime" search:"type:lte;column:created_at;table:ord_user_orders" comment:"结束时间"`
-	AssignBy string `json:"-" search:"type:exact;column:assign_by;table:ord_user_orders" comment:"接单人ID（从context自动获取）"`
+	AssignBy int `json:"-" search:"type:exact;column:assign_by;table:ord_user_orders" comment:"接单人ID（从context自动获取）"`
 	OrdUserOrdersOrder
 }
 

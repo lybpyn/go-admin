@@ -2228,7 +2228,7 @@ definitions:
       remark:
         type: string
       status:
-        type: string
+        type: integer
       supplierId:
         type: string
     required:
@@ -2260,7 +2260,7 @@ definitions:
       remark:
         type: string
       status:
-        type: string
+        type: integer
       supplierId:
         type: string
       updateBy:
@@ -2290,7 +2290,7 @@ definitions:
       remark:
         type: string
       status:
-        type: string
+        type: integer
       supplierId:
         type: string
       updateBy:
@@ -2379,7 +2379,7 @@ definitions:
       remark:
         type: string
       status:
-        type: string
+        type: integer
       updateBy:
         type: integer
       userId:
@@ -2419,7 +2419,7 @@ definitions:
       remark:
         type: string
       status:
-        type: string
+        type: integer
       updateBy:
         type: integer
       userId:
@@ -4419,7 +4419,7 @@ definitions:
       remark:
         type: string
       status:
-        type: string
+        type: integer
       supplierId:
         type: string
       updateBy:
@@ -4454,14 +4454,16 @@ definitions:
     type: object
   models.OrdUserOrders:
     properties:
+      OrderNo:
+        type: string
       adminRemark:
         type: string
       assignBy:
-        type: string
+        type: integer
       assignName:
         type: string
       assignType:
-        type: string
+        type: integer
       balance:
         type: string
       balanceType:
@@ -4496,6 +4498,8 @@ definitions:
         type: string
       processingStartedEnd:
         type: string
+      processingStatus:
+        type: integer
       rate:
         type: string
       regionId:
@@ -4503,7 +4507,7 @@ definitions:
       remark:
         type: string
       status:
-        type: string
+        type: integer
       updateBy:
         type: integer
       updatedAt:
@@ -11023,7 +11027,7 @@ paths:
       - 礼品卡订单表
   /api/v1/ord-user-orders/my-assigned:
     get:
-      description: 根据当前登录用户作为接单人，查询不同状态的订单列表
+      description: 根据当前登录用户作为接单人，查询不同状态的订单列表（包含兑换码信息，仅接单人可访问）
       parameters:
       - description: 订单状态
         in: query

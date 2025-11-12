@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
 
     "github.com/go-admin-team/go-admin-core/sdk/service"
 	"gorm.io/gorm"
@@ -89,13 +88,13 @@ func (e *OrdOrderGiftcardImages) checkImagePermission(image *models.OrdOrderGift
 	}
 
 	// 如果订单已完成（status=3），所有人都可以查看
-	if order.Status == "3" {
+	if order.Status == 3 {
 		return nil
 	}
 
 	// 如果订单未完成，只有接单人可以查看
-	if order.AssignBy != fmt.Sprintf("%d", adminId) {
-		e.Log.Errorf("Permission denied: order not completed and not assigned to current admin, orderId:%s, assignBy:%s, currentAdmin:%d", image.OrderId, order.AssignBy, adminId)
+	if order.AssignBy != adminId {
+		e.Log.Errorf("Permission denied: order not completed and not assigned to current admin, orderId:%s, assignBy:%d, currentAdmin:%d", image.OrderId, order.AssignBy, adminId)
 		return errors.New("无权查看该订单图片，只有接单人或已完成订单可以查看")
 	}
 

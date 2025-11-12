@@ -217,7 +217,7 @@ func (e OrdUserOrders) GetPageByAssign(c *gin.Context) {
    	}
 
 	// 自动设置接单人ID为当前登录用户ID，确保只能查询自己接的单
-	req.AssignBy = fmt.Sprintf("%d", user.GetUserId(c))
+	req.AssignBy = user.GetUserId(c)
 
 	p := actions.GetPermissionFromContext(c)
 	list := make([]models.OrdUserOrders, 0)

@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
 
     "github.com/go-admin-team/go-admin-core/sdk/service"
 	"gorm.io/gorm"
@@ -59,7 +58,7 @@ func (e *OrdUserOrders) Get(d *dto.OrdUserOrdersGetReq, p *actions.DataPermissio
 	}
 
 	// 只有已完成状态（status=3）的订单才能查看兑换码
-	if model.Status != "3" {
+	if model.Status != 3 {
 		model.GiftCardCode = ""
 	}
 
@@ -86,7 +85,16 @@ func (e *OrdUserOrders) Update(c *dto.OrdUserOrdersUpdateReq, p *actions.DataPer
     e.Orm.Scopes(
             actions.Permission(data.TableName(), p),
         ).First(&data, c.GetId())
+
+    // 记录原始状态
+    oldStatus := data.Status
+
     c.Generate(&data)
+
+    // 如果订单状态从非完成状态变更为完成状态（3），自动设置 ProcessingStatus = 3
+    if oldStatus != 3 && data.Status == 3 {
+        data.ProcessingStatus = 3
+    }
 
     db := e.Orm.Save(&data)
     if err = db.Error; err != nil {
@@ -124,7 +132,7 @@ func (e *OrdUserOrders) GetPageByAssign(c *dto.OrdUserOrdersGetByAssignReq, p *a
 	var data models.OrdUserOrders
 
 	// 确保AssignBy参数不为空（必须由API层从context自动设置）
-	if c.AssignBy == "" || c.AssignBy == "0" {
+	if c.AssignBy == 0 {
 		e.Log.Errorf("GetPageByAssign error: AssignBy is required")
 		return errors.New("接单人ID不能为空")
 	}
@@ -166,14 +174,14 @@ func (e *OrdUserOrders) AcceptOrder(c *dto.OrdUserOrdersAcceptReq, adminId int, 
 	}
 
 	// 检查订单是否已被接单
-	if order.AssignBy != "" && order.AssignBy != "0" {
-		e.Log.Errorf("AcceptOrder error: order already accepted, id:%v, assign_by:%s", c.GetId(), order.AssignBy)
+	if order.AssignBy != 0 {
+		e.Log.Errorf("AcceptOrder error: order already accepted, id:%v, assign_by:%d", c.GetId(), order.AssignBy)
 		return errors.New("订单已被接单，无法重复接单")
 	}
 
 	// 检查订单状态是否允许接单（例如：只有已支付状态才能接单）
-	if order.Status != "1" {
-		e.Log.Errorf("AcceptOrder error: invalid order status, id:%v, status:%s", c.GetId(), order.Status)
+	if order.Status != 1 {
+		e.Log.Errorf("AcceptOrder error: invalid order status, id:%v, status:%d", c.GetId(), order.Status)
 		return errors.New("订单状态不允许接单")
 	}
 
@@ -181,14 +189,15 @@ func (e *OrdUserOrders) AcceptOrder(c *dto.OrdUserOrdersAcceptReq, adminId int, 
 	updates := map[string]interface{}{
 		"assign_by":              adminId,
 		"assign_name":            adminName,
-		"assign_type":            "0", // 0=人工接单
+		"assign_type":            1, // 1=人工接单
 		"processing_started_at":  gorm.Expr("NOW()"),
+		"processing_status":      1, // 1=正在处理
 		"update_by":              adminId,
 	}
 
 	db := e.Orm.Model(&order).
 		Where("id = ?", c.GetId()).
-		Where("(assign_by IS NULL OR assign_by = '' OR assign_by = '0')"). // 再次确认未被接单
+		Where("(assign_by IS NULL OR assign_by = 0)"). // 再次确认未被接单
 		Updates(updates)
 
 	if err = db.Error; err != nil {
@@ -225,20 +234,20 @@ func (e *OrdUserOrders) CancelAcceptOrder(c *dto.OrdUserOrdersCancelAcceptReq, a
 	}
 
 	// 检查订单是否已被接单
-	if order.AssignBy == "" || order.AssignBy == "0" {
+	if order.AssignBy == 0 {
 		e.Log.Errorf("CancelAcceptOrder error: order not accepted yet, id:%v", c.GetId())
 		return errors.New("订单未被接单，无法取消接单")
 	}
 
 	// 检查是否是当前管理员接的单
-	if order.AssignBy != fmt.Sprintf("%d", adminId) {
-		e.Log.Errorf("CancelAcceptOrder error: order accepted by another admin, id:%v, assign_by:%s, current_admin:%d", c.GetId(), order.AssignBy, adminId)
+	if order.AssignBy != adminId {
+		e.Log.Errorf("CancelAcceptOrder error: order accepted by another admin, id:%v, assign_by:%d, current_admin:%d", c.GetId(), order.AssignBy, adminId)
 		return errors.New("只能取消自己接的单")
 	}
 
 	// 检查订单状态是否允许取消接单（已完成或已取消的订单不能取消接单）
-	if order.Status == "3" || order.Status == "4" {
-		e.Log.Errorf("CancelAcceptOrder error: invalid order status, id:%v, status:%s", c.GetId(), order.Status)
+	if order.Status == 3 || order.Status == 4 {
+		e.Log.Errorf("CancelAcceptOrder error: invalid order status, id:%v, status:%d", c.GetId(), order.Status)
 		return errors.New("订单已完成或已取消，无法取消接单")
 	}
 
@@ -249,6 +258,7 @@ func (e *OrdUserOrders) CancelAcceptOrder(c *dto.OrdUserOrdersCancelAcceptReq, a
 		"assign_type":            nil,
 		"processing_started_at":  nil,
 		"processing_started_end": nil,
+		"processing_status":      2, // 2=取消
 		"update_by":              adminId,
 	}
 
