@@ -209,18 +209,22 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 			}
 		}
 
-		// 6. 构建批量插入数据并计算总金额
+		// 6. 预先转换公共字段，避免循环中重复转换
+		userId, _ := strconv.Atoi(c.UserId)
+		orderId, _ := strconv.Atoi(c.OrderId)
+		giftCardId, _ := strconv.Atoi(c.GiftCardId)
+		configRateFloat, _ := strconv.ParseFloat(configRate, 64)
+
+		// 7. 构建批量插入数据并计算总金额
 		writeoffRecords := make([]models.OrdGiftcardWriteoffs, 0, len(c.WriteoffList))
 		var totalAmount float64 = 0
 
 		for _, item := range c.WriteoffList {
 			// 计算转换后的金额
-			convertedAmount := "0.00000000"
+			var convertedAmount string = "0.00000000"
 			if item.RecognizedCardValue != "" {
-				cardValue, err1 := strconv.ParseFloat(item.RecognizedCardValue, 64)
-				rate, err2 := strconv.ParseFloat(configRate, 64)
-				if err1 == nil && err2 == nil {
-					amount := cardValue * rate
+				if cardValue, err := strconv.ParseFloat(item.RecognizedCardValue, 64); err == nil {
+					amount := cardValue * configRateFloat
 					convertedAmount = fmt.Sprintf("%.8f", amount)
 
 					// 只累加状态为"已核销"（status=1）的金额
@@ -247,10 +251,6 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 				}
 			}
 
-			userId, _ := strconv.Atoi(c.UserId)
-			orderId, _ := strconv.Atoi(c.OrderId)
-			giftCardId, _ := strconv.Atoi(c.GiftCardId)
-
 			record := models.OrdGiftcardWriteoffs{
 				UserId:                     userId,
 				OrderId:                    orderId,
@@ -273,14 +273,14 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 			writeoffRecords = append(writeoffRecords, record)
 		}
 
-		// 7. 批量插入核销记录
+		// 8. 批量插入核销记录
 		err = tx.Create(&writeoffRecords).Error
 		if err != nil {
 			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert error:%s \r\n", err)
 			return err
 		}
 
-		// 8. 判断核销结果并更新订单状态
+		// 9. 判断核销结果并更新订单状态
 		hasSuccess := false
 		hasFailure := false
 		for _, record := range writeoffRecords {
