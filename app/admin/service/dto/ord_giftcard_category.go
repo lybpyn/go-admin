@@ -15,6 +15,7 @@ type OrdGiftcardCategoryGetPageReq struct {
 type OrdGiftcardCategoryOrder struct {
     Id string `form:"idOrder"  search:"type:order;column:id;table:ord_giftcard_category"`
     Name string `form:"nameOrder"  search:"type:order;column:name;table:ord_giftcard_category"`
+    Logo string `form:"logoOrder"  search:"type:order;column:logo;table:ord_giftcard_category"`
     Status string `form:"statusOrder"  search:"type:order;column:status;table:ord_giftcard_category"`
     DiscountRate string `form:"discountRateOrder"  search:"type:order;column:discount_rate;table:ord_giftcard_category"`
     SortOrder string `form:"sortOrderOrder"  search:"type:order;column:sort_order;table:ord_giftcard_category"`
@@ -23,7 +24,7 @@ type OrdGiftcardCategoryOrder struct {
     CreatedAt string `form:"createdAtOrder"  search:"type:order;column:created_at;table:ord_giftcard_category"`
     UpdatedAt string `form:"updatedAtOrder"  search:"type:order;column:updated_at;table:ord_giftcard_category"`
     DeletedAt string `form:"deletedAtOrder"  search:"type:order;column:deleted_at;table:ord_giftcard_category"`
-    
+
 }
 
 func (m *OrdGiftcardCategoryGetPageReq) GetNeedSearch() interface{} {
@@ -33,6 +34,7 @@ func (m *OrdGiftcardCategoryGetPageReq) GetNeedSearch() interface{} {
 type OrdGiftcardCategoryInsertReq struct {
     Id int `json:"-" comment:"分类ID"` // 分类ID
     Name string `json:"name" comment:"分类名称，如 Steam、eBay"`
+    Logo string `json:"logo" comment:"分类Logo图片URL"`
     Status string `json:"status" comment:"状态: 1=启用, 0=禁用"`
     DiscountRate string `json:"discountRate" comment:"汇率折扣展示用"`
     SortOrder string `json:"sortOrder" comment:""`
@@ -44,6 +46,7 @@ func (s *OrdGiftcardCategoryInsertReq) Generate(model *models.OrdGiftcardCategor
         model.Model = common.Model{ Id: s.Id }
     }
     model.Name = s.Name
+    model.Logo = s.Logo
     model.Status = s.Status
     model.DiscountRate = s.DiscountRate
     model.SortOrder = s.SortOrder
@@ -57,6 +60,7 @@ func (s *OrdGiftcardCategoryInsertReq) GetId() interface{} {
 type OrdGiftcardCategoryUpdateReq struct {
     Id int `uri:"id" comment:"分类ID"` // 分类ID
     Name string `json:"name" comment:"分类名称，如 Steam、eBay"`
+    Logo string `json:"logo" comment:"分类Logo图片URL"`
     Status string `json:"status" comment:"状态: 1=启用, 0=禁用"`
     DiscountRate string `json:"discountRate" comment:"汇率折扣展示用"`
     SortOrder string `json:"sortOrder" comment:""`
@@ -68,6 +72,7 @@ func (s *OrdGiftcardCategoryUpdateReq) Generate(model *models.OrdGiftcardCategor
         model.Model = common.Model{ Id: s.Id }
     }
     model.Name = s.Name
+    model.Logo = s.Logo
     model.Status = s.Status
     model.DiscountRate = s.DiscountRate
     model.SortOrder = s.SortOrder

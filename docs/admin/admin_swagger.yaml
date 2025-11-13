@@ -2108,6 +2108,8 @@ definitions:
         type: integer
       discountRate:
         type: string
+      logo:
+        type: string
       name:
         type: string
       sortOrder:
@@ -2126,6 +2128,8 @@ definitions:
       id:
         description: 分类ID
         type: integer
+      logo:
+        type: string
       name:
         type: string
       sortOrder:
@@ -4451,6 +4455,8 @@ definitions:
         type: string
       id:
         type: integer
+      logo:
+        type: string
       name:
         type: string
       sortOrder:

@@ -15930,6 +15930,9 @@ const docTemplateadmin = `{
                 "discountRate": {
                     "type": "string"
                 },
+                "logo": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -15956,6 +15959,9 @@ const docTemplateadmin = `{
                 "id": {
                     "description": "分类ID",
                     "type": "integer"
+                },
+                "logo": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
@@ -19444,6 +19450,9 @@ const docTemplateadmin = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "logo": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
