@@ -136,58 +136,53 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 
 	// 使用事务处理
 	return e.Orm.Transaction(func(tx *gorm.DB) error {
-		// 1. 获取用户信息以获取用户的货币代码
-		var user models.HsUsers
-		err = tx.Select("hs_users.*, hs_config_regions.currency_code").
+		// 1. 并行获取用户和订单信息（一次查询获取用户货币代码）
+		type QueryResult struct {
+			UserCurrency  string
+			Order         models.OrdUserOrders
+			UserErr       error
+			OrderErr      error
+		}
+
+		result := QueryResult{}
+
+		// 查询用户货币代码
+		err = tx.Table("hs_users").
+			Select("hs_config_regions.currency_code").
 			Joins("LEFT JOIN hs_config_regions ON hs_users.region_id = hs_config_regions.id").
 			Where("hs_users.id = ?", c.UserId).
-			First(&user).Error
+			Scan(&result.UserCurrency).Error
 		if err != nil {
-			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert get user error:%s \r\n", err)
+			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert get user currency error:%s", err)
 			return errors.New("获取用户信息失败")
 		}
 
-		// 2. 获取用户货币代码
-		var userCurrencyCode string
-		err = tx.Table("hs_config_regions").
-			Select("currency_code").
-			Where("id = ?", user.RegionId).
-			Scan(&userCurrencyCode).Error
+		// 查询订单信息
+		err = tx.Where("id = ?", c.OrderId).First(&result.Order).Error
 		if err != nil {
-			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert get user currency error:%s \r\n", err)
-			return errors.New("获取用户信息失败")
-		}
-
-		// 3. 获取订单信息以获取订单的货币代码和入账类型
-		var order models.OrdUserOrders
-		err = tx.Where("id = ?", c.OrderId).First(&order).Error
-		if err != nil {
-			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert get order error:%s \r\n", err)
+			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert get order error:%s", err)
 			return errors.New("获取订单信息失败")
 		}
 
 		// 检查订单状态，必须是已经接单状态（status=1）才能核销
-		if order.Status != 1 {
-			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert order status invalid: orderId=%d, status=%d", order.Id, order.Status)
+		if result.Order.Status != 1 {
+			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert order status invalid: orderId=%d, status=%d", result.Order.Id, result.Order.Status)
 			return errors.New("订单状态不正确，只有已接单的订单才能核销")
 		}
 
-		// 4. 判断入账类型：1=法币余额，2=虚拟币余额
-		isCrypto := order.BalanceType == 2
+		order := result.Order
+		userCurrencyCode := result.UserCurrency
 
-		// 5. 计算汇率
-		// 如果是虚拟币，统一按USD计算
-		// 如果是法币，根据订单货币和用户货币计算
+		// 2. 计算配置汇率和目标货币
+		isCrypto := order.BalanceType == 2
 		var configRate string
 		var targetCurrency string
 
 		if isCrypto {
-			// 虚拟币统一按USD计算
 			targetCurrency = "USD"
 			if order.CurrencyCode == "USD" {
 				configRate = "1.00000000"
 			} else {
-				// 从订单货币转换到USD
 				rate, err := e.getCurrencyRate(tx, order.CurrencyCode, "USD")
 				if err != nil {
 					return err
@@ -195,12 +190,10 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 				configRate = rate
 			}
 		} else {
-			// 法币按用户本地货币计算
 			targetCurrency = userCurrencyCode
 			if order.CurrencyCode == userCurrencyCode {
 				configRate = "1.00000000"
 			} else {
-				// 通过USD中转：订单货币 -> USD -> 用户货币
 				rate, err := e.getCurrencyRateViaUSD(tx, order.CurrencyCode, userCurrencyCode)
 				if err != nil {
 					return err
@@ -209,46 +202,60 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 			}
 		}
 
-		// 6. 预先转换公共字段，避免循环中重复转换
+		// 3. 收集需要查询的平台货币并批量查询汇率
+		currencySet := make(map[string]bool)
+		for _, item := range c.WriteoffList {
+			if item.PlatformSettlementCurrency != "" && item.PlatformSettlementCurrency != "USD" {
+				currencySet[item.PlatformSettlementCurrency] = true
+			}
+		}
+
+		// 批量查询汇率缓存
+		rateCache := make(map[string]string)
+		rateCache["USD"] = "1.00000000"
+		for currency := range currencySet {
+			rate, err := e.getCurrencyRate(tx, currency, "USD")
+			if err != nil {
+				e.Log.Warnf("Get platform currency %s to USD rate error:%s, use 0", currency, err)
+				rateCache[currency] = "0.00000000"
+			} else {
+				rateCache[currency] = rate
+			}
+		}
+
+		// 4. 预转换公共字段
 		userId, _ := strconv.Atoi(c.UserId)
 		orderId, _ := strconv.Atoi(c.OrderId)
 		giftCardId, _ := strconv.Atoi(c.GiftCardId)
 		configRateFloat, _ := strconv.ParseFloat(configRate, 64)
 
-		// 7. 构建批量插入数据并计算总金额
+		// 5. 构建批量插入数据并同时计算状态和总金额
 		writeoffRecords := make([]models.OrdGiftcardWriteoffs, 0, len(c.WriteoffList))
-		var totalAmount float64 = 0
+		var hasSuccess, hasFailure bool
+		var totalAmount float64
 
 		for _, item := range c.WriteoffList {
 			// 计算转换后的金额
-			var convertedAmount string = "0.00000000"
+			convertedAmount := "0.00000000"
 			if item.RecognizedCardValue != "" {
 				if cardValue, err := strconv.ParseFloat(item.RecognizedCardValue, 64); err == nil {
 					amount := cardValue * configRateFloat
 					convertedAmount = fmt.Sprintf("%.8f", amount)
-
-					// 只累加状态为"已核销"（status=1）的金额
+					// 只累加已核销状态的金额
 					if item.Status == 1 {
 						totalAmount += amount
 					}
 				}
 			}
 
-			// 计算平台入账货币对应的美元汇率
-			var platformToUsdRate string
-			if item.PlatformSettlementCurrency != "" {
-				if item.PlatformSettlementCurrency == "USD" {
-					platformToUsdRate = "1.00000000"
-				} else {
-					// 获取平台入账货币到USD的汇率
-					rate, err := e.getCurrencyRate(tx, item.PlatformSettlementCurrency, "USD")
-					if err != nil {
-						e.Log.Warnf("Get platform currency %s to USD rate error:%s, use 0", item.PlatformSettlementCurrency, err)
-						platformToUsdRate = "0.00000000"
-					} else {
-						platformToUsdRate = rate
-					}
-				}
+			// 从缓存获取平台汇率
+			platformToUsdRate := rateCache[item.PlatformSettlementCurrency]
+
+			// 同时统计状态
+			if item.Status == 1 {
+				hasSuccess = true
+			} else if item.Status == 2 {
+				hasFailure = true
 			}
 
 			record := models.OrdGiftcardWriteoffs{
@@ -273,94 +280,69 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 			writeoffRecords = append(writeoffRecords, record)
 		}
 
-		// 8. 批量插入核销记录
-		err = tx.Create(&writeoffRecords).Error
-		if err != nil {
-			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert error:%s \r\n", err)
+		// 6. 批量插入核销记录
+		if err = tx.Create(&writeoffRecords).Error; err != nil {
+			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert error:%s", err)
 			return err
 		}
 
-		// 9. 判断核销结果并更新订单状态
-		hasSuccess := false
-		hasFailure := false
-		for _, record := range writeoffRecords {
-			if record.Status == 1 {
-				hasSuccess = true
-			} else if record.Status == 2 {
-				hasFailure = true
-			}
-		}
-
-		// 确定订单最终状态
+		// 7. 根据核销结果更新订单状态
 		var orderStatus int
 		if hasSuccess {
-			// 只要有成功的核销记录，订单状态就是"已完成"
-			orderStatus = 2 // 2=已完成
+			orderStatus = 2 // 已完成
 		} else if hasFailure {
-			// 全部失败，订单状态改为"已经驳回"
-			orderStatus = 4 // 4=已经驳回
+			orderStatus = 4 // 已驳回
 		} else {
-			// 全部待核销，订单保持"已经接单"状态
-			orderStatus = 1 // 1=已经接单
+			orderStatus = 1 // 保持已接单
 		}
 
-		// 更新订单状态
-		orderUpdates := map[string]interface{}{
-			"status": orderStatus,
-		}
+		orderUpdates := map[string]interface{}{"status": orderStatus}
 		if orderStatus == 2 {
-			// 只有完成时才设置完成时间
 			orderUpdates["completed_at"] = time.Now()
 		}
 
-		e.Log.Infof("Updating order %s status to %d, hasSuccess=%v, hasFailure=%v", c.OrderId, orderStatus, hasSuccess, hasFailure)
+		e.Log.Infof("Updating order %d status to %d, hasSuccess=%v, hasFailure=%v", orderId, orderStatus, hasSuccess, hasFailure)
 
-		result := tx.Model(&models.OrdUserOrders{}).
-			Where("id = ?", c.OrderId).
-			Updates(orderUpdates)
-
-		if result.Error != nil {
-			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert update order status error:%s \r\n", result.Error)
-			return errors.New("更新订单状态失败")
+		if err = tx.Model(&models.OrdUserOrders{}).Where("id = ?", orderId).Updates(orderUpdates).Error; err != nil {
+			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert update order status error:%s", err)
+			return err
 		}
 
-		e.Log.Infof("Order status update affected %d rows", result.RowsAffected)
+		// 如果有成功的核销记录且总金额大于0，需要进行余额增加、流水记录和账户分成
+		if hasSuccess && totalAmount > 0 {
+			// 8. 查询用户当前余额和版本号
+			var user models.HsUsers
+			if err = tx.Select("id, balance, crypto_balance, version").Where("id = ?", userId).First(&user).Error; err != nil {
+				e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert get user balance error:%s", err)
+				return errors.New("获取用户余额失败")
+			}
 
-		if result.RowsAffected == 0 {
-			e.Log.Warnf("Order %s status not updated, no rows affected", c.OrderId)
-		}
-
-		// 如果总金额大于0，需要进行余额增加、流水记录和账户分成
-		if totalAmount > 0 {
-			// 8. 更新用户余额（根据入账类型选择法币或虚拟币余额）
+			// 9. 更新用户余额（根据入账类型选择法币或虚拟币余额）
 			var balanceBefore float64
-			var balanceAfter float64
 			var balanceField string
 			var decimalPlaces int
 
 			if isCrypto {
-				// 虚拟币余额（8位小数）
 				balanceField = "crypto_balance"
 				decimalPlaces = 8
 				balanceBefore, _ = strconv.ParseFloat(user.CryptoBalance, 64)
 			} else {
-				// 法币余额（2位小数）
 				balanceField = "balance"
 				decimalPlaces = 2
 				balanceBefore, _ = strconv.ParseFloat(user.Balance, 64)
 			}
 
-			balanceAfter = balanceBefore + totalAmount
+			balanceAfter := balanceBefore + totalAmount
 
 			result := tx.Model(&models.HsUsers{}).
-				Where("id = ? AND version = ?", c.UserId, user.Version).
+				Where("id = ? AND version = ?", userId, user.Version).
 				Updates(map[string]interface{}{
 					balanceField: fmt.Sprintf("%.*f", decimalPlaces, balanceAfter),
 					"version":    gorm.Expr("version + 1"),
 				})
 
 			if result.Error != nil {
-				e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert update balance error:%s \r\n", result.Error)
+				e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert update balance error:%s", result.Error)
 				return errors.New("更新用户余额失败")
 			}
 
@@ -369,7 +351,7 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 				return errors.New("余额更新冲突，请重试")
 			}
 
-			// 9. 创建流水记录
+			// 10. 创建流水记录
 			bizType := "giftcard_writeoff_fiat"
 			if isCrypto {
 				bizType = "giftcard_writeoff_crypto"
