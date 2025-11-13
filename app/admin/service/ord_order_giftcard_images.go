@@ -87,8 +87,8 @@ func (e *OrdOrderGiftcardImages) checkImagePermission(image *models.OrdOrderGift
 		return err
 	}
 
-	// 如果订单已完成（status=3），所有人都可以查看
-	if order.Status == 3 {
+	// 如果订单已完成（status=2），所有人都可以查看
+	if order.Status == 2 {
 		return nil
 	}
 

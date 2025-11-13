@@ -57,8 +57,8 @@ func (e *OrdUserOrders) Get(d *dto.OrdUserOrdersGetReq, p *actions.DataPermissio
 		return err
 	}
 
-	// 只有已完成状态（status=3）的订单才能查看兑换码
-	if model.Status != 3 {
+	// 只有已完成状态（status=2）的订单才能查看兑换码
+	if model.Status != 2 {
 		model.GiftCardCode = ""
 	}
 
@@ -92,8 +92,8 @@ func (e *OrdUserOrders) Update(c *dto.OrdUserOrdersUpdateReq, p *actions.DataPer
 
     c.Generate(&data)
 
-    // 如果订单状态从非完成状态变更为完成状态（3），自动设置相关字段
-    if oldStatus != 3 && data.Status == 3 {
+    // 如果订单状态从非完成状态变更为完成状态（2），自动设置相关字段
+    if oldStatus != 2 && data.Status == 2 {
         data.ProcessingStatus = 3
 
         // 计算处理耗时（秒）：从开始处理时间到现在
@@ -200,10 +200,10 @@ func (e *OrdUserOrders) AcceptOrder(c *dto.OrdUserOrdersAcceptReq, adminId int, 
 		return errors.New("订单已被接单，无法重复接单")
 	}
 
-	// 检查订单状态是否允许接单（例如：只有已支付状态才能接单）
-	if order.Status != 1 {
+	// 检查订单状态是否允许接单（只有待处理状态0才能接单）
+	if order.Status != 0 {
 		e.Log.Errorf("AcceptOrder error: invalid order status, id:%v, status:%d", c.GetId(), order.Status)
-		return errors.New("订单状态不允许接单")
+		return errors.New("订单状态不允许接单，只有待处理的订单才能接单")
 	}
 
 	// 更新接单信息
@@ -211,6 +211,7 @@ func (e *OrdUserOrders) AcceptOrder(c *dto.OrdUserOrdersAcceptReq, adminId int, 
 		"assign_by":              adminId,
 		"assign_name":            adminName,
 		"assign_type":            1, // 1=人工接单
+		"status":                 1, // 更新订单状态为"已经接单"
 		"processing_started_at":  gorm.Expr("NOW()"),
 		"processing_status":      1, // 1=正在处理
 		"update_by":              adminId,
@@ -266,10 +267,10 @@ func (e *OrdUserOrders) CancelAcceptOrder(c *dto.OrdUserOrdersCancelAcceptReq, a
 		return errors.New("只能取消自己接的单")
 	}
 
-	// 检查订单状态是否允许取消接单（已完成或已取消的订单不能取消接单）
-	if order.Status == 3 || order.Status == 4 {
+	// 检查订单状态是否允许取消接单（已完成、已取消或已驳回的订单不能取消接单）
+	if order.Status == 2 || order.Status == 3 || order.Status == 4 {
 		e.Log.Errorf("CancelAcceptOrder error: invalid order status, id:%v, status:%d", c.GetId(), order.Status)
-		return errors.New("订单已完成或已取消，无法取消接单")
+		return errors.New("订单已完成、已取消或已驳回，无法取消接单")
 	}
 
 	// 更新订单信息，清空接单相关字段
@@ -277,6 +278,7 @@ func (e *OrdUserOrders) CancelAcceptOrder(c *dto.OrdUserOrdersCancelAcceptReq, a
 		"assign_by":              nil,
 		"assign_name":            nil,
 		"assign_type":            nil,
+		"status":                 0, // 恢复为"待处理"状态
 		"processing_started_at":  nil,
 		"processing_started_end": nil,
 		"processing_status":      2, // 2=取消
