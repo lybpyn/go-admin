@@ -166,6 +166,12 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 			return errors.New("获取订单信息失败")
 		}
 
+		// 检查订单状态，必须是已经接单状态（status=1）才能核销
+		if order.Status != 1 {
+			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert order status invalid: orderId=%d, status=%d", order.Id, order.Status)
+			return errors.New("订单状态不正确，只有已接单的订单才能核销")
+		}
+
 		// 4. 判断入账类型：1=法币余额，2=虚拟币余额
 		isCrypto := order.BalanceType == 2
 
