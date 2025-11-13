@@ -229,9 +229,21 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 		giftCardId, _ := strconv.Atoi(c.GiftCardId)
 		configRateFloat, _ := strconv.ParseFloat(configRate, 64)
 
-		// 5. 构建批量插入数据并同时计算状态和总金额
+		// 5. 验证核销状态并构建批量插入数据
+		if len(c.WriteoffList) == 0 {
+			return errors.New("核销记录列表不能为空")
+		}
+
+		// 获取第一条记录的状态作为订单最终状态
+		finalStatus := c.WriteoffList[0].Status
+
+		// 核销状态只能是成功(1)或失败(2)
+		if finalStatus != 1 && finalStatus != 2 {
+			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert invalid writeoff status: %d", finalStatus)
+			return errors.New("核销状态无效，只能是已核销(1)或失败(2)")
+		}
+
 		writeoffRecords := make([]models.OrdGiftcardWriteoffs, 0, len(c.WriteoffList))
-		var hasSuccess, hasFailure bool
 		var totalAmount float64
 
 		for _, item := range c.WriteoffList {
@@ -250,13 +262,6 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 
 			// 从缓存获取平台汇率
 			platformToUsdRate := rateCache[item.PlatformSettlementCurrency]
-
-			// 同时统计状态
-			if item.Status == 1 {
-				hasSuccess = true
-			} else if item.Status == 2 {
-				hasFailure = true
-			}
 
 			record := models.OrdGiftcardWriteoffs{
 				UserId:                     userId,
@@ -286,30 +291,38 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 			return err
 		}
 
-		// 7. 根据核销结果更新订单状态
+		// 7. 根据核销状态更新订单状态和处理状态
+		// 核销成功(1) → 订单完成(2)，处理状态完成(3)
+		// 核销失败(2) → 订单驳回(4)，处理状态取消(2)
 		var orderStatus int
-		if hasSuccess {
-			orderStatus = 2 // 已完成
-		} else if hasFailure {
-			orderStatus = 4 // 已驳回
+		var processingStatus int
+		if finalStatus == 1 {
+			orderStatus = 2         // 订单完成
+			processingStatus = 3     // 处理完成
 		} else {
-			orderStatus = 1 // 保持已接单
+			orderStatus = 4         // 订单驳回
+			processingStatus = 2    // 处理取消
 		}
 
-		orderUpdates := map[string]interface{}{"status": orderStatus}
+		orderUpdates := map[string]interface{}{
+			"status":             orderStatus,
+			"processing_status":  processingStatus,
+			"processing_started_end": time.Now(),
+		}
+
 		if orderStatus == 2 {
 			orderUpdates["completed_at"] = time.Now()
 		}
 
-		e.Log.Infof("Updating order %d status to %d, hasSuccess=%v, hasFailure=%v", orderId, orderStatus, hasSuccess, hasFailure)
+		e.Log.Infof("Updating order %d: status=%d, processing_status=%d (writeoff status: %d)", orderId, orderStatus, processingStatus, finalStatus)
 
 		if err = tx.Model(&models.OrdUserOrders{}).Where("id = ?", orderId).Updates(orderUpdates).Error; err != nil {
 			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert update order status error:%s", err)
 			return err
 		}
 
-		// 如果有成功的核销记录且总金额大于0，需要进行余额增加、流水记录和账户分成
-		if hasSuccess && totalAmount > 0 {
+		// 如果核销成功且总金额大于0，需要进行余额增加、流水记录和账户分成
+		if finalStatus == 1 && totalAmount > 0 {
 			// 8. 查询用户当前余额和版本号
 			var user models.HsUsers
 			if err = tx.Select("id, balance, crypto_balance, version").Where("id = ?", userId).First(&user).Error; err != nil {
