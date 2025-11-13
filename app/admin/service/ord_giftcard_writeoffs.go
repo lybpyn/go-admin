@@ -223,10 +223,7 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 			}
 		}
 
-		// 4. 预转换公共字段
-		userId, _ := strconv.Atoi(c.UserId)
-		orderId, _ := strconv.Atoi(c.OrderId)
-		giftCardId, _ := strconv.Atoi(c.GiftCardId)
+		// 4. 预转换配置汇率
 		configRateFloat, _ := strconv.ParseFloat(configRate, 64)
 
 		// 5. 验证核销状态并构建批量插入数据
@@ -264,9 +261,9 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 			platformToUsdRate := rateCache[item.PlatformSettlementCurrency]
 
 			record := models.OrdGiftcardWriteoffs{
-				UserId:                     userId,
-				OrderId:                    orderId,
-				GiftCardId:                 giftCardId,
+				UserId:                     c.UserId,
+				OrderId:                    c.OrderId,
+				GiftCardId:                 c.GiftCardId,
 				Status:                     item.Status,
 				Remark:                     item.Remark,
 				AdminRecognizedCode:        item.AdminRecognizedCode,
@@ -314,9 +311,9 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 			orderUpdates["completed_at"] = time.Now()
 		}
 
-		e.Log.Infof("Updating order %d: status=%d, processing_status=%d (writeoff status: %d)", orderId, orderStatus, processingStatus, finalStatus)
+		e.Log.Infof("Updating order %d: status=%d, processing_status=%d (writeoff status: %d)", c.OrderId, orderStatus, processingStatus, finalStatus)
 
-		if err = tx.Model(&models.OrdUserOrders{}).Where("id = ?", orderId).Updates(orderUpdates).Error; err != nil {
+		if err = tx.Model(&models.OrdUserOrders{}).Where("id = ?", c.OrderId).Updates(orderUpdates).Error; err != nil {
 			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert update order status error:%s", err)
 			return err
 		}
@@ -325,7 +322,7 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 		if finalStatus == 1 && totalAmount > 0 {
 			// 8. 查询用户当前余额和版本号
 			var user models.HsUsers
-			if err = tx.Select("id, balance, crypto_balance, version").Where("id = ?", userId).First(&user).Error; err != nil {
+			if err = tx.Select("id, balance, crypto_balance, version").Where("id = ?", c.UserId).First(&user).Error; err != nil {
 				e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert get user balance error:%s", err)
 				return errors.New("获取用户余额失败")
 			}
@@ -348,7 +345,7 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 			balanceAfter := balanceBefore + totalAmount
 
 			result := tx.Model(&models.HsUsers{}).
-				Where("id = ? AND version = ?", userId, user.Version).
+				Where("id = ? AND version = ?", c.UserId, user.Version).
 				Updates(map[string]interface{}{
 					balanceField: fmt.Sprintf("%.*f", decimalPlaces, balanceAfter),
 					"version":    gorm.Expr("version + 1"),
@@ -370,19 +367,22 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 				bizType = "giftcard_writeoff_crypto"
 			}
 
+			orderIdStr := strconv.Itoa(c.OrderId)
+			userIdStr := strconv.Itoa(c.UserId)
+
 			ledger := models.HsUserLedger{
-				UserId:         c.UserId,
+				UserId:         userIdStr,
 				CurrencyCode:   targetCurrency,
 				Direction:      "1", // 1=入账
 				Amount:         fmt.Sprintf("%.*f", decimalPlaces, totalAmount),
 				BalanceBefore:  fmt.Sprintf("%.*f", decimalPlaces, balanceBefore),
 				BalanceAfter:   fmt.Sprintf("%.*f", decimalPlaces, balanceAfter),
 				BizType:        bizType,
-				BizId:          c.OrderId,
-				IdempotencyKey: fmt.Sprintf("GIFTCARD_WRITEOFF:%s:%d", c.OrderId, time.Now().UnixNano()),
+				BizId:          orderIdStr,
+				IdempotencyKey: fmt.Sprintf("GIFTCARD_WRITEOFF:%d:%d", c.OrderId, time.Now().UnixNano()),
 				RefTable:       "ord_giftcard_writeoffs",
-				RefId:          c.OrderId,
-				Remark:         fmt.Sprintf("礼品卡核销到账，订单号: %s", c.OrderId),
+				RefId:          orderIdStr,
+				Remark:         fmt.Sprintf("礼品卡核销到账，订单号: %d", c.OrderId),
 				Status:         "1", // 1=已入账
 			}
 			ledger.CreateBy = c.CreateBy
@@ -434,7 +434,9 @@ func (e *OrdGiftcardWriteoffs) getCurrencyRateViaUSD(tx *gorm.DB, fromCurrency, 
 }
 
 // processInviteCommissions 处理邀请分成（一级5%、二级3%），分成进入冻结余额
-func (e *OrdGiftcardWriteoffs) processInviteCommissions(tx *gorm.DB, userId, orderId string, amount float64, sourceCurrency string, isCrypto bool, createBy int) error {
+func (e *OrdGiftcardWriteoffs) processInviteCommissions(tx *gorm.DB, userId, orderId int, amount float64, sourceCurrency string, isCrypto bool, createBy int) error {
+	orderIdStr := strconv.Itoa(orderId)
+
 	// 1. 查询邀请关系
 	var inviteRelation models.HsInviteRelations
 	err := tx.Where("user_id = ?", userId).First(&inviteRelation).Error
@@ -462,7 +464,7 @@ func (e *OrdGiftcardWriteoffs) processInviteCommissions(tx *gorm.DB, userId, ord
 
 			// 创建分成记录
 			commission := models.HsInviteCommissions{
-				OrderId:          orderId,
+				OrderId:          orderIdStr,
 				UserId:           inviteRelation.Level1InviterId,
 				CommissionLevel:  "1",
 				CommissionRate:   fmt.Sprintf("%.2f", config.CommissionRate),
@@ -514,7 +516,7 @@ func (e *OrdGiftcardWriteoffs) processInviteCommissions(tx *gorm.DB, userId, ord
 
 			// 创建分成记录
 			commission := models.HsInviteCommissions{
-				OrderId:          orderId,
+				OrderId:          orderIdStr,
 				UserId:           inviteRelation.Level2InviterId,
 				CommissionLevel:  "2",
 				CommissionRate:   fmt.Sprintf("%.2f", config.CommissionRate),
@@ -638,7 +640,9 @@ func (e *OrdGiftcardWriteoffs) getInviterCommissionConfig(tx *gorm.DB, inviterId
 }
 
 // updateInviterFrozenBalance 更新邀请人冻结余额和流水（支持多货币汇率转换）
-func (e *OrdGiftcardWriteoffs) updateInviterFrozenBalance(tx *gorm.DB, inviterId string, sourceAmount float64, sourceCurrency string, isCrypto bool, orderId, level string, createBy int) error {
+func (e *OrdGiftcardWriteoffs) updateInviterFrozenBalance(tx *gorm.DB, inviterId string, sourceAmount float64, sourceCurrency string, isCrypto bool, orderId int, level string, createBy int) error {
+	orderIdStr := strconv.Itoa(orderId)
+
 	// 1. 获取邀请人信息和所在区域的货币代码
 	var inviter models.HsUsers
 	err := tx.Select("hs_users.*, hs_config_regions.currency_code").
@@ -705,11 +709,11 @@ func (e *OrdGiftcardWriteoffs) updateInviterFrozenBalance(tx *gorm.DB, inviterId
 		BalanceBefore:  fmt.Sprintf("%.*f", decimalPlaces, balanceBefore),
 		BalanceAfter:   fmt.Sprintf("%.*f", decimalPlaces, balanceAfter),
 		BizType:        bizType,
-		BizId:          orderId,
-		IdempotencyKey: fmt.Sprintf("INVITE_COMMISSION_FROZEN_L%s:%s:%d", level, orderId, time.Now().UnixNano()),
+		BizId:          orderIdStr,
+		IdempotencyKey: fmt.Sprintf("INVITE_COMMISSION_FROZEN_L%s:%d:%d", level, orderId, time.Now().UnixNano()),
 		RefTable:       "hs_invite_commissions",
-		RefId:          orderId,
-		Remark:         fmt.Sprintf("邀请分成冻结（%s级），订单号: %s", level, orderId),
+		RefId:          orderIdStr,
+		Remark:         fmt.Sprintf("邀请分成冻结（%s级），订单号: %d", level, orderId),
 		Status:         "1", // 1=已入账
 	}
 	ledger.CreateBy = createBy
@@ -724,7 +728,9 @@ func (e *OrdGiftcardWriteoffs) updateInviterFrozenBalance(tx *gorm.DB, inviterId
 }
 
 // updateInviterAvailableBalance 更新邀请人可用余额和流水（使用订单用户的货币）
-func (e *OrdGiftcardWriteoffs) updateInviterAvailableBalance(tx *gorm.DB, inviterId string, sourceAmount float64, sourceCurrency string, isCrypto bool, orderId, level string, createBy int) error {
+func (e *OrdGiftcardWriteoffs) updateInviterAvailableBalance(tx *gorm.DB, inviterId string, sourceAmount float64, sourceCurrency string, isCrypto bool, orderId int, level string, createBy int) error {
+	orderIdStr := strconv.Itoa(orderId)
+
 	// 1. 获取邀请人信息
 	var inviter models.HsUsers
 	err := tx.Where("id = ?", inviterId).First(&inviter).Error
@@ -788,11 +794,11 @@ func (e *OrdGiftcardWriteoffs) updateInviterAvailableBalance(tx *gorm.DB, invite
 		BalanceBefore:  fmt.Sprintf("%.*f", decimalPlaces, balanceBefore),
 		BalanceAfter:   fmt.Sprintf("%.*f", decimalPlaces, balanceAfter),
 		BizType:        bizType,
-		BizId:          orderId,
-		IdempotencyKey: fmt.Sprintf("INVITE_COMMISSION_AVAILABLE_L%s:%s:%d", level, orderId, time.Now().UnixNano()),
+		BizId:          orderIdStr,
+		IdempotencyKey: fmt.Sprintf("INVITE_COMMISSION_AVAILABLE_L%s:%d:%d", level, orderId, time.Now().UnixNano()),
 		RefTable:       "hs_invite_commissions",
-		RefId:          orderId,
-		Remark:         fmt.Sprintf("邀请分成可用（%s级），订单号: %s", level, orderId),
+		RefId:          orderIdStr,
+		Remark:         fmt.Sprintf("邀请分成可用（%s级），订单号: %d", level, orderId),
 		Status:         "1", // 1=已入账
 	}
 	ledger.CreateBy = createBy

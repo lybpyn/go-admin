@@ -16195,16 +16195,16 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "giftCardId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "orderId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
                 },
                 "userId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "writeoffList": {
                     "type": "array",
