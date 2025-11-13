@@ -13,7 +13,7 @@ type OrdUserOrdersGetPageReq struct {
 	dto.Pagination     `search:"-"`
 	OrderNo string `form:"orderNo" search:"type:exact;column:order_no;table:ord_user_orders" comment:"订单号"`
 	UserId string `form:"userId" search:"type:exact;column:user_id;table:ord_user_orders" comment:"用户ID"`
-	Status int `form:"status" search:"type:exact;column:status;table:ord_user_orders" comment:"订单状态:0=待处理,1=已经接单,2=已完成,3=已取消,4=已经驳回"`
+	Status int `form:"status" search:"type:exact;column:status;table:ord_user_orders" comment:"订单状态:5=待处理,1=已经接单,2=已完成,3=已取消,4=已经驳回"`
 	ProcessingStatus int `form:"processingStatus" search:"type:exact;column:processing_status;table:ord_user_orders" comment:"管理员处理状态:1=正在处理,2=取消,3=完成"`
 	BeginTime string `form:"beginTime" search:"type:gte;column:created_at;table:ord_user_orders" comment:"开始时间"`
 	EndTime string `form:"endTime" search:"type:lte;column:created_at;table:ord_user_orders" comment:"结束时间"`
@@ -162,7 +162,7 @@ func (s *OrdUserOrdersDeleteReq) GetId() interface{} {
 type OrdUserOrdersGetByAssignReq struct {
 	dto.Pagination `search:"-"`
 	OrderNo string `form:"orderNo" search:"type:exact;column:order_no;table:ord_user_orders" comment:"订单号"`
-	Status int `form:"status" search:"type:exact;column:status;table:ord_user_orders" comment:"订单状态:0=待处理,1=已经接单,2=已完成,3=已取消,4=已经驳回"`
+	Status int `form:"status" search:"type:exact;column:status;table:ord_user_orders" comment:"订单状态:5=待处理,1=已经接单,2=已完成,3=已取消,4=已经驳回"`
 	BeginTime string `form:"beginTime" search:"type:gte;column:created_at;table:ord_user_orders" comment:"开始时间"`
 	EndTime string `form:"endTime" search:"type:lte;column:created_at;table:ord_user_orders" comment:"结束时间"`
 	AssignBy int `json:"-" search:"type:exact;column:assign_by;table:ord_user_orders" comment:"接单人ID（从context自动获取）"`

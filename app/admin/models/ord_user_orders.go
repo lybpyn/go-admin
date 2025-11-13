@@ -21,7 +21,7 @@ type OrdUserOrders struct {
 	Rate         string    `json:"rate" gorm:"type:decimal(20,8);comment:汇率"`
 	VerifySpeed  string    `json:"verifySpeed" gorm:"type:varchar(32);comment:验证速度，如 instant, fast, normal, slow 或秒数描述"`
 	BalanceType  int       `json:"balanceType" gorm:"type:varchar(255);comment:入账类型：1=法币余额，2=虚拟币余额"`
-	Status       int       `json:"status" gorm:"type:tinyint(4);comment:订单状态: 0=待处理,1=已经接单,2=已完成,3=已取消,4=已经驳回"`
+	Status       int       `json:"status" gorm:"type:tinyint(4);comment:订单状态: 5=待处理,1=已经接单,2=已完成,3=已取消,4=已经驳回"`
 	CardExtra    string    `json:"cardExtra" gorm:"type:json;comment:卡片附加信息（如过期时间、面额说明等）"`
 	CompletedAt  time.Time `json:"completedAt" gorm:"type:timestamp;comment:完成时间"`
 	Remark       string    `json:"remark" gorm:"type:varchar(255);comment:备注"`
