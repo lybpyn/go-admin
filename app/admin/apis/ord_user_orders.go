@@ -22,6 +22,12 @@ type OrdUserOrders struct {
 // @Summary 获取礼品卡订单表列表
 // @Description 获取礼品卡订单表列表
 // @Tags 礼品卡订单表
+// @Param orderNo query string false "订单号"
+// @Param userId query string false "用户ID"
+// @Param status query int false "订单状态:0=待处理,1=已经接单,2=已完成,3=已取消,4=已经驳回"
+// @Param processingStatus query int false "管理员处理状态:1=正在处理,2=取消,3=完成"
+// @Param beginTime query string false "开始时间"
+// @Param endTime query string false "结束时间"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
 // @Success 200 {object} models.Response{data=models.Page{list=[]models.OrdUserOrders}} "{"code": 200, "data": [...]}"

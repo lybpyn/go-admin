@@ -10607,6 +10607,42 @@ const docTemplateadmin = `{
                 "summary": "获取礼品卡订单表列表",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "订单号",
+                        "name": "orderNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "userId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "订单状态:0=待处理,1=已经接单,2=已完成,3=已取消,4=已经驳回",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "管理员处理状态:1=正在处理,2=取消,3=完成",
+                        "name": "processingStatus",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "开始时间",
+                        "name": "beginTime",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "结束时间",
+                        "name": "endTime",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "页条数",
                         "name": "pageSize",
@@ -19499,9 +19535,6 @@ const docTemplateadmin = `{
         "models.OrdGiftcardWriteoffs": {
             "type": "object",
             "properties": {
-                "Name": {
-                    "type": "string"
-                },
                 "adminRecognizedCode": {
                     "description": "新增字段",
                     "type": "string"
@@ -19519,6 +19552,9 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "giftCardId": {
+                    "type": "string"
+                },
+                "giftCardName": {
                     "type": "string"
                 },
                 "id": {
