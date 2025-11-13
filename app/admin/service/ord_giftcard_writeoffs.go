@@ -29,10 +29,12 @@ func (e *OrdGiftcardWriteoffs) GetPage(c *dto.OrdGiftcardWriteoffsGetPageReq, p 
 		Select("ord_giftcard_writeoffs.*, "+
 			"ord_user_orders.order_no as order_no, "+
 			"hs_users.username as user_name, "+
-			"ord_giftcard.name as gift_card_name").
+			"ord_giftcard_category.name as gift_card_name").
 		Joins("LEFT JOIN ord_user_orders ON ord_giftcard_writeoffs.order_id = ord_user_orders.id").
 		Joins("LEFT JOIN hs_users ON ord_giftcard_writeoffs.user_id = hs_users.id").
 		Joins("LEFT JOIN ord_giftcard ON ord_giftcard_writeoffs.gift_card_id = ord_giftcard.id").
+		Joins("LEFT JOIN ord_giftcard_region ON ord_giftcard.region_id = ord_giftcard_region.id").
+		Joins("LEFT JOIN ord_giftcard_category ON ord_giftcard_region.category_id = ord_giftcard_category.id").
 		Scopes(
 			cDto.MakeCondition(c.GetNeedSearch()),
 			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
@@ -55,10 +57,12 @@ func (e *OrdGiftcardWriteoffs) Get(d *dto.OrdGiftcardWriteoffsGetReq, p *actions
 		Select("ord_giftcard_writeoffs.*, "+
 			"ord_user_orders.order_no as order_no, "+
 			"hs_users.username as user_name, "+
-			"ord_giftcard.name as gift_card_name").
+			"ord_giftcard_category.name as gift_card_name").
 		Joins("LEFT JOIN ord_user_orders ON ord_giftcard_writeoffs.order_id = ord_user_orders.id").
 		Joins("LEFT JOIN hs_users ON ord_giftcard_writeoffs.user_id = hs_users.id").
 		Joins("LEFT JOIN ord_giftcard ON ord_giftcard_writeoffs.gift_card_id = ord_giftcard.id").
+		Joins("LEFT JOIN ord_giftcard_region ON ord_giftcard.region_id = ord_giftcard_region.id").
+		Joins("LEFT JOIN ord_giftcard_category ON ord_giftcard_region.category_id = ord_giftcard_category.id").
 		Scopes(
 			actions.Permission(data.TableName(), p),
 		).
