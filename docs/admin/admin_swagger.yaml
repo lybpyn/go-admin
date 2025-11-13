@@ -4528,13 +4528,13 @@ definitions:
       failureImageUrl:
         type: string
       giftCardId:
-        type: string
+        type: integer
       giftCardName:
         type: string
       id:
         type: integer
       orderId:
-        type: string
+        type: integer
       orderNo:
         description: 关联字段（不存储到数据库，仅用于返回）
         type: string
@@ -4562,7 +4562,7 @@ definitions:
       userCurrencyCode:
         type: string
       userId:
-        type: string
+        type: integer
       userLocalCurrencyAmount:
         type: string
       userName:
@@ -4610,7 +4610,7 @@ definitions:
       cardType:
         type: string
       categoryId:
-        type: string
+        type: integer
       completedAt:
         type: string
       createBy:
@@ -4624,7 +4624,7 @@ definitions:
       giftCardCode:
         type: string
       giftcardId:
-        type: string
+        type: integer
       id:
         type: integer
       processingDuration:
@@ -4638,7 +4638,7 @@ definitions:
       rate:
         type: string
       regionId:
-        type: string
+        type: integer
       remark:
         type: string
       status:
@@ -4648,7 +4648,7 @@ definitions:
       updatedAt:
         type: string
       userId:
-        type: string
+        type: integer
       verifySpeed:
         type: string
     type: object

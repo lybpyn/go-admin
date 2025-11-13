@@ -19558,7 +19558,7 @@
                     "type": "string"
                 },
                 "giftCardId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "giftCardName": {
                     "type": "string"
@@ -19567,7 +19567,7 @@
                     "type": "integer"
                 },
                 "orderId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "orderNo": {
                     "description": "关联字段（不存储到数据库，仅用于返回）",
@@ -19608,7 +19608,7 @@
                     "type": "string"
                 },
                 "userId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "userLocalCurrencyAmount": {
                     "type": "string"
@@ -19681,7 +19681,7 @@
                     "type": "string"
                 },
                 "categoryId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "completedAt": {
                     "type": "string"
@@ -19702,7 +19702,7 @@
                     "type": "string"
                 },
                 "giftcardId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
@@ -19723,7 +19723,7 @@
                     "type": "string"
                 },
                 "regionId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "remark": {
                     "type": "string"
@@ -19738,7 +19738,7 @@
                     "type": "string"
                 },
                 "userId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "verifySpeed": {
                     "type": "string"

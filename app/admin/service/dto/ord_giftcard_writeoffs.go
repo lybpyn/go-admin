@@ -1,6 +1,8 @@
 package dto
 
 import (
+	"strconv"
+
 	"go-admin/app/admin/models"
 	"go-admin/common/dto"
 	common "go-admin/common/models"
@@ -48,9 +50,9 @@ func (s *OrdGiftcardWriteoffsInsertReq) Generate(model *models.OrdGiftcardWriteo
 	if s.Id == 0 {
 		model.Model = common.Model{Id: s.Id}
 	}
-	model.UserId = s.UserId
-	model.OrderId = s.OrderId
-	model.GiftCardId = s.GiftCardId
+	model.UserId, _ = strconv.Atoi(s.UserId)
+	model.OrderId, _ = strconv.Atoi(s.OrderId)
+	model.GiftCardId, _ = strconv.Atoi(s.GiftCardId)
 	model.Status = s.Status
 	model.Remark = s.Remark
 	model.AdminRecognizedCode = s.AdminRecognizedCode
@@ -84,9 +86,9 @@ func (s *OrdGiftcardWriteoffsUpdateReq) Generate(model *models.OrdGiftcardWriteo
 	if s.Id == 0 {
 		model.Model = common.Model{Id: s.Id}
 	}
-	model.UserId = s.UserId
-	model.OrderId = s.OrderId
-	model.GiftCardId = s.GiftCardId
+	model.UserId, _ = strconv.Atoi(s.UserId)
+	model.OrderId, _ = strconv.Atoi(s.OrderId)
+	model.GiftCardId, _ = strconv.Atoi(s.GiftCardId)
 	model.Status = s.Status
 	model.Remark = s.Remark
 	model.AdminRecognizedCode = s.AdminRecognizedCode

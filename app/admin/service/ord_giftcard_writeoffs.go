@@ -241,10 +241,14 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 				}
 			}
 
+			userId, _ := strconv.Atoi(c.UserId)
+			orderId, _ := strconv.Atoi(c.OrderId)
+			giftCardId, _ := strconv.Atoi(c.GiftCardId)
+
 			record := models.OrdGiftcardWriteoffs{
-				UserId:                     c.UserId,
-				OrderId:                    c.OrderId,
-				GiftCardId:                 c.GiftCardId,
+				UserId:                     userId,
+				OrderId:                    orderId,
+				GiftCardId:                 giftCardId,
 				Status:                     item.Status,
 				Remark:                     item.Remark,
 				AdminRecognizedCode:        item.AdminRecognizedCode,
@@ -303,12 +307,21 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 			orderUpdates["completed_at"] = time.Now()
 		}
 
-		err = tx.Model(&models.OrdUserOrders{}).
+		e.Log.Infof("Updating order %s status to %d, hasSuccess=%v, hasFailure=%v", c.OrderId, orderStatus, hasSuccess, hasFailure)
+
+		result := tx.Model(&models.OrdUserOrders{}).
 			Where("id = ?", c.OrderId).
-			Updates(orderUpdates).Error
-		if err != nil {
-			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert update order status error:%s \r\n", err)
+			Updates(orderUpdates)
+
+		if result.Error != nil {
+			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert update order status error:%s \r\n", result.Error)
 			return errors.New("更新订单状态失败")
+		}
+
+		e.Log.Infof("Order status update affected %d rows", result.RowsAffected)
+
+		if result.RowsAffected == 0 {
+			e.Log.Warnf("Order %s status not updated, no rows affected", c.OrderId)
 		}
 
 		// 如果总金额大于0，需要进行余额增加、流水记录和账户分成

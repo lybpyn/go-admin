@@ -1,6 +1,7 @@
 package dto
 
 import (
+    "strconv"
     "time"
 
 	"go-admin/app/admin/models"
@@ -72,10 +73,10 @@ func (s *OrdUserOrdersInsertReq) Generate(model *models.OrdUserOrders)  {
     if s.Id == 0 {
         model.Model = common.Model{ Id: s.Id }
     }
-    model.UserId = s.UserId
-    model.RegionId = s.RegionId
-    model.CategoryId = s.CategoryId
-    model.GiftcardId = s.GiftcardId
+    model.UserId, _ = strconv.Atoi(s.UserId)
+    model.RegionId, _ = strconv.Atoi(s.RegionId)
+    model.CategoryId, _ = strconv.Atoi(s.CategoryId)
+    model.GiftcardId, _ = strconv.Atoi(s.GiftcardId)
     model.CardType = s.CardType
     model.GiftCardCode = s.GiftCardCode
     model.Balance = s.Balance
@@ -118,10 +119,10 @@ func (s *OrdUserOrdersUpdateReq) Generate(model *models.OrdUserOrders)  {
     if s.Id == 0 {
         model.Model = common.Model{ Id: s.Id }
     }
-    model.UserId = s.UserId
-    model.RegionId = s.RegionId
-    model.CategoryId = s.CategoryId
-    model.GiftcardId = s.GiftcardId
+    model.UserId, _ = strconv.Atoi(s.UserId)
+    model.RegionId, _ = strconv.Atoi(s.RegionId)
+    model.CategoryId, _ = strconv.Atoi(s.CategoryId)
+    model.GiftcardId, _ = strconv.Atoi(s.GiftcardId)
     model.CardType = s.CardType
     model.GiftCardCode = s.GiftCardCode
     model.Balance = s.Balance

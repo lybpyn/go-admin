@@ -19561,7 +19561,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "giftCardId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "giftCardName": {
                     "type": "string"
@@ -19570,7 +19570,7 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "orderId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "orderNo": {
                     "description": "关联字段（不存储到数据库，仅用于返回）",
@@ -19611,7 +19611,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "userId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "userLocalCurrencyAmount": {
                     "type": "string"
@@ -19684,7 +19684,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "categoryId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "completedAt": {
                     "type": "string"
@@ -19705,7 +19705,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "giftcardId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
@@ -19726,7 +19726,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "regionId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "remark": {
                     "type": "string"
@@ -19741,7 +19741,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "userId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "verifySpeed": {
                     "type": "string"

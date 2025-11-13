@@ -9,10 +9,10 @@ import (
 type OrdUserOrders struct {
 	models.Model
 	OrderNo      string    `json:"OrderNo" gorm:"type:varchar(255);comment:订单号"`
-	UserId       string    `json:"userId" gorm:"type:bigint(20);comment:用户ID"`
-	RegionId     string    `json:"regionId" gorm:"type:bigint(20);comment:地区ID"`
-	CategoryId   string    `json:"categoryId" gorm:"type:bigint(20);comment:分类ID"`
-	GiftcardId   string    `json:"giftcardId" gorm:"type:bigint(20);comment:礼品卡ID"`
+	UserId       int       `json:"userId" gorm:"type:bigint(20);comment:用户ID"`
+	RegionId     int       `json:"regionId" gorm:"type:bigint(20);comment:地区ID"`
+	CategoryId   int       `json:"categoryId" gorm:"type:bigint(20);comment:分类ID"`
+	GiftcardId   int       `json:"giftcardId" gorm:"type:bigint(20);comment:礼品卡ID"`
 	CardType     string    `json:"cardType" gorm:"type:enum('code','physical','image','horizontal','whiteboard');comment:卡片类型: code=兑换码, image=图片, physical=实体卡等"`
 	GiftCardCode string    `json:"giftCardCode" gorm:"type:varchar(40);comment:礼品卡卡号或验证码"`
 	Balance      string    `json:"balance" gorm:"type:decimal(20,8);comment:卡余额"`
