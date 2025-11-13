@@ -270,6 +270,47 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 			return err
 		}
 
+		// 8. 判断核销结果并更新订单状态
+		hasSuccess := false
+		hasFailure := false
+		for _, record := range writeoffRecords {
+			if record.Status == 1 {
+				hasSuccess = true
+			} else if record.Status == 2 {
+				hasFailure = true
+			}
+		}
+
+		// 确定订单最终状态
+		var orderStatus int
+		if hasSuccess {
+			// 只要有成功的核销记录，订单状态就是"已完成"
+			orderStatus = 2 // 2=已完成
+		} else if hasFailure {
+			// 全部失败，订单状态改为"已经驳回"
+			orderStatus = 4 // 4=已经驳回
+		} else {
+			// 全部待核销，订单保持"已经接单"状态
+			orderStatus = 1 // 1=已经接单
+		}
+
+		// 更新订单状态
+		orderUpdates := map[string]interface{}{
+			"status": orderStatus,
+		}
+		if orderStatus == 2 {
+			// 只有完成时才设置完成时间
+			orderUpdates["completed_at"] = time.Now()
+		}
+
+		err = tx.Model(&models.OrdUserOrders{}).
+			Where("id = ?", c.OrderId).
+			Updates(orderUpdates).Error
+		if err != nil {
+			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert update order status error:%s \r\n", err)
+			return errors.New("更新订单状态失败")
+		}
+
 		// 如果总金额大于0，需要进行余额增加、流水记录和账户分成
 		if totalAmount > 0 {
 			// 8. 更新用户余额（根据入账类型选择法币或虚拟币余额）
