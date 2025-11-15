@@ -200,8 +200,8 @@ func (e *OrdUserOrders) AcceptOrder(c *dto.OrdUserOrdersAcceptReq, adminId int, 
 		return errors.New("订单已被接单，无法重复接单")
 	}
 
-	// 检查订单状态是否允许接单（只有待处理状态0才能接单）
-	if order.Status != 0 {
+	// 检查订单状态是否允许接单（只有待处理状态5才能接单）
+	if order.Status != 5 {
 		e.Log.Errorf("AcceptOrder error: invalid order status, id:%v, status:%d", c.GetId(), order.Status)
 		return errors.New("订单状态不允许接单，只有待处理的订单才能接单")
 	}
@@ -278,7 +278,7 @@ func (e *OrdUserOrders) CancelAcceptOrder(c *dto.OrdUserOrdersCancelAcceptReq, a
 		"assign_by":              nil,
 		"assign_name":            nil,
 		"assign_type":            nil,
-		"status":                 0, // 恢复为"待处理"状态
+		"status":                 5, // 恢复为"待处理"状态
 		"processing_started_at":  nil,
 		"processing_started_end": nil,
 		"processing_status":      2, // 2=取消
