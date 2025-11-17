@@ -214,7 +214,6 @@ func (e *OrdUserOrders) AcceptOrder(c *dto.OrdUserOrdersAcceptReq, adminId int, 
 
 	db := e.Orm.Model(&order).
 		Where("id = ?", c.GetId()).
-		Where("(assign_by IS NULL OR assign_by = 0)"). // 再次确认未被接单
 		Updates(updates)
 
 	if err = db.Error; err != nil {
