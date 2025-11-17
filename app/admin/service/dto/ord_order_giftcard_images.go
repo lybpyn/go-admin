@@ -32,7 +32,7 @@ type OrdOrderGiftcardImagesInsertReq struct {
     Id int `json:"-" comment:"主键ID"` // 主键ID
     OrderId string `json:"orderId" comment:"关联的订单ID"`
     ImageUrl string `json:"imageUrl" comment:"礼品卡图片URL"`
-    SortOrder string `json:"sortOrder" comment:"排序顺序"`
+    SortOrder int `json:"sortOrder" comment:"排序顺序"`
     common.ControlBy
 }
 
@@ -53,7 +53,7 @@ type OrdOrderGiftcardImagesUpdateReq struct {
     Id int `uri:"id" comment:"主键ID"` // 主键ID
     OrderId string `json:"orderId" comment:"关联的订单ID"`
     ImageUrl string `json:"imageUrl" comment:"礼品卡图片URL"`
-    SortOrder string `json:"sortOrder" comment:"排序顺序"`
+    SortOrder int `json:"sortOrder" comment:"排序顺序"`
     common.ControlBy
 }
 

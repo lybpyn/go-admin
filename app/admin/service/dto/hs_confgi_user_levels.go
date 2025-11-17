@@ -40,7 +40,7 @@ type HsConfgiUserLevelsInsertReq struct {
     UpExperience string `json:"upExperience" comment:"升级所需经验值"`
     LevelIcon string `json:"levelIcon" comment:"等级图标URL"`
     LevelPrivileges string `json:"levelPrivileges" comment:"等级特权配置(JSON格式)"`
-    SortOrder string `json:"sortOrder" comment:"排序顺序"`
+    SortOrder int `json:"sortOrder" comment:"排序顺序"`
     IsActive string `json:"isActive" comment:"是否启用"`
     common.ControlBy
 }
@@ -68,7 +68,7 @@ type HsConfgiUserLevelsUpdateReq struct {
     UpExperience string `json:"upExperience" comment:"升级所需经验值"`
     LevelIcon string `json:"levelIcon" comment:"等级图标URL"`
     LevelPrivileges string `json:"levelPrivileges" comment:"等级特权配置(JSON格式)"`
-    SortOrder string `json:"sortOrder" comment:"排序顺序"`
+    SortOrder int `json:"sortOrder" comment:"排序顺序"`
     IsActive string `json:"isActive" comment:"是否启用"`
     common.ControlBy
 }

@@ -56,7 +56,7 @@ type HsConfigSupportedChainsCoinInsertReq struct {
     MinWithdrawAmount string `json:"minWithdrawAmount" comment:"最小提现金额"`
     WithdrawFee string `json:"withdrawFee" comment:"固定提现手续费（USDT）"`
     Status string `json:"status" comment:"状态：1=启用，0=停用"`
-    SortOrder string `json:"sortOrder" comment:"排序权重"`
+    SortOrder int `json:"sortOrder" comment:"排序权重"`
     Remark string `json:"remark" comment:"备注说明"`
     common.ControlBy
 }
@@ -102,7 +102,7 @@ type HsConfigSupportedChainsCoinUpdateReq struct {
     MinWithdrawAmount string `json:"minWithdrawAmount" comment:"最小提现金额"`
     WithdrawFee string `json:"withdrawFee" comment:"固定提现手续费（USDT）"`
     Status string `json:"status" comment:"状态：1=启用，0=停用"`
-    SortOrder string `json:"sortOrder" comment:"排序权重"`
+    SortOrder int `json:"sortOrder" comment:"排序权重"`
     Remark string `json:"remark" comment:"备注说明"`
     common.ControlBy
 }

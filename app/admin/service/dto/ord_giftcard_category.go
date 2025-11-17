@@ -37,7 +37,7 @@ type OrdGiftcardCategoryInsertReq struct {
     Logo string `json:"logo" comment:"分类Logo图片URL"`
     Status string `json:"status" comment:"状态: 1=启用, 0=禁用"`
     DiscountRate string `json:"discountRate" comment:"汇率折扣展示用"`
-    SortOrder string `json:"sortOrder" comment:""`
+    SortOrder int `json:"sortOrder" comment:""`
     common.ControlBy
 }
 
@@ -63,7 +63,7 @@ type OrdGiftcardCategoryUpdateReq struct {
     Logo string `json:"logo" comment:"分类Logo图片URL"`
     Status string `json:"status" comment:"状态: 1=启用, 0=禁用"`
     DiscountRate string `json:"discountRate" comment:"汇率折扣展示用"`
-    SortOrder string `json:"sortOrder" comment:""`
+    SortOrder int `json:"sortOrder" comment:""`
     common.ControlBy
 }
 

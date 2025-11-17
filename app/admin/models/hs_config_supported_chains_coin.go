@@ -22,7 +22,7 @@ type HsConfigSupportedChainsCoin struct {
     MinWithdrawAmount string `json:"minWithdrawAmount" gorm:"type:decimal(20,8);comment:最小提现金额"` 
     WithdrawFee string `json:"withdrawFee" gorm:"type:decimal(20,8);comment:固定提现手续费（USDT）"` 
     Status string `json:"status" gorm:"type:tinyint(1);comment:状态：1=启用，0=停用"` 
-    SortOrder string `json:"sortOrder" gorm:"type:int(11);comment:排序权重"` 
+    SortOrder int `json:"sortOrder" gorm:"type:int(11);comment:排序权重"` 
     Remark string `json:"remark" gorm:"type:varchar(255);comment:备注说明"` 
     models.ModelTime
     models.ControlBy

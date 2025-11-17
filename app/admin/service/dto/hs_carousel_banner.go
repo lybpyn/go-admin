@@ -41,7 +41,7 @@ type HsCarouselBannerInsertReq struct {
     Title string `json:"title" comment:"标题"`
     ImageUrl string `json:"imageUrl" comment:"图片地址"`
     LinkUrl string `json:"linkUrl" comment:"跳转地址"`
-    SortOrder string `json:"sortOrder" comment:"排序，小的优先"`
+    SortOrder int `json:"sortOrder" comment:"排序，小的优先"`
     StartTime time.Time `json:"startTime" comment:"开始展示时间"`
     EndTime time.Time `json:"endTime" comment:"结束展示时间"`
     Status string `json:"status" comment:"0=下线,1=上线"`
@@ -71,7 +71,7 @@ type HsCarouselBannerUpdateReq struct {
     Title string `json:"title" comment:"标题"`
     ImageUrl string `json:"imageUrl" comment:"图片地址"`
     LinkUrl string `json:"linkUrl" comment:"跳转地址"`
-    SortOrder string `json:"sortOrder" comment:"排序，小的优先"`
+    SortOrder int `json:"sortOrder" comment:"排序，小的优先"`
     StartTime time.Time `json:"startTime" comment:"开始展示时间"`
     EndTime time.Time `json:"endTime" comment:"结束展示时间"`
     Status string `json:"status" comment:"0=下线,1=上线"`
