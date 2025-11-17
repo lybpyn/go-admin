@@ -194,11 +194,6 @@ func (e *OrdUserOrders) AcceptOrder(c *dto.OrdUserOrdersAcceptReq, adminId int, 
 		return err
 	}
 
-	// 检查订单是否已被接单
-	if order.AssignBy != 0 {
-		e.Log.Errorf("AcceptOrder error: order already accepted, id:%v, assign_by:%d", c.GetId(), order.AssignBy)
-		return errors.New("订单已被接单，无法重复接单")
-	}
 
 	// 检查订单状态是否允许接单（只有待处理状态5才能接单）
 	if order.Status != 5 {
@@ -275,10 +270,10 @@ func (e *OrdUserOrders) CancelAcceptOrder(c *dto.OrdUserOrdersCancelAcceptReq, a
 
 	// 更新订单信息，清空接单相关字段
 	updates := map[string]interface{}{
-		"assign_by":              nil,
-		"assign_name":            nil,
-		"assign_type":            nil,
-		"status":                 5, // 恢复为"待处理"状态
+		"assign_by":              0,  // 使用0表示未分配
+		"assign_name":            "", // 使用空字符串
+		"assign_type":            0,  // 使用0表示未分配
+		"status":                 5,  // 恢复为"待处理"状态
 		"processing_started_at":  nil,
 		"processing_started_end": nil,
 		"processing_status":      2, // 2=取消
