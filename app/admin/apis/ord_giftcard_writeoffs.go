@@ -228,3 +228,36 @@ func (e OrdGiftcardWriteoffs) BatchInsert(c *gin.Context) {
 
 	e.OK(nil, fmt.Sprintf("批量核销成功，共创建 %d 条记录", len(req.WriteoffList)))
 }
+
+// CalculateUserLocalCurrency 计算用户入账金额（辅助接口）
+// @Summary 计算用户入账金额
+// @Description 根据订单ID和卡片面值，计算用户将获得的本地货币金额
+// @Tags 礼品卡核销记录表
+// @Accept application/json
+// @Product application/json
+// @Param data body dto.OrdGiftcardWriteoffsCalculateReq true "data"
+// @Success 200 {object} models.Response{data=dto.OrdGiftcardWriteoffsCalculateResp} "{"code": 200, "data": {...}}"
+// @Router /api/v1/ord-giftcard-writeoffs/calculate [post]
+// @Security Bearer
+func (e OrdGiftcardWriteoffs) CalculateUserLocalCurrency(c *gin.Context) {
+	req := dto.OrdGiftcardWriteoffsCalculateReq{}
+	s := service.OrdGiftcardWriteoffs{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
+
+	resp, err := s.CalculateUserLocalCurrency(&req)
+	if err != nil {
+		e.Error(500, err, fmt.Sprintf("计算用户入账金额失败，\r\n失败信息 %s", err.Error()))
+		return
+	}
+
+	e.OK(resp, "计算成功")
+}

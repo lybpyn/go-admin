@@ -1687,6 +1687,12 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "币种类型：fiat=法币，crypto=虚拟币",
+                        "name": "currencyType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "币种代码，如 USD/CNY/USDT",
                         "name": "currencyCode",
                         "in": "query"
@@ -3047,6 +3053,235 @@ const docTemplate = `{
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
                             "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/hs-config-withdraw-rules": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取提现规则配置表（兼容法币与虚拟币）列表",
+                "tags": [
+                    "提现规则配置表（兼容法币与虚拟币）"
+                ],
+                "summary": "获取提现规则配置表（兼容法币与虚拟币）列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "币种代码，如 USD、CNY、USDT、BTC",
+                        "name": "currencyCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "币种类型：fiat=法币，crypto=虚拟币",
+                        "name": "currencyType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "链类型（仅虚拟币适用），如 ERC20/TRC20/BEP20",
+                        "name": "chainType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageIndex",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.Page"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/models.HsConfigWithdrawRules"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建提现规则配置表（兼容法币与虚拟币）",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "提现规则配置表（兼容法币与虚拟币）"
+                ],
+                "summary": "创建提现规则配置表（兼容法币与虚拟币）",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigWithdrawRulesInsertReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"添加成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除提现规则配置表（兼容法币与虚拟币）",
+                "tags": [
+                    "提现规则配置表（兼容法币与虚拟币）"
+                ],
+                "summary": "删除提现规则配置表（兼容法币与虚拟币）",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigWithdrawRulesDeleteReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/hs-config-withdraw-rules/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取提现规则配置表（兼容法币与虚拟币）",
+                "tags": [
+                    "提现规则配置表（兼容法币与虚拟币）"
+                ],
+                "summary": "获取提现规则配置表（兼容法币与虚拟币）",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.HsConfigWithdrawRules"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "修改提现规则配置表（兼容法币与虚拟币）",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "提现规则配置表（兼容法币与虚拟币）"
+                ],
+                "summary": "修改提现规则配置表（兼容法币与虚拟币）",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigWithdrawRulesUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"修改成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -6658,6 +6893,92 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/hs-user-withdrawal/{id}/approve": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "审核通过提现申请，bank方式将自动调用PandaPay代付接口转账，crypto方式不调用",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户余额提现申请表"
+                ],
+                "summary": "审核通过提现申请",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "提现记录ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "审核请求",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsUserWithdrawalApproveReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"审核成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/hs-user-withdrawal/{id}/reject": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "拒绝提现申请，需要提供拒绝原因",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户余额提现申请表"
+                ],
+                "summary": "拒绝提现申请",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "提现记录ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "拒绝请求",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsUserWithdrawalRejectReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"拒绝成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/hs-users": {
             "get": {
                 "security": [
@@ -9398,6 +9719,18 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "description": "礼品卡ID",
+                        "name": "giftcard_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "卡类型",
+                        "name": "card_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "description": "页条数",
                         "name": "pageSize",
                         "in": "query"
@@ -9969,6 +10302,54 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/ord-giftcard-writeoffs/calculate": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "根据订单ID和卡片面值，计算用户将获得的本地货币金额",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "礼品卡核销记录表"
+                ],
+                "summary": "计算用户入账金额",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrdGiftcardWriteoffsCalculateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": {...}}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.OrdGiftcardWriteoffsCalculateResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/ord-giftcard-writeoffs/{id}": {
             "get": {
                 "security": [
@@ -10377,6 +10758,42 @@ const docTemplate = `{
                 ],
                 "summary": "获取礼品卡订单表列表",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "订单号",
+                        "name": "orderNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户ID",
+                        "name": "userId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "订单状态:5=待处理,1=已经接单,2=已完成,3=已取消,4=已经驳回",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "管理员处理状态:1=正在处理,2=取消,3=完成",
+                        "name": "processingStatus",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "开始时间",
+                        "name": "beginTime",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "结束时间",
+                        "name": "endTime",
+                        "in": "query"
+                    },
                     {
                         "type": "integer",
                         "description": "页条数",
@@ -12589,7 +13006,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "startTime": {
                     "type": "string"
@@ -12624,7 +13041,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "startTime": {
                     "type": "string"
@@ -12670,7 +13087,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "upExperience": {
                     "type": "string"
@@ -12703,7 +13120,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "upExperience": {
                     "type": "string"
@@ -12794,6 +13211,9 @@ const docTemplate = `{
                 "currencyCode": {
                     "type": "string"
                 },
+                "currencyType": {
+                    "type": "string"
+                },
                 "frozenLimitAmount": {
                     "type": "string"
                 },
@@ -12812,6 +13232,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "currencyCode": {
+                    "type": "string"
+                },
+                "currencyType": {
                     "type": "string"
                 },
                 "frozenLimitAmount": {
@@ -13005,7 +13428,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"
@@ -13065,7 +13488,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"
@@ -13211,6 +13634,121 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "singleLimit": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.HsConfigWithdrawRulesDeleteReq": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "dto.HsConfigWithdrawRulesInsertReq": {
+            "type": "object",
+            "properties": {
+                "chainType": {
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "currencyType": {
+                    "type": "string"
+                },
+                "dailyLimitAmount": {
+                    "type": "string"
+                },
+                "dailyLimitCount": {
+                    "type": "string"
+                },
+                "feeFixed": {
+                    "type": "string"
+                },
+                "feeRate": {
+                    "type": "string"
+                },
+                "feeType": {
+                    "type": "string"
+                },
+                "isActive": {
+                    "type": "string"
+                },
+                "maxFee": {
+                    "type": "string"
+                },
+                "minFee": {
+                    "type": "string"
+                },
+                "singleMax": {
+                    "type": "string"
+                },
+                "singleMin": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.HsConfigWithdrawRulesUpdateReq": {
+            "type": "object",
+            "properties": {
+                "chainType": {
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "currencyType": {
+                    "type": "string"
+                },
+                "dailyLimitAmount": {
+                    "type": "string"
+                },
+                "dailyLimitCount": {
+                    "type": "string"
+                },
+                "feeFixed": {
+                    "type": "string"
+                },
+                "feeRate": {
+                    "type": "string"
+                },
+                "feeType": {
+                    "type": "string"
+                },
+                "id": {
+                    "description": "主键ID",
+                    "type": "integer"
+                },
+                "isActive": {
+                    "type": "string"
+                },
+                "maxFee": {
+                    "type": "string"
+                },
+                "minFee": {
+                    "type": "string"
+                },
+                "singleMax": {
+                    "type": "string"
+                },
+                "singleMin": {
                     "type": "string"
                 },
                 "updateBy": {
@@ -14422,6 +14960,23 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.HsUserWithdrawalApproveReq": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.HsUserWithdrawalDeleteReq": {
             "type": "object",
             "properties": {
@@ -14492,6 +15047,26 @@ const docTemplate = `{
                 },
                 "withdrawNo": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.HsUserWithdrawalRejectReq": {
+            "type": "object",
+            "required": [
+                "reason"
+            ],
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
                 }
             }
         },
@@ -15468,6 +16043,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "settlementCurrencyCode": {
+                    "type": "string"
+                },
                 "settlementRate": {
                     "type": "string"
                 },
@@ -15513,6 +16091,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "settlementCurrencyCode": {
+                    "type": "string"
+                },
                 "settlementRate": {
                     "type": "string"
                 },
@@ -15544,11 +16125,14 @@ const docTemplate = `{
                 "discountRate": {
                     "type": "string"
                 },
+                "logo": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"
@@ -15571,11 +16155,14 @@ const docTemplate = `{
                     "description": "分类ID",
                     "type": "integer"
                 },
+                "logo": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"
@@ -15620,7 +16207,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "giftcardId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -15640,7 +16227,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "giftcardId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
@@ -15699,16 +16286,13 @@ const docTemplate = `{
                 "createBy": {
                     "type": "integer"
                 },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "discountRate": {
+                    "type": "string"
+                },
                 "isMain": {
-                    "type": "string"
-                },
-                "quoteCurrency": {
-                    "type": "string"
-                },
-                "quoteCurrencySymbol": {
-                    "type": "string"
-                },
-                "rate": {
                     "type": "string"
                 },
                 "regionCode": {
@@ -15731,20 +16315,17 @@ const docTemplate = `{
                 "createBy": {
                     "type": "integer"
                 },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "discountRate": {
+                    "type": "string"
+                },
                 "id": {
                     "description": "地区ID",
                     "type": "integer"
                 },
                 "isMain": {
-                    "type": "string"
-                },
-                "quoteCurrency": {
-                    "type": "string"
-                },
-                "quoteCurrencySymbol": {
-                    "type": "string"
-                },
-                "rate": {
                     "type": "string"
                 },
                 "regionCode": {
@@ -15795,24 +16376,11 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "orderId",
-                "userId",
                 "writeoffList"
             ],
             "properties": {
-                "createBy": {
-                    "type": "integer"
-                },
-                "giftCardId": {
-                    "type": "string"
-                },
                 "orderId": {
-                    "type": "string"
-                },
-                "updateBy": {
                     "type": "integer"
-                },
-                "userId": {
-                    "type": "string"
                 },
                 "writeoffList": {
                     "type": "array",
@@ -15835,13 +16403,10 @@ const docTemplate = `{
                 "failureImageUrl": {
                     "type": "string"
                 },
-                "platformSaleRate": {
-                    "type": "string"
+                "giftCardDiscountId": {
+                    "type": "integer"
                 },
                 "platformSettlementAmount": {
-                    "type": "string"
-                },
-                "platformSettlementCurrency": {
                     "type": "string"
                 },
                 "recognizedCardValue": {
@@ -15854,6 +16419,50 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "supplierId": {
+                    "type": "integer"
+                },
+                "userLocalCurrencyAmount": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.OrdGiftcardWriteoffsCalculateReq": {
+            "type": "object",
+            "required": [
+                "orderId",
+                "recognizedCardValue"
+            ],
+            "properties": {
+                "giftCardDiscountId": {
+                    "type": "integer"
+                },
+                "orderId": {
+                    "type": "integer"
+                },
+                "recognizedCardValue": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.OrdGiftcardWriteoffsCalculateResp": {
+            "type": "object",
+            "properties": {
+                "configRate": {
+                    "type": "string"
+                },
+                "denominationValidation": {
+                    "$ref": "#/definitions/dto.OrdGiftcardWriteoffsDenominationValidation"
+                },
+                "isCrypto": {
+                    "type": "boolean"
+                },
+                "orderCurrencyCode": {
+                    "type": "string"
+                },
+                "userCurrencyCode": {
+                    "type": "string"
+                },
+                "userLocalCurrencyAmount": {
                     "type": "string"
                 }
             }
@@ -15869,6 +16478,34 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.OrdGiftcardWriteoffsDenominationValidation": {
+            "type": "object",
+            "properties": {
+                "allowedFixed": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "allowedRange": {
+                    "type": "object",
+                    "properties": {
+                        "max": {
+                            "type": "string"
+                        },
+                        "min": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "errorMessage": {
+                    "type": "string"
+                },
+                "isValid": {
+                    "type": "boolean"
+                }
+            }
+        },
         "dto.OrdGiftcardWriteoffsInsertReq": {
             "type": "object",
             "properties": {
@@ -15879,6 +16516,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "failureImageUrl": {
+                    "type": "string"
+                },
+                "giftCardDiscountId": {
                     "type": "string"
                 },
                 "giftCardId": {
@@ -15920,6 +16560,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "failureImageUrl": {
+                    "type": "string"
+                },
+                "giftCardDiscountId": {
                     "type": "string"
                 },
                 "giftCardId": {
@@ -15979,7 +16622,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -16003,7 +16646,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -16078,7 +16721,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -16138,7 +16781,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -17475,7 +18118,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "startTime": {
                     "type": "string"
@@ -17519,7 +18162,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "upExperience": {
                     "type": "string"
@@ -17574,6 +18217,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "currencyCode": {
+                    "type": "string"
+                },
+                "currencyType": {
                     "type": "string"
                 },
                 "frozenLimitAmount": {
@@ -17703,7 +18349,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"
@@ -17785,6 +18431,65 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "singleLimit": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.HsConfigWithdrawRules": {
+            "type": "object",
+            "properties": {
+                "chainType": {
+                    "type": "string"
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "currencyType": {
+                    "type": "string"
+                },
+                "dailyLimitAmount": {
+                    "type": "string"
+                },
+                "dailyLimitCount": {
+                    "type": "string"
+                },
+                "feeFixed": {
+                    "type": "string"
+                },
+                "feeRate": {
+                    "type": "string"
+                },
+                "feeType": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isActive": {
+                    "type": "string"
+                },
+                "maxFee": {
+                    "type": "string"
+                },
+                "minFee": {
+                    "type": "string"
+                },
+                "singleMax": {
+                    "type": "string"
+                },
+                "singleMin": {
                     "type": "string"
                 },
                 "updateBy": {
@@ -18930,6 +19635,9 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "settlementCurrencyCode": {
+                    "type": "string"
+                },
                 "settlementRate": {
                     "type": "string"
                 },
@@ -18997,11 +19705,14 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "logo": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"
@@ -19030,7 +19741,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "giftcardId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
@@ -19055,19 +19766,16 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "discountRate": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
                 "isMain": {
-                    "type": "string"
-                },
-                "quoteCurrency": {
-                    "type": "string"
-                },
-                "quoteCurrencySymbol": {
-                    "type": "string"
-                },
-                "rate": {
                     "type": "string"
                 },
                 "regionCode": {
@@ -19103,20 +19811,29 @@ const docTemplate = `{
                 "failureImageUrl": {
                     "type": "string"
                 },
+                "giftCardDiscountId": {
+                    "type": "integer"
+                },
                 "giftCardId": {
+                    "type": "integer"
+                },
+                "giftCardName": {
                     "type": "string"
                 },
                 "id": {
                     "type": "integer"
                 },
                 "orderId": {
+                    "type": "integer"
+                },
+                "orderNo": {
+                    "description": "关联字段（不存储到数据库，仅用于返回）",
                     "type": "string"
                 },
                 "platformSaleRate": {
                     "type": "string"
                 },
                 "platformSettlementAmount": {
-                    "description": "平台入账相关字段",
                     "type": "string"
                 },
                 "platformSettlementCurrency": {
@@ -19135,6 +19852,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "supplierId": {
+                    "description": "平台入账相关字段",
                     "type": "string"
                 },
                 "updateBy": {
@@ -19147,9 +19865,12 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "userId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "userLocalCurrencyAmount": {
+                    "type": "string"
+                },
+                "userName": {
                     "type": "string"
                 }
             }
@@ -19173,7 +19894,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -19186,17 +19907,20 @@ const docTemplate = `{
         "models.OrdUserOrders": {
             "type": "object",
             "properties": {
+                "OrderNo": {
+                    "type": "string"
+                },
                 "adminRemark": {
                     "type": "string"
                 },
                 "assignBy": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "assignName": {
                     "type": "string"
                 },
                 "assignType": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "balance": {
                     "type": "string"
@@ -19214,7 +19938,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "categoryId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "completedAt": {
                     "type": "string"
@@ -19235,7 +19959,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "giftcardId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
@@ -19249,17 +19973,20 @@ const docTemplate = `{
                 "processingStartedEnd": {
                     "type": "string"
                 },
+                "processingStatus": {
+                    "type": "integer"
+                },
                 "rate": {
                     "type": "string"
                 },
                 "regionId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "remark": {
                     "type": "string"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -19268,7 +19995,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "userId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "verifySpeed": {
                     "type": "string"
@@ -19306,6 +20033,38 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.Page": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "pageIndex": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.Response": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "msg": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "description": "数据集",
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }
@@ -19581,9 +20340,9 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "2.0.0",
-	Host:             "",
-	BasePath:         "",
-	Schemes:          []string{},
+	Host:             "adminapi.cardpartner.io",
+	BasePath:         "/",
+	Schemes:          []string{"https"},
 	Title:            "go-admin API",
 	Description:      "基于Gin + Vue + Element UI的前后端分离权限管理系统的接口文档",
 	InfoInstanceName: "swagger",

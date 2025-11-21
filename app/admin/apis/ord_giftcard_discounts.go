@@ -22,6 +22,8 @@ type OrdGiftcardDiscounts struct {
 // @Summary 获取礼品卡不同类型折扣列表
 // @Description 获取礼品卡不同类型折扣列表
 // @Tags 礼品卡不同类型折扣
+// @Param giftcard_id query int false "礼品卡ID"
+// @Param card_type query string false "卡类型"
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
 // @Success 200 {object} models.Response{data=models.Page{list=[]models.OrdGiftcardDiscounts}} "{"code": 200, "data": [...]}"

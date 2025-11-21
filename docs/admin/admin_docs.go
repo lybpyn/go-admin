@@ -1687,6 +1687,12 @@ const docTemplateadmin = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "币种类型：fiat=法币，crypto=虚拟币",
+                        "name": "currencyType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "币种代码，如 USD/CNY/USDT",
                         "name": "currencyCode",
                         "in": "query"
@@ -9627,6 +9633,18 @@ const docTemplateadmin = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "description": "礼品卡ID",
+                        "name": "giftcard_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "卡类型",
+                        "name": "card_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
                         "description": "页条数",
                         "name": "pageSize",
                         "in": "query"
@@ -10193,6 +10211,54 @@ const docTemplateadmin = `{
                         "description": "{\"code\": 200, \"message\": \"批量核销成功\"}",
                         "schema": {
                             "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ord-giftcard-writeoffs/calculate": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "根据订单ID和卡片面值，计算用户将获得的本地货币金额",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "礼品卡核销记录表"
+                ],
+                "summary": "计算用户入账金额",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrdGiftcardWriteoffsCalculateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": {...}}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.OrdGiftcardWriteoffsCalculateResp"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -12854,7 +12920,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "startTime": {
                     "type": "string"
@@ -12889,7 +12955,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "startTime": {
                     "type": "string"
@@ -12935,7 +13001,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "upExperience": {
                     "type": "string"
@@ -12968,7 +13034,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "upExperience": {
                     "type": "string"
@@ -13059,6 +13125,9 @@ const docTemplateadmin = `{
                 "currencyCode": {
                     "type": "string"
                 },
+                "currencyType": {
+                    "type": "string"
+                },
                 "frozenLimitAmount": {
                     "type": "string"
                 },
@@ -13077,6 +13146,9 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "currencyCode": {
+                    "type": "string"
+                },
+                "currencyType": {
                     "type": "string"
                 },
                 "frozenLimitAmount": {
@@ -13270,7 +13342,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"
@@ -13330,7 +13402,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"
@@ -15937,7 +16009,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"
@@ -15967,7 +16039,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"
@@ -16012,7 +16084,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "giftcardId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -16032,7 +16104,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "giftcardId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
@@ -16091,16 +16163,13 @@ const docTemplateadmin = `{
                 "createBy": {
                     "type": "integer"
                 },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "discountRate": {
+                    "type": "string"
+                },
                 "isMain": {
-                    "type": "string"
-                },
-                "quoteCurrency": {
-                    "type": "string"
-                },
-                "quoteCurrencySymbol": {
-                    "type": "string"
-                },
-                "rate": {
                     "type": "string"
                 },
                 "regionCode": {
@@ -16123,20 +16192,17 @@ const docTemplateadmin = `{
                 "createBy": {
                     "type": "integer"
                 },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "discountRate": {
+                    "type": "string"
+                },
                 "id": {
                     "description": "地区ID",
                     "type": "integer"
                 },
                 "isMain": {
-                    "type": "string"
-                },
-                "quoteCurrency": {
-                    "type": "string"
-                },
-                "quoteCurrencySymbol": {
-                    "type": "string"
-                },
-                "rate": {
                     "type": "string"
                 },
                 "regionCode": {
@@ -16187,23 +16253,10 @@ const docTemplateadmin = `{
             "type": "object",
             "required": [
                 "orderId",
-                "userId",
                 "writeoffList"
             ],
             "properties": {
-                "createBy": {
-                    "type": "integer"
-                },
-                "giftCardId": {
-                    "type": "integer"
-                },
                 "orderId": {
-                    "type": "integer"
-                },
-                "updateBy": {
-                    "type": "integer"
-                },
-                "userId": {
                     "type": "integer"
                 },
                 "writeoffList": {
@@ -16227,13 +16280,10 @@ const docTemplateadmin = `{
                 "failureImageUrl": {
                     "type": "string"
                 },
-                "platformSaleRate": {
-                    "type": "string"
+                "giftCardDiscountId": {
+                    "type": "integer"
                 },
                 "platformSettlementAmount": {
-                    "type": "string"
-                },
-                "platformSettlementCurrency": {
                     "type": "string"
                 },
                 "recognizedCardValue": {
@@ -16246,6 +16296,50 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "supplierId": {
+                    "type": "integer"
+                },
+                "userLocalCurrencyAmount": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.OrdGiftcardWriteoffsCalculateReq": {
+            "type": "object",
+            "required": [
+                "orderId",
+                "recognizedCardValue"
+            ],
+            "properties": {
+                "giftCardDiscountId": {
+                    "type": "integer"
+                },
+                "orderId": {
+                    "type": "integer"
+                },
+                "recognizedCardValue": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.OrdGiftcardWriteoffsCalculateResp": {
+            "type": "object",
+            "properties": {
+                "configRate": {
+                    "type": "string"
+                },
+                "denominationValidation": {
+                    "$ref": "#/definitions/dto.OrdGiftcardWriteoffsDenominationValidation"
+                },
+                "isCrypto": {
+                    "type": "boolean"
+                },
+                "orderCurrencyCode": {
+                    "type": "string"
+                },
+                "userCurrencyCode": {
+                    "type": "string"
+                },
+                "userLocalCurrencyAmount": {
                     "type": "string"
                 }
             }
@@ -16261,6 +16355,34 @@ const docTemplateadmin = `{
                 }
             }
         },
+        "dto.OrdGiftcardWriteoffsDenominationValidation": {
+            "type": "object",
+            "properties": {
+                "allowedFixed": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "allowedRange": {
+                    "type": "object",
+                    "properties": {
+                        "max": {
+                            "type": "string"
+                        },
+                        "min": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "errorMessage": {
+                    "type": "string"
+                },
+                "isValid": {
+                    "type": "boolean"
+                }
+            }
+        },
         "dto.OrdGiftcardWriteoffsInsertReq": {
             "type": "object",
             "properties": {
@@ -16271,6 +16393,9 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "failureImageUrl": {
+                    "type": "string"
+                },
+                "giftCardDiscountId": {
                     "type": "string"
                 },
                 "giftCardId": {
@@ -16312,6 +16437,9 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "failureImageUrl": {
+                    "type": "string"
+                },
+                "giftCardDiscountId": {
                     "type": "string"
                 },
                 "giftCardId": {
@@ -16371,7 +16499,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -16395,7 +16523,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -17867,7 +17995,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "startTime": {
                     "type": "string"
@@ -17911,7 +18039,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "upExperience": {
                     "type": "string"
@@ -17966,6 +18094,9 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "currencyCode": {
+                    "type": "string"
+                },
+                "currencyType": {
                     "type": "string"
                 },
                 "frozenLimitAmount": {
@@ -18095,7 +18226,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"
@@ -19458,7 +19589,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "status": {
                     "type": "string"
@@ -19487,7 +19618,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "giftcardId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
@@ -19512,19 +19643,16 @@ const docTemplateadmin = `{
                 "createdAt": {
                     "type": "string"
                 },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "discountRate": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
                 "isMain": {
-                    "type": "string"
-                },
-                "quoteCurrency": {
-                    "type": "string"
-                },
-                "quoteCurrencySymbol": {
-                    "type": "string"
-                },
-                "rate": {
                     "type": "string"
                 },
                 "regionCode": {
@@ -19560,6 +19688,9 @@ const docTemplateadmin = `{
                 "failureImageUrl": {
                     "type": "string"
                 },
+                "giftCardDiscountId": {
+                    "type": "integer"
+                },
                 "giftCardId": {
                     "type": "integer"
                 },
@@ -19580,7 +19711,6 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "platformSettlementAmount": {
-                    "description": "平台入账相关字段",
                     "type": "string"
                 },
                 "platformSettlementCurrency": {
@@ -19599,6 +19729,7 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "supplierId": {
+                    "description": "平台入账相关字段",
                     "type": "string"
                 },
                 "updateBy": {
@@ -19640,7 +19771,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "sortOrder": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"

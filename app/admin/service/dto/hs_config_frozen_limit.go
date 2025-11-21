@@ -9,6 +9,7 @@ import (
 
 type HsConfigFrozenLimitGetPageReq struct {
 	dto.Pagination     `search:"-"`
+    CurrencyType string `form:"currencyType"  search:"type:exact;column:currency_type;table:hs_config_frozen_limit" comment:"币种类型：fiat=法币，crypto=虚拟币"`
     CurrencyCode string `form:"currencyCode"  search:"type:exact;column:currency_code;table:hs_config_frozen_limit" comment:"币种代码，如 USD/CNY/USDT"`
     FrozenLimitAmount string `form:"frozenLimitAmount"  search:"type:exact;column:frozen_limit_amount;table:hs_config_frozen_limit" comment:"可冻结金额上限 / 提现限制金额"`
     IsActive string `form:"isActive"  search:"type:exact;column:is_active;table:hs_config_frozen_limit" comment:"是否启用：1=启用，0=禁用"`
@@ -17,6 +18,7 @@ type HsConfigFrozenLimitGetPageReq struct {
 
 type HsConfigFrozenLimitOrder struct {
     Id string `form:"idOrder"  search:"type:order;column:id;table:hs_config_frozen_limit"`
+    CurrencyType string `form:"currencyTypeOrder"  search:"type:order;column:currency_type;table:hs_config_frozen_limit"`
     CurrencyCode string `form:"currencyCodeOrder"  search:"type:order;column:currency_code;table:hs_config_frozen_limit"`
     FrozenLimitAmount string `form:"frozenLimitAmountOrder"  search:"type:order;column:frozen_limit_amount;table:hs_config_frozen_limit"`
     IsActive string `form:"isActiveOrder"  search:"type:order;column:is_active;table:hs_config_frozen_limit"`
@@ -25,7 +27,7 @@ type HsConfigFrozenLimitOrder struct {
     CreatedAt string `form:"createdAtOrder"  search:"type:order;column:created_at;table:hs_config_frozen_limit"`
     UpdatedAt string `form:"updatedAtOrder"  search:"type:order;column:updated_at;table:hs_config_frozen_limit"`
     DeletedAt string `form:"deletedAtOrder"  search:"type:order;column:deleted_at;table:hs_config_frozen_limit"`
-    
+
 }
 
 func (m *HsConfigFrozenLimitGetPageReq) GetNeedSearch() interface{} {
@@ -34,6 +36,7 @@ func (m *HsConfigFrozenLimitGetPageReq) GetNeedSearch() interface{} {
 
 type HsConfigFrozenLimitInsertReq struct {
     Id int `json:"-" comment:"主键ID"` // 主键ID
+    CurrencyType string `json:"currencyType" comment:"币种类型：fiat=法币，crypto=虚拟币"`
     CurrencyCode string `json:"currencyCode" comment:"币种代码，如 USD/CNY/USDT"`
     FrozenLimitAmount string `json:"frozenLimitAmount" comment:"可冻结金额上限 / 提现限制金额"`
     IsActive string `json:"isActive" comment:"是否启用：1=启用，0=禁用"`
@@ -44,6 +47,7 @@ func (s *HsConfigFrozenLimitInsertReq) Generate(model *models.HsConfigFrozenLimi
     if s.Id == 0 {
         model.Model = common.Model{ Id: s.Id }
     }
+    model.CurrencyType = s.CurrencyType
     model.CurrencyCode = s.CurrencyCode
     model.FrozenLimitAmount = s.FrozenLimitAmount
     model.IsActive = s.IsActive
@@ -56,6 +60,7 @@ func (s *HsConfigFrozenLimitInsertReq) GetId() interface{} {
 
 type HsConfigFrozenLimitUpdateReq struct {
     Id int `uri:"id" comment:"主键ID"` // 主键ID
+    CurrencyType string `json:"currencyType" comment:"币种类型：fiat=法币，crypto=虚拟币"`
     CurrencyCode string `json:"currencyCode" comment:"币种代码，如 USD/CNY/USDT"`
     FrozenLimitAmount string `json:"frozenLimitAmount" comment:"可冻结金额上限 / 提现限制金额"`
     IsActive string `json:"isActive" comment:"是否启用：1=启用，0=禁用"`
@@ -66,6 +71,7 @@ func (s *HsConfigFrozenLimitUpdateReq) Generate(model *models.HsConfigFrozenLimi
     if s.Id == 0 {
         model.Model = common.Model{ Id: s.Id }
     }
+    model.CurrencyType = s.CurrencyType
     model.CurrencyCode = s.CurrencyCode
     model.FrozenLimitAmount = s.FrozenLimitAmount
     model.IsActive = s.IsActive

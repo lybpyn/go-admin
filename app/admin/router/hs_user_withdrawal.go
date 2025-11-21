@@ -23,5 +23,7 @@ func registerHsUserWithdrawalRouter(v1 *gin.RouterGroup, authMiddleware *jwt.Gin
 		r.POST("", api.Insert)
 		r.PUT("/:id", actions.PermissionAction(), api.Update)
 		r.DELETE("", api.Delete)
+		r.POST("/:id/approve", actions.PermissionAction(), api.Approve)
+		r.POST("/:id/reject", actions.PermissionAction(), api.Reject)
 	}
 }

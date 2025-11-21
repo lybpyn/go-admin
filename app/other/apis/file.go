@@ -14,6 +14,7 @@ import (
 	"github.com/google/uuid"
 
 	"go-admin/common/file_store"
+	"go-admin/config"
 )
 
 type FileResponse struct {
@@ -24,10 +25,24 @@ type FileResponse struct {
 	Type     string `json:"type"`
 }
 
-const path = "static/uploadfile/"
+// 默认上传路径
+const defaultPath = "static/uploadfile/"
 
 type File struct {
 	api.Api
+}
+
+// getUploadPath 获取上传路径，优先使用配置，否则使用默认路径
+func getUploadPath() string {
+	if config.ExtConfig.Upload.Path != "" {
+		path := config.ExtConfig.Upload.Path
+		// 确保路径以 / 结尾
+		if !strings.HasSuffix(path, "/") {
+			path = path + "/"
+		}
+		return path
+	}
+	return defaultPath
 }
 
 // UploadFile 上传图片
@@ -82,12 +97,13 @@ func (e File) baseImg(c *gin.Context, fileResponse FileResponse, urlPrefix strin
 	decodedData, _ := base64.StdEncoding.DecodeString(file2list[1])
 	fileName := uuid.New().String() + ".jpg"
 
-	if err := utils.IsNotExistMkDir(path); err != nil {
+	uploadPath := getUploadPath()
+	if err := utils.IsNotExistMkDir(uploadPath); err != nil {
 		e.Error(500, errors.New(""), "初始化文件路径失败")
 		return fileResponse
 	}
 
-	base64File := path + fileName
+	base64File := uploadPath + fileName
 	_ = ioutil.WriteFile(base64File, decodedData, 0666)
 	typeStr := strings.Replace(strings.Replace(file2list[0], "data:", "", -1), ";base64", "", -1)
 
@@ -100,8 +116,8 @@ func (e File) baseImg(c *gin.Context, fileResponse FileResponse, urlPrefix strin
 	}
 
 	if source != "1" {
-		fileResponse.Path = "/static/uploadfile/" + fileName
-		fileResponse.FullPath = "/static/uploadfile/" + fileName
+		fileResponse.Path = "/" + uploadPath + fileName
+		fileResponse.FullPath = "/" + uploadPath + fileName
 	}
 	return fileResponse
 }
@@ -111,15 +127,16 @@ func (e File) multipleFile(c *gin.Context, urlPrefix string) []FileResponse {
 	source, _ := c.GetPostForm("source")
 	var multipartFile []FileResponse
 
+	uploadPath := getUploadPath()
 	for _, f := range files {
 		fileName := uuid.New().String() + utils.GetExt(f.Filename)
 
-		if err := utils.IsNotExistMkDir(path); err != nil {
+		if err := utils.IsNotExistMkDir(uploadPath); err != nil {
 			e.Error(500, errors.New(""), "初始化文件路径失败")
 			continue
 		}
 
-		multipartFileName := path + fileName
+		multipartFileName := uploadPath + fileName
 		if err := c.SaveUploadedFile(f, multipartFileName); err != nil {
 			continue
 		}
@@ -132,8 +149,8 @@ func (e File) multipleFile(c *gin.Context, urlPrefix string) []FileResponse {
 
 		fileResponse := e.buildFileResponse(multipartFileName, urlPrefix, f.Filename, fileType)
 		if source != "1" {
-			fileResponse.Path = "/static/uploadfile/" + fileName
-			fileResponse.FullPath = "/static/uploadfile/" + fileName
+			fileResponse.Path = "/" + uploadPath + fileName
+			fileResponse.FullPath = "/" + uploadPath + fileName
 		}
 		multipartFile = append(multipartFile, fileResponse)
 	}
@@ -147,13 +164,14 @@ func (e File) singleFile(c *gin.Context, fileResponse FileResponse, urlPrefix st
 		return FileResponse{}, true
 	}
 
+	uploadPath := getUploadPath()
 	fileName := uuid.New().String() + utils.GetExt(files.Filename)
-	if err := utils.IsNotExistMkDir(path); err != nil {
+	if err := utils.IsNotExistMkDir(uploadPath); err != nil {
 		e.Error(500, errors.New(""), "初始化文件路径失败")
 		return FileResponse{}, true
 	}
 
-	singleFile := path + fileName
+	singleFile := uploadPath + fileName
 	if err := c.SaveUploadedFile(files, singleFile); err != nil {
 		e.Error(500, errors.New(""), "文件保存失败")
 		return FileResponse{}, true
@@ -161,8 +179,8 @@ func (e File) singleFile(c *gin.Context, fileResponse FileResponse, urlPrefix st
 
 	fileType, _ := utils.GetType(singleFile)
 	fileResponse = e.buildFileResponse(singleFile, urlPrefix, files.Filename, fileType)
-	fileResponse.Path = "/static/uploadfile/" + fileName
-	fileResponse.FullPath = "/static/uploadfile/" + fileName
+	fileResponse.Path = "/" + uploadPath + fileName
+	fileResponse.FullPath = "/" + uploadPath + fileName
 	return fileResponse, false
 }
 

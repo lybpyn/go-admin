@@ -14,17 +14,18 @@ type OrdGiftcardWriteoffsGetPageReq struct {
 }
 
 type OrdGiftcardWriteoffsOrder struct {
-	Id         string `form:"idOrder"  search:"type:order;column:id;table:ord_giftcard_writeoffs"`
-	UserId     string `form:"userIdOrder"  search:"type:order;column:user_id;table:ord_giftcard_writeoffs"`
-	OrderId    string `form:"orderIdOrder"  search:"type:order;column:order_id;table:ord_giftcard_writeoffs"`
-	GiftCardId string `form:"giftCardIdOrder"  search:"type:order;column:gift_card_id;table:ord_giftcard_writeoffs"`
-	Status     string `form:"statusOrder"  search:"type:order;column:status;table:ord_giftcard_writeoffs"`
-	Remark     string `form:"remarkOrder"  search:"type:order;column:remark;table:ord_giftcard_writeoffs"`
-	CreateBy   string `form:"createByOrder"  search:"type:order;column:create_by;table:ord_giftcard_writeoffs"`
-	UpdateBy   string `form:"updateByOrder"  search:"type:order;column:update_by;table:ord_giftcard_writeoffs"`
-	CreatedAt  string `form:"createdAtOrder"  search:"type:order;column:created_at;table:ord_giftcard_writeoffs"`
-	UpdatedAt  string `form:"updatedAtOrder"  search:"type:order;column:updated_at;table:ord_giftcard_writeoffs"`
-	DeletedAt  string `form:"deletedAtOrder"  search:"type:order;column:deleted_at;table:ord_giftcard_writeoffs"`
+	Id                 string `form:"idOrder"  search:"type:order;column:id;table:ord_giftcard_writeoffs"`
+	UserId             string `form:"userIdOrder"  search:"type:order;column:user_id;table:ord_giftcard_writeoffs"`
+	OrderId            string `form:"orderIdOrder"  search:"type:order;column:order_id;table:ord_giftcard_writeoffs"`
+	GiftCardId         string `form:"giftCardIdOrder"  search:"type:order;column:gift_card_id;table:ord_giftcard_writeoffs"`
+	GiftCardDiscountId string `form:"giftCardDiscountIdOrder"  search:"type:order;column:gift_card_discount_id;table:ord_giftcard_writeoffs"`
+	Status             string `form:"statusOrder"  search:"type:order;column:status;table:ord_giftcard_writeoffs"`
+	Remark             string `form:"remarkOrder"  search:"type:order;column:remark;table:ord_giftcard_writeoffs"`
+	CreateBy           string `form:"createByOrder"  search:"type:order;column:create_by;table:ord_giftcard_writeoffs"`
+	UpdateBy           string `form:"updateByOrder"  search:"type:order;column:update_by;table:ord_giftcard_writeoffs"`
+	CreatedAt          string `form:"createdAtOrder"  search:"type:order;column:created_at;table:ord_giftcard_writeoffs"`
+	UpdatedAt          string `form:"updatedAtOrder"  search:"type:order;column:updated_at;table:ord_giftcard_writeoffs"`
+	DeletedAt          string `form:"deletedAtOrder"  search:"type:order;column:deleted_at;table:ord_giftcard_writeoffs"`
 }
 
 func (m *OrdGiftcardWriteoffsGetPageReq) GetNeedSearch() interface{} {
@@ -36,6 +37,7 @@ type OrdGiftcardWriteoffsInsertReq struct {
 	UserId              string `json:"userId" comment:"用户ID，表示提交/使用礼品卡的用户"`
 	OrderId             string `json:"orderId" comment:"订单ID，关联 ord_user_orders.id，用于核销对应的订单"`
 	GiftCardId          string `json:"giftCardId" comment:"礼品卡ID，关联礼品卡主表（若有）"`
+	GiftCardDiscountId  string `json:"giftCardDiscountId" comment:"礼品卡折扣ID，关联 ord_giftcard_discounts.id"`
 	Status              int    `json:"status" comment:"核销状态：0=待核销，1=已核销，2=失败"`
 	Remark              string `json:"remark" comment:"备注信息，例如失败原因、核销说明"`
 	AdminRecognizedCode string `json:"adminRecognizedCode" comment:"管理员识别的兑换码"`
@@ -53,6 +55,7 @@ func (s *OrdGiftcardWriteoffsInsertReq) Generate(model *models.OrdGiftcardWriteo
 	model.UserId, _ = strconv.Atoi(s.UserId)
 	model.OrderId, _ = strconv.Atoi(s.OrderId)
 	model.GiftCardId, _ = strconv.Atoi(s.GiftCardId)
+	model.GiftCardDiscountId, _ = strconv.Atoi(s.GiftCardDiscountId)
 	model.Status = s.Status
 	model.Remark = s.Remark
 	model.AdminRecognizedCode = s.AdminRecognizedCode
@@ -72,6 +75,7 @@ type OrdGiftcardWriteoffsUpdateReq struct {
 	UserId              string `json:"userId" comment:"用户ID，表示提交/使用礼品卡的用户"`
 	OrderId             string `json:"orderId" comment:"订单ID，关联 ord_user_orders.id，用于核销对应的订单"`
 	GiftCardId          string `json:"giftCardId" comment:"礼品卡ID，关联礼品卡主表（若有）"`
+	GiftCardDiscountId  string `json:"giftCardDiscountId" comment:"礼品卡折扣ID，关联 ord_giftcard_discounts.id"`
 	Status              int    `json:"status" comment:"核销状态：0=待核销，1=已核销，2=失败"`
 	Remark              string `json:"remark" comment:"备注信息，例如失败原因、核销说明"`
 	AdminRecognizedCode string `json:"adminRecognizedCode" comment:"管理员识别的兑换码"`
@@ -89,6 +93,7 @@ func (s *OrdGiftcardWriteoffsUpdateReq) Generate(model *models.OrdGiftcardWriteo
 	model.UserId, _ = strconv.Atoi(s.UserId)
 	model.OrderId, _ = strconv.Atoi(s.OrderId)
 	model.GiftCardId, _ = strconv.Atoi(s.GiftCardId)
+	model.GiftCardDiscountId, _ = strconv.Atoi(s.GiftCardDiscountId)
 	model.Status = s.Status
 	model.Remark = s.Remark
 	model.AdminRecognizedCode = s.AdminRecognizedCode
@@ -123,22 +128,59 @@ func (s *OrdGiftcardWriteoffsDeleteReq) GetId() interface{} {
 
 // OrdGiftcardWriteoffsBatchInsertReq 批量核销请求参数
 type OrdGiftcardWriteoffsBatchInsertReq struct {
-	OrderId      int                              `json:"orderId" binding:"required" comment:"订单ID"`
-	UserId       int                              `json:"userId" binding:"required" comment:"用户ID"`
-	GiftCardId   int                              `json:"giftCardId" comment:"礼品卡ID"`
+	OrderId      int                             `json:"orderId" binding:"required" comment:"订单ID"`
 	WriteoffList []OrdGiftcardWriteoffsBatchItem `json:"writeoffList" binding:"required,min=1" comment:"核销列表"`
-	common.ControlBy
+	CreateBy     int                             `json:"-" comment:"创建者"` // 不从前端传参，从context获取
+	UpdateBy     int                             `json:"-" comment:"更新者"` // 不从前端传参，从context获取
+}
+
+// SetCreateBy 设置创建人id
+func (e *OrdGiftcardWriteoffsBatchInsertReq) SetCreateBy(createBy int) {
+	e.CreateBy = createBy
+}
+
+// SetUpdateBy 设置修改人id
+func (e *OrdGiftcardWriteoffsBatchInsertReq) SetUpdateBy(updateBy int) {
+	e.UpdateBy = updateBy
 }
 
 // OrdGiftcardWriteoffsBatchItem 批量核销项
 type OrdGiftcardWriteoffsBatchItem struct {
-	AdminRecognizedCode        string `json:"adminRecognizedCode" binding:"required" comment:"管理员识别的兑换码"`
-	Status                     int    `json:"status" comment:"核销状态：0=待核销，1=已核销，2=失败"`
-	Remark                     string `json:"remark" comment:"备注信息"`
-	PlatformSaleRate           string `json:"platformSaleRate" comment:"平台售卡汇率"`
-	RecognizedCardValue        string `json:"recognizedCardValue" comment:"识别的卡片面值"`
-	FailureImageUrl            string `json:"failureImageUrl" comment:"失败时的截图URL"`
-	SupplierId                 string `json:"supplierId" comment:"收卡品牌商ID"`
-	PlatformSettlementAmount   string `json:"platformSettlementAmount" comment:"平台入账货币金额"`
-	PlatformSettlementCurrency string `json:"platformSettlementCurrency" comment:"平台入账货币代码"`
+	GiftCardDiscountId       int    `json:"giftCardDiscountId" comment:"礼品卡折扣ID，关联 ord_giftcard_discounts.id"`
+	AdminRecognizedCode      string `json:"adminRecognizedCode" binding:"required" comment:"管理员识别的兑换码"`
+	RecognizedCardValue      string `json:"recognizedCardValue" comment:"识别的卡片面值"`
+	UserLocalCurrencyAmount  string `json:"userLocalCurrencyAmount" comment:"用户入账的本地货币金额"`
+	Status                   int    `json:"status" comment:"核销状态：0=待核销，1=已核销，2=失败"`
+	Remark                   string `json:"remark" comment:"备注信息"`
+	FailureImageUrl          string `json:"failureImageUrl" comment:"失败时的截图URL"`
+	SupplierId               int    `json:"supplierId" comment:"收卡品牌商ID"`
+	PlatformSettlementAmount string `json:"platformSettlementAmount" comment:"平台入账货币金额"`
+}
+
+// OrdGiftcardWriteoffsCalculateReq 计算用户入账金额请求参数
+type OrdGiftcardWriteoffsCalculateReq struct {
+	OrderId             int    `json:"orderId" binding:"required" comment:"订单ID"`
+	GiftCardDiscountId  int    `json:"giftCardDiscountId" comment:"礼品卡折扣ID（可选，用于面额校验）"`
+	RecognizedCardValue string `json:"recognizedCardValue" binding:"required" comment:"识别的卡片面值"`
+}
+
+// OrdGiftcardWriteoffsCalculateResp 计算用户入账金额响应
+type OrdGiftcardWriteoffsCalculateResp struct {
+	UserLocalCurrencyAmount string                                      `json:"userLocalCurrencyAmount" comment:"用户将获得的本地货币金额"`
+	UserCurrencyCode        string                                      `json:"userCurrencyCode" comment:"用户的货币代码"`
+	ConfigRate              string                                      `json:"configRate" comment:"配置的汇率"`
+	IsCrypto                bool                                        `json:"isCrypto" comment:"是否虚拟币"`
+	OrderCurrencyCode       string                                      `json:"orderCurrencyCode" comment:"源货币代码（提供折扣ID时为礼品卡区域货币，否则为订单货币）"`
+	DenominationValidation  *OrdGiftcardWriteoffsDenominationValidation `json:"denominationValidation,omitempty" comment:"面额校验信息"`
+}
+
+// OrdGiftcardWriteoffsDenominationValidation 面额校验信息
+type OrdGiftcardWriteoffsDenominationValidation struct {
+	IsValid      bool     `json:"isValid" comment:"是否符合面额规则"`
+	ErrorMessage string   `json:"errorMessage,omitempty" comment:"错误信息"`
+	AllowedFixed []string `json:"allowedFixed,omitempty" comment:"允许的固定面额"`
+	AllowedRange *struct {
+		Min string `json:"min" comment:"最小值"`
+		Max string `json:"max" comment:"最大值"`
+	} `json:"allowedRange,omitempty" comment:"允许的面额区间"`
 }

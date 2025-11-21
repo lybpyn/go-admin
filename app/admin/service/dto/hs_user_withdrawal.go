@@ -186,3 +186,25 @@ type HsUserWithdrawalWithStats struct {
 	WithdrawCount  int64  `json:"withdrawCount"`  // 提现笔数
 	OrderCount     int64  `json:"orderCount"`     // 订单笔数
 }
+
+// HsUserWithdrawalApproveReq 提现审核请求参数
+type HsUserWithdrawalApproveReq struct {
+	Id     int    `uri:"id" comment:"提现记录ID"`
+	Remark string `json:"remark" comment:"审核备注（可选）"`
+	common.ControlBy
+}
+
+func (s *HsUserWithdrawalApproveReq) GetId() interface{} {
+	return s.Id
+}
+
+// HsUserWithdrawalRejectReq 提现拒绝请求参数
+type HsUserWithdrawalRejectReq struct {
+	Id     int    `uri:"id" comment:"提现记录ID"`
+	Reason string `json:"reason" comment:"拒绝原因" binding:"required"`
+	common.ControlBy
+}
+
+func (s *HsUserWithdrawalRejectReq) GetId() interface{} {
+	return s.Id
+}

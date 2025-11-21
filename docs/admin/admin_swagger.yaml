@@ -84,7 +84,7 @@ definitions:
       linkUrl:
         type: string
       sortOrder:
-        type: string
+        type: integer
       startTime:
         type: string
       status:
@@ -107,7 +107,7 @@ definitions:
       linkUrl:
         type: string
       sortOrder:
-        type: string
+        type: integer
       startTime:
         type: string
       status:
@@ -137,7 +137,7 @@ definitions:
       levelPrivileges:
         type: string
       sortOrder:
-        type: string
+        type: integer
       upExperience:
         type: string
       updateBy:
@@ -159,7 +159,7 @@ definitions:
       levelPrivileges:
         type: string
       sortOrder:
-        type: string
+        type: integer
       upExperience:
         type: string
       updateBy:
@@ -218,6 +218,8 @@ definitions:
         type: integer
       currencyCode:
         type: string
+      currencyType:
+        type: string
       frozenLimitAmount:
         type: string
       isActive:
@@ -230,6 +232,8 @@ definitions:
       createBy:
         type: integer
       currencyCode:
+        type: string
+      currencyType:
         type: string
       frozenLimitAmount:
         type: string
@@ -357,7 +361,7 @@ definitions:
       rpcEndpoint:
         type: string
       sortOrder:
-        type: string
+        type: integer
       status:
         type: string
       updateBy:
@@ -397,7 +401,7 @@ definitions:
       rpcEndpoint:
         type: string
       sortOrder:
-        type: string
+        type: integer
       status:
         type: string
       updateBy:
@@ -2113,7 +2117,7 @@ definitions:
       name:
         type: string
       sortOrder:
-        type: string
+        type: integer
       status:
         type: string
       updateBy:
@@ -2133,7 +2137,7 @@ definitions:
       name:
         type: string
       sortOrder:
-        type: string
+        type: integer
       status:
         type: string
       updateBy:
@@ -2162,7 +2166,7 @@ definitions:
       discountRate:
         type: string
       giftcardId:
-        type: string
+        type: integer
       updateBy:
         type: integer
     type: object
@@ -2175,7 +2179,7 @@ definitions:
       discountRate:
         type: string
       giftcardId:
-        type: string
+        type: integer
       id:
         type: integer
       updateBy:
@@ -2213,13 +2217,11 @@ definitions:
         type: string
       createBy:
         type: integer
+      currencyCode:
+        type: string
+      discountRate:
+        type: string
       isMain:
-        type: string
-      quoteCurrency:
-        type: string
-      quoteCurrencySymbol:
-        type: string
-      rate:
         type: string
       regionCode:
         type: string
@@ -2234,16 +2236,14 @@ definitions:
         type: string
       createBy:
         type: integer
+      currencyCode:
+        type: string
+      discountRate:
+        type: string
       id:
         description: 地区ID
         type: integer
       isMain:
-        type: string
-      quoteCurrency:
-        type: string
-      quoteCurrencySymbol:
-        type: string
-      rate:
         type: string
       regionCode:
         type: string
@@ -2276,15 +2276,7 @@ definitions:
     type: object
   dto.OrdGiftcardWriteoffsBatchInsertReq:
     properties:
-      createBy:
-        type: integer
-      giftCardId:
-        type: integer
       orderId:
-        type: integer
-      updateBy:
-        type: integer
-      userId:
         type: integer
       writeoffList:
         items:
@@ -2293,7 +2285,6 @@ definitions:
         type: array
     required:
     - orderId
-    - userId
     - writeoffList
     type: object
   dto.OrdGiftcardWriteoffsBatchItem:
@@ -2302,11 +2293,9 @@ definitions:
         type: string
       failureImageUrl:
         type: string
-      platformSaleRate:
-        type: string
+      giftCardDiscountId:
+        type: integer
       platformSettlementAmount:
-        type: string
-      platformSettlementCurrency:
         type: string
       recognizedCardValue:
         type: string
@@ -2315,9 +2304,38 @@ definitions:
       status:
         type: integer
       supplierId:
+        type: integer
+      userLocalCurrencyAmount:
         type: string
     required:
     - adminRecognizedCode
+    type: object
+  dto.OrdGiftcardWriteoffsCalculateReq:
+    properties:
+      giftCardDiscountId:
+        type: integer
+      orderId:
+        type: integer
+      recognizedCardValue:
+        type: string
+    required:
+    - orderId
+    - recognizedCardValue
+    type: object
+  dto.OrdGiftcardWriteoffsCalculateResp:
+    properties:
+      configRate:
+        type: string
+      denominationValidation:
+        $ref: '#/definitions/dto.OrdGiftcardWriteoffsDenominationValidation'
+      isCrypto:
+        type: boolean
+      orderCurrencyCode:
+        type: string
+      userCurrencyCode:
+        type: string
+      userLocalCurrencyAmount:
+        type: string
     type: object
   dto.OrdGiftcardWriteoffsDeleteReq:
     properties:
@@ -2326,6 +2344,24 @@ definitions:
           type: integer
         type: array
     type: object
+  dto.OrdGiftcardWriteoffsDenominationValidation:
+    properties:
+      allowedFixed:
+        items:
+          type: string
+        type: array
+      allowedRange:
+        properties:
+          max:
+            type: string
+          min:
+            type: string
+        type: object
+      errorMessage:
+        type: string
+      isValid:
+        type: boolean
+    type: object
   dto.OrdGiftcardWriteoffsInsertReq:
     properties:
       adminRecognizedCode:
@@ -2333,6 +2369,8 @@ definitions:
       createBy:
         type: integer
       failureImageUrl:
+        type: string
+      giftCardDiscountId:
         type: string
       giftCardId:
         type: string
@@ -2360,6 +2398,8 @@ definitions:
       createBy:
         type: integer
       failureImageUrl:
+        type: string
+      giftCardDiscountId:
         type: string
       giftCardId:
         type: string
@@ -2399,7 +2439,7 @@ definitions:
       orderId:
         type: string
       sortOrder:
-        type: string
+        type: integer
       updateBy:
         type: integer
     type: object
@@ -2415,7 +2455,7 @@ definitions:
       orderId:
         type: string
       sortOrder:
-        type: string
+        type: integer
       updateBy:
         type: integer
     type: object
@@ -3411,7 +3451,7 @@ definitions:
       linkUrl:
         type: string
       sortOrder:
-        type: string
+        type: integer
       startTime:
         type: string
       status:
@@ -3440,7 +3480,7 @@ definitions:
       levelPrivileges:
         type: string
       sortOrder:
-        type: string
+        type: integer
       upExperience:
         type: string
       updateBy:
@@ -3476,6 +3516,8 @@ definitions:
       createdAt:
         type: string
       currencyCode:
+        type: string
+      currencyType:
         type: string
       frozenLimitAmount:
         type: string
@@ -3561,7 +3603,7 @@ definitions:
       rpcEndpoint:
         type: string
       sortOrder:
-        type: string
+        type: integer
       status:
         type: string
       updateBy:
@@ -4460,7 +4502,7 @@ definitions:
       name:
         type: string
       sortOrder:
-        type: string
+        type: integer
       status:
         type: string
       updateBy:
@@ -4479,7 +4521,7 @@ definitions:
       discountRate:
         type: string
       giftcardId:
-        type: string
+        type: integer
       id:
         type: integer
       updateBy:
@@ -4495,15 +4537,13 @@ definitions:
         type: integer
       createdAt:
         type: string
+      currencyCode:
+        type: string
+      discountRate:
+        type: string
       id:
         type: integer
       isMain:
-        type: string
-      quoteCurrency:
-        type: string
-      quoteCurrencySymbol:
-        type: string
-      rate:
         type: string
       regionCode:
         type: string
@@ -4527,6 +4567,8 @@ definitions:
         type: string
       failureImageUrl:
         type: string
+      giftCardDiscountId:
+        type: integer
       giftCardId:
         type: integer
       giftCardName:
@@ -4541,7 +4583,6 @@ definitions:
       platformSaleRate:
         type: string
       platformSettlementAmount:
-        description: 平台入账相关字段
         type: string
       platformSettlementCurrency:
         type: string
@@ -4554,6 +4595,7 @@ definitions:
       status:
         type: integer
       supplierId:
+        description: 平台入账相关字段
         type: string
       updateBy:
         type: integer
@@ -4581,7 +4623,7 @@ definitions:
       orderId:
         type: string
       sortOrder:
-        type: string
+        type: integer
       updateBy:
         type: integer
       updatedAt:
@@ -5893,6 +5935,10 @@ paths:
     get:
       description: 获取用户冻结金额限制配置表列表
       parameters:
+      - description: 币种类型：fiat=法币，crypto=虚拟币
+        in: query
+        name: currencyType
+        type: string
       - description: 币种代码，如 USD/CNY/USDT
         in: query
         name: currencyCode
@@ -10598,6 +10644,14 @@ paths:
     get:
       description: 获取礼品卡不同类型折扣列表
       parameters:
+      - description: 礼品卡ID
+        in: query
+        name: giftcard_id
+        type: integer
+      - description: 卡类型
+        in: query
+        name: card_type
+        type: string
       - description: 页条数
         in: query
         name: pageSize
@@ -10964,6 +11018,33 @@ paths:
       security:
       - Bearer: []
       summary: 批量创建礼品卡核销记录
+      tags:
+      - 礼品卡核销记录表
+  /api/v1/ord-giftcard-writeoffs/calculate:
+    post:
+      consumes:
+      - application/json
+      description: 根据订单ID和卡片面值，计算用户将获得的本地货币金额
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardWriteoffsCalculateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "data": {...}}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.OrdGiftcardWriteoffsCalculateResp'
+              type: object
+      security:
+      - Bearer: []
+      summary: 计算用户入账金额
       tags:
       - 礼品卡核销记录表
   /api/v1/ord-giftcard/{id}:

@@ -22,6 +22,7 @@ type HsConfigFrozenLimit struct {
 // @Summary 获取用户冻结金额限制配置表列表
 // @Description 获取用户冻结金额限制配置表列表
 // @Tags 用户冻结金额限制配置表
+// @Param currencyType query string false "币种类型：fiat=法币，crypto=虚拟币"
 // @Param currencyCode query string false "币种代码，如 USD/CNY/USDT"
 // @Param frozenLimitAmount query string false "可冻结金额上限 / 提现限制金额"
 // @Param isActive query string false "是否启用：1=启用，0=禁用"

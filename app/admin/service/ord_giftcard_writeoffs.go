@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-admin-team/go-admin-core/sdk/service"
@@ -134,183 +135,337 @@ func (e *OrdGiftcardWriteoffs) Remove(d *dto.OrdGiftcardWriteoffsDeleteReq, p *a
 func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInsertReq) error {
 	var err error
 
-	// 使用事务处理
-	return e.Orm.Transaction(func(tx *gorm.DB) error {
-		// 1. 并行获取用户和订单信息（一次查询获取用户货币代码）
-		type QueryResult struct {
-			UserCurrency  string
-			Order         models.OrdUserOrders
-			UserErr       error
-			OrderErr      error
+	// ============ 事务外：所有只读查询和数据准备 ============
+
+	// 1. 查询订单信息
+	var order models.OrdUserOrders
+	err = e.Orm.Where("id = ?", c.OrderId).First(&order).Error
+	if err != nil {
+		e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert get order error:%s", err)
+		return errors.New("获取订单信息失败")
+	}
+
+	// 预检查订单状态，必须是已经接单状态（status=1）才能核销（快速失败）
+	if order.Status != 1 {
+		e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert order status invalid: orderId=%d, status=%d", order.Id, order.Status)
+		return errors.New("订单状态不正确，只有已接单的订单才能核销")
+	}
+
+	// 从订单中获取用户ID
+	userId := order.UserId
+
+	// 2. 查询用户货币代码
+	var userCurrencyCode string
+	err = e.Orm.Table("hs_users").
+		Select("hs_config_regions.currency_code").
+		Joins("LEFT JOIN hs_config_regions ON hs_users.region_id = hs_config_regions.id").
+		Where("hs_users.id = ?", userId).
+		Scan(&userCurrencyCode).Error
+	if err != nil {
+		e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert get user currency error:%s", err)
+		return errors.New("获取用户信息失败")
+	}
+
+	// 3. 计算配置汇率和目标货币
+	isCrypto := order.BalanceType == 2
+	var configRate string
+	var targetCurrency string
+
+	if isCrypto {
+		targetCurrency = "USD"
+		if order.CurrencyCode == "USD" {
+			configRate = "1.00000000"
+		} else {
+			rate, err := e.getCurrencyRate(e.Orm, order.CurrencyCode, "USD")
+			if err != nil {
+				return err
+			}
+			configRate = rate
+		}
+	} else {
+		targetCurrency = userCurrencyCode
+		if order.CurrencyCode == userCurrencyCode {
+			configRate = "1.00000000"
+		} else {
+			rate, err := e.getCurrencyRateViaUSD(e.Orm, order.CurrencyCode, userCurrencyCode)
+			if err != nil {
+				return err
+			}
+			configRate = rate
+		}
+	}
+
+	// 4. 批量查询礼品卡折扣配置
+	discountIdSet := make(map[int]bool)
+	for _, item := range c.WriteoffList {
+		if item.GiftCardDiscountId > 0 {
+			discountIdSet[item.GiftCardDiscountId] = true
+		}
+	}
+
+	// 批量查询折扣配置
+	discountCache := make(map[int]*models.OrdGiftcardDiscounts)
+	giftcardIdSet := make(map[int]bool)
+	if len(discountIdSet) > 0 {
+		discountIds := make([]int, 0, len(discountIdSet))
+		for id := range discountIdSet {
+			discountIds = append(discountIds, id)
 		}
 
-		result := QueryResult{}
-
-		// 查询用户货币代码
-		err = tx.Table("hs_users").
-			Select("hs_config_regions.currency_code").
-			Joins("LEFT JOIN hs_config_regions ON hs_users.region_id = hs_config_regions.id").
-			Where("hs_users.id = ?", c.UserId).
-			Scan(&result.UserCurrency).Error
+		var discountConfigs []models.OrdGiftcardDiscounts
+		err = e.Orm.Where("id IN ?", discountIds).Find(&discountConfigs).Error
 		if err != nil {
-			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert get user currency error:%s", err)
-			return errors.New("获取用户信息失败")
+			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert get discount configs error:%s", err)
+			return errors.New("查询折扣配置失败")
 		}
 
-		// 查询订单信息
-		err = tx.Where("id = ?", c.OrderId).First(&result.Order).Error
+		for i := range discountConfigs {
+			discountCache[discountConfigs[i].Id] = &discountConfigs[i]
+			// 收集礼品卡ID用于查询面额配置
+			if discountConfigs[i].GiftcardId > 0 {
+				giftcardIdSet[discountConfigs[i].GiftcardId] = true
+			}
+		}
+	}
+
+	// 批量查询礼品卡配置（获取面额规则）
+	giftcardCache := make(map[int]*models.OrdGiftcard)
+	regionIdSet := make(map[string]bool)
+	if len(giftcardIdSet) > 0 {
+		giftcardIds := make([]int, 0, len(giftcardIdSet))
+		for id := range giftcardIdSet {
+			giftcardIds = append(giftcardIds, id)
+		}
+
+		var giftcards []models.OrdGiftcard
+		err = e.Orm.Where("id IN ?", giftcardIds).Find(&giftcards).Error
 		if err != nil {
-			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert get order error:%s", err)
-			return errors.New("获取订单信息失败")
+			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert get giftcard configs error:%s", err)
+			return errors.New("查询礼品卡配置失败")
 		}
 
-		// 检查订单状态，必须是已经接单状态（status=1）才能核销
-		if result.Order.Status != 1 {
-			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert order status invalid: orderId=%d, status=%d", result.Order.Id, result.Order.Status)
-			return errors.New("订单状态不正确，只有已接单的订单才能核销")
+		for i := range giftcards {
+			giftcardCache[giftcards[i].Id] = &giftcards[i]
+			// 收集区域ID用于查询货币代码
+			if giftcards[i].RegionId != "" && giftcards[i].RegionId != "0" {
+				regionIdSet[giftcards[i].RegionId] = true
+			}
+		}
+	}
+
+	// 5. 批量查询礼品卡区域配置（获取货币代码）
+	regionCache := make(map[string]*models.OrdGiftcardRegion)
+	if len(regionIdSet) > 0 {
+		regionIds := make([]string, 0, len(regionIdSet))
+		for id := range regionIdSet {
+			regionIds = append(regionIds, id)
 		}
 
-		order := result.Order
-		userCurrencyCode := result.UserCurrency
+		var regions []models.OrdGiftcardRegion
+		err = e.Orm.Where("id IN ?", regionIds).Find(&regions).Error
+		if err != nil {
+			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert get region configs error:%s", err)
+			return errors.New("查询礼品卡区域配置失败")
+		}
 
-		// 2. 计算配置汇率和目标货币
-		isCrypto := order.BalanceType == 2
-		var configRate string
-		var targetCurrency string
+		for i := range regions {
+			regionCache[strconv.Itoa(regions[i].Id)] = &regions[i]
+		}
+	}
 
-		if isCrypto {
-			targetCurrency = "USD"
-			if order.CurrencyCode == "USD" {
-				configRate = "1.00000000"
+	// 6. 预转换配置汇率
+	configRateFloat, _ := strconv.ParseFloat(configRate, 64)
+
+	// 7. 验证核销状态并构建批量插入数据
+	if len(c.WriteoffList) == 0 {
+		return errors.New("核销记录列表不能为空")
+	}
+
+	// 获取第一条记录的状态作为订单最终状态
+	finalStatus := c.WriteoffList[0].Status
+
+	// 核销状态只能是成功(1)或失败(2)
+	if finalStatus != 1 && finalStatus != 2 {
+		e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert invalid writeoff status: %d", finalStatus)
+		return errors.New("核销状态无效，只能是已核销(1)或失败(2)")
+	}
+
+	writeoffRecords := make([]models.OrdGiftcardWriteoffs, 0, len(c.WriteoffList))
+	var totalAmount float64
+
+	for _, item := range c.WriteoffList {
+		// 使用int类型的GiftCardDiscountId
+		giftCardDiscountId := item.GiftCardDiscountId
+
+		// 从数据库配置中获取折扣率（平台售卡汇率）
+		var platformSaleRate string
+		var discountRateFloat float64
+		var giftcardId int
+		if giftCardDiscountId > 0 {
+			if discountConfig, exists := discountCache[giftCardDiscountId]; exists {
+				platformSaleRate = discountConfig.DiscountRate
+				discountRateFloat, _ = strconv.ParseFloat(platformSaleRate, 64)
+				giftcardId = discountConfig.GiftcardId
 			} else {
-				rate, err := e.getCurrencyRate(tx, order.CurrencyCode, "USD")
-				if err != nil {
-					return err
-				}
-				configRate = rate
+				e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert discount config not found: discountId=%d", giftCardDiscountId)
+				return fmt.Errorf("折扣配置不存在：ID=%d", giftCardDiscountId)
 			}
 		} else {
-			targetCurrency = userCurrencyCode
-			if order.CurrencyCode == userCurrencyCode {
-				configRate = "1.00000000"
-			} else {
-				rate, err := e.getCurrencyRateViaUSD(tx, order.CurrencyCode, userCurrencyCode)
-				if err != nil {
-					return err
-				}
-				configRate = rate
-			}
+			// 如果没有提供折扣配置ID，使用默认值
+			platformSaleRate = ""
+			discountRateFloat = 0
 		}
 
-		// 3. 收集需要查询的平台货币并批量查询汇率
-		currencySet := make(map[string]bool)
-		for _, item := range c.WriteoffList {
-			if item.PlatformSettlementCurrency != "" && item.PlatformSettlementCurrency != "USD" {
-				currencySet[item.PlatformSettlementCurrency] = true
-			}
+		// 获取卡片面值
+		var cardValueFloat float64
+		if item.RecognizedCardValue != "" {
+			cardValueFloat, _ = strconv.ParseFloat(item.RecognizedCardValue, 64)
 		}
 
-		// 批量查询汇率缓存
-		rateCache := make(map[string]string)
-		rateCache["USD"] = "1.00000000"
-		for currency := range currencySet {
-			rate, err := e.getCurrencyRate(tx, currency, "USD")
-			if err != nil {
-				e.Log.Warnf("Get platform currency %s to USD rate error:%s, use 0", currency, err)
-				rateCache[currency] = "0.00000000"
-			} else {
-				rateCache[currency] = rate
-			}
-		}
+		// 获取用户本地货币金额
+		var userLocalAmount float64
+		var convertedAmount string
 
-		// 4. 预转换配置汇率
-		configRateFloat, _ := strconv.ParseFloat(configRate, 64)
+		if item.UserLocalCurrencyAmount != "" && item.UserLocalCurrencyAmount != "0" {
+			// 使用前端传入的用户本地货币金额
+			userLocalAmount, _ = strconv.ParseFloat(item.UserLocalCurrencyAmount, 64)
+			convertedAmount = item.UserLocalCurrencyAmount
 
-		// 5. 验证核销状态并构建批量插入数据
-		if len(c.WriteoffList) == 0 {
-			return errors.New("核销记录列表不能为空")
-		}
-
-		// 获取第一条记录的状态作为订单最终状态
-		finalStatus := c.WriteoffList[0].Status
-
-		// 核销状态只能是成功(1)或失败(2)
-		if finalStatus != 1 && finalStatus != 2 {
-			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert invalid writeoff status: %d", finalStatus)
-			return errors.New("核销状态无效，只能是已核销(1)或失败(2)")
-		}
-
-		writeoffRecords := make([]models.OrdGiftcardWriteoffs, 0, len(c.WriteoffList))
-		var totalAmount float64
-
-		for _, item := range c.WriteoffList {
-			// 计算转换后的金额
-			convertedAmount := "0.00000000"
-			if item.RecognizedCardValue != "" {
-				if cardValue, err := strconv.ParseFloat(item.RecognizedCardValue, 64); err == nil {
-					amount := cardValue * configRateFloat
-					convertedAmount = fmt.Sprintf("%.8f", amount)
-					// 只累加已核销状态的金额
-					if item.Status == 1 {
-						totalAmount += amount
+			// 校验面额规则（如果有对应的礼品卡配置）
+			if giftcardId > 0 {
+				if giftcard, exists := giftcardCache[giftcardId]; exists && giftcard.ValuesConfig != "" {
+					// 解析面额配置并校验
+					if err := e.validateDenomination(userLocalAmount, giftcard.ValuesConfig); err != nil {
+						e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert denomination validation failed: amount=%.8f, config=%s, error=%s",
+							userLocalAmount, giftcard.ValuesConfig, err.Error())
+						return fmt.Errorf("金额 %.2f 不符合入账面额规则：%s", userLocalAmount, err.Error())
 					}
 				}
 			}
-
-			// 从缓存获取平台汇率
-			platformToUsdRate := rateCache[item.PlatformSettlementCurrency]
-
-			record := models.OrdGiftcardWriteoffs{
-				UserId:                     c.UserId,
-				OrderId:                    c.OrderId,
-				GiftCardId:                 c.GiftCardId,
-				Status:                     item.Status,
-				Remark:                     item.Remark,
-				AdminRecognizedCode:        item.AdminRecognizedCode,
-				PlatformSaleRate:           item.PlatformSaleRate,
-				RecognizedCardValue:        item.RecognizedCardValue,
-				FailureImageUrl:            item.FailureImageUrl,
-				SupplierId:                 item.SupplierId,
-				ConfigRate:                 configRate,
-				UserLocalCurrencyAmount:    convertedAmount,
-				UserCurrencyCode:           targetCurrency,
-				PlatformSettlementAmount:   item.PlatformSettlementAmount,
-				PlatformSettlementCurrency: item.PlatformSettlementCurrency,
-				PlatformToUsdRate:          platformToUsdRate,
+		} else {
+			// 计算转换后的金额（给用户的金额）
+			// 用户金额 = 卡片面值 × 货币转换汇率
+			convertedAmount = "0.00000000"
+			if cardValueFloat > 0 {
+				userLocalAmount = cardValueFloat * configRateFloat
+				convertedAmount = fmt.Sprintf("%.8f", userLocalAmount)
 			}
-			record.CreateBy = c.CreateBy
-			writeoffRecords = append(writeoffRecords, record)
 		}
 
-		// 6. 批量插入核销记录
+		// 只累加已核销状态的金额
+		if item.Status == 1 && userLocalAmount > 0 {
+			totalAmount += userLocalAmount
+		}
+
+		// 计算平台入账金额（如果未提供）
+		// 平台入账金额 = 卡片面值 × 折扣率
+		platformSettlementAmount := item.PlatformSettlementAmount
+
+		// 根据礼品卡区域配置获取货币代码（以管理员核销选择为准）
+		platformSettlementCurrency := order.CurrencyCode // 默认使用订单货币
+		var platformToUsdRate string
+
+		if giftcardId > 0 {
+			if giftcard, exists := giftcardCache[giftcardId]; exists && giftcard.RegionId != "" {
+				if region, regionExists := regionCache[giftcard.RegionId]; regionExists {
+					platformSettlementCurrency = region.CurrencyCode
+				}
+			}
+		}
+
+		// 计算平台货币对美元汇率
+		if platformSettlementCurrency == "USD" {
+			platformToUsdRate = "1.00000000"
+		} else {
+			rate, err := e.getCurrencyRate(e.Orm, platformSettlementCurrency, "USD")
+			if err != nil {
+				e.Log.Warnf("Get platform currency %s to USD rate error:%s, use 1", platformSettlementCurrency, err)
+				platformToUsdRate = "1.00000000"
+			} else {
+				platformToUsdRate = rate
+			}
+		}
+
+		if platformSettlementAmount == "" || platformSettlementAmount == "0" {
+			// 自动计算平台入账金额
+			if cardValueFloat > 0 && discountRateFloat > 0 {
+				// 平台收卡成本 = 卡片面值 × 折扣率
+				platformCost := cardValueFloat * discountRateFloat
+				platformSettlementAmount = fmt.Sprintf("%.8f", platformCost)
+			}
+		}
+
+		record := models.OrdGiftcardWriteoffs{
+			UserId:                     userId,
+			OrderId:                    c.OrderId,
+			GiftCardId:                 giftcardId, // 从折扣配置中获取
+			GiftCardDiscountId:         giftCardDiscountId,
+			Status:                     item.Status,
+			Remark:                     item.Remark,
+			AdminRecognizedCode:        item.AdminRecognizedCode,
+			PlatformSaleRate:           platformSaleRate,
+			RecognizedCardValue:        item.RecognizedCardValue,
+			FailureImageUrl:            item.FailureImageUrl,
+			SupplierId:                 strconv.Itoa(item.SupplierId),
+			ConfigRate:                 configRate,
+			UserLocalCurrencyAmount:    convertedAmount,
+			UserCurrencyCode:           targetCurrency,
+			PlatformSettlementAmount:   platformSettlementAmount,
+			PlatformSettlementCurrency: platformSettlementCurrency,
+			PlatformToUsdRate:          platformToUsdRate,
+		}
+		record.CreateBy = c.CreateBy
+		writeoffRecords = append(writeoffRecords, record)
+	}
+
+	// 8. 准备订单状态更新数据
+	// 核销成功(1) → 订单完成(2)，处理状态完成(3)
+	// 核销失败(2) → 订单驳回(4)，处理状态取消(2)
+	var orderStatus int
+	var processingStatus int
+	if finalStatus == 1 {
+		orderStatus = 2      // 订单完成
+		processingStatus = 3 // 处理完成
+	} else {
+		orderStatus = 4      // 订单驳回
+		processingStatus = 2 // 处理取消
+	}
+
+	orderUpdates := map[string]interface{}{
+		"status":                 orderStatus,
+		"processing_status":      processingStatus,
+		"processing_started_end": time.Now(),
+	}
+
+	if orderStatus == 2 {
+		orderUpdates["completed_at"] = time.Now()
+	}
+
+	// ============ 事务内：只执行写操作 ============
+	return e.Orm.Transaction(func(tx *gorm.DB) error {
+		// 1. 加锁查询订单，再次验证状态（防止并发核销）
+		var orderLocked models.OrdUserOrders
+		err := tx.Set("gorm:query_option", "FOR UPDATE").
+			Where("id = ?", c.OrderId).
+			First(&orderLocked).Error
+		if err != nil {
+			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert lock order error:%s", err)
+			return errors.New("获取订单锁失败")
+		}
+
+		// 再次检查状态（防止并发修改）
+		if orderLocked.Status != 1 {
+			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert order status changed: orderId=%d, status=%d", orderLocked.Id, orderLocked.Status)
+			return errors.New("订单状态已变更，无法核销")
+		}
+
+		// 2. 批量插入核销记录
 		if err = tx.Create(&writeoffRecords).Error; err != nil {
 			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert error:%s", err)
 			return err
 		}
 
-		// 7. 根据核销状态更新订单状态和处理状态
-		// 核销成功(1) → 订单完成(2)，处理状态完成(3)
-		// 核销失败(2) → 订单驳回(4)，处理状态取消(2)
-		var orderStatus int
-		var processingStatus int
-		if finalStatus == 1 {
-			orderStatus = 2         // 订单完成
-			processingStatus = 3     // 处理完成
-		} else {
-			orderStatus = 4         // 订单驳回
-			processingStatus = 2    // 处理取消
-		}
-
-		orderUpdates := map[string]interface{}{
-			"status":             orderStatus,
-			"processing_status":  processingStatus,
-			"processing_started_end": time.Now(),
-		}
-
-		if orderStatus == 2 {
-			orderUpdates["completed_at"] = time.Now()
-		}
-
+		// 3. 更新订单状态
 		e.Log.Infof("Updating order %d: status=%d, processing_status=%d (writeoff status: %d)", c.OrderId, orderStatus, processingStatus, finalStatus)
 
 		if err = tx.Model(&models.OrdUserOrders{}).Where("id = ?", c.OrderId).Updates(orderUpdates).Error; err != nil {
@@ -318,91 +473,119 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 			return err
 		}
 
-		// 如果核销成功且总金额大于0，需要进行余额增加、流水记录和账户分成
+		// 4. 如果核销成功且总金额大于0，需要进行余额增加、流水记录和账户分成
 		if finalStatus == 1 && totalAmount > 0 {
-			// 8. 查询用户当前余额和版本号
-			var user models.HsUsers
-			if err = tx.Select("id, balance, crypto_balance, version").Where("id = ?", c.UserId).First(&user).Error; err != nil {
-				e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert get user balance error:%s", err)
-				return errors.New("获取用户余额失败")
-			}
-
-			// 9. 更新用户余额（根据入账类型选择法币或虚拟币余额）
-			var balanceBefore float64
-			var balanceField string
-			var decimalPlaces int
-
-			if isCrypto {
-				balanceField = "crypto_balance"
-				decimalPlaces = 8
-				balanceBefore, _ = strconv.ParseFloat(user.CryptoBalance, 64)
-			} else {
-				balanceField = "balance"
-				decimalPlaces = 2
-				balanceBefore, _ = strconv.ParseFloat(user.Balance, 64)
-			}
-
-			balanceAfter := balanceBefore + totalAmount
-
-			result := tx.Model(&models.HsUsers{}).
-				Where("id = ? AND version = ?", c.UserId, user.Version).
-				Updates(map[string]interface{}{
-					balanceField: fmt.Sprintf("%.*f", decimalPlaces, balanceAfter),
-					"version":    gorm.Expr("version + 1"),
-				})
-
-			if result.Error != nil {
-				e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert update balance error:%s", result.Error)
-				return errors.New("更新用户余额失败")
-			}
-
-			if result.RowsAffected == 0 {
-				e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert update balance conflict")
-				return errors.New("余额更新冲突，请重试")
-			}
-
-			// 10. 创建流水记录
+			// 用户入账（独立封装方法）
 			bizType := "giftcard_writeoff_fiat"
 			if isCrypto {
 				bizType = "giftcard_writeoff_crypto"
 			}
 
-			orderIdStr := strconv.Itoa(c.OrderId)
-			userIdStr := strconv.Itoa(c.UserId)
-
-			ledger := models.HsUserLedger{
-				UserId:         userIdStr,
-				CurrencyCode:   targetCurrency,
-				Direction:      "1", // 1=入账
-				Amount:         fmt.Sprintf("%.*f", decimalPlaces, totalAmount),
-				BalanceBefore:  fmt.Sprintf("%.*f", decimalPlaces, balanceBefore),
-				BalanceAfter:   fmt.Sprintf("%.*f", decimalPlaces, balanceAfter),
-				BizType:        bizType,
-				BizId:          orderIdStr,
-				IdempotencyKey: fmt.Sprintf("GIFTCARD_WRITEOFF:%d:%d", c.OrderId, time.Now().UnixNano()),
-				RefTable:       "ord_giftcard_writeoffs",
-				RefId:          orderIdStr,
-				Remark:         fmt.Sprintf("礼品卡核销到账，订单号: %d", c.OrderId),
-				Status:         "1", // 1=已入账
-			}
-			ledger.CreateBy = c.CreateBy
-
-			err = tx.Create(&ledger).Error
+			remark := fmt.Sprintf("礼品卡核销到账，订单号: %d", c.OrderId)
+			err = e.creditUserBalance(tx, userId, totalAmount, targetCurrency, isCrypto, c.OrderId, bizType, remark, c.CreateBy)
 			if err != nil {
-				e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert create ledger error:%s \r\n", err)
-				return errors.New("创建流水记录失败")
+				e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert credit user balance error:%s", err)
+				return err
 			}
 
-			// 10. 处理邀请分成（分成进入冻结余额）
-			err = e.processInviteCommissions(tx, c.UserId, c.OrderId, totalAmount, targetCurrency, isCrypto, c.CreateBy)
+			// 处理邀请分成（分成进入冻结余额）
+			err = e.processInviteCommissions(tx, userId, c.OrderId, totalAmount, targetCurrency, isCrypto, c.CreateBy)
 			if err != nil {
-				e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert process commissions error:%s \r\n", err)
+				e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert process commissions error:%s", err)
 				return err
 			}
 		}
 
 		return nil
 	})
+}
+
+// creditUserBalance 用户入账（独立封装）
+// 参数：
+//   - userId: 用户ID
+//   - amount: 入账金额
+//   - currencyCode: 货币代码
+//   - isCrypto: 是否虚拟币（true=虚拟币，false=法币）
+//   - orderId: 订单ID
+//   - bizType: 业务类型（如：giftcard_writeoff_fiat、giftcard_writeoff_crypto）
+//   - remark: 备注信息
+//   - createBy: 创建人ID
+func (e *OrdGiftcardWriteoffs) creditUserBalance(tx *gorm.DB, userId int, amount float64, currencyCode string, isCrypto bool, orderId int, bizType string, remark string, createBy int) error {
+	// 1. 查询用户当前余额和版本号
+	var user models.HsUsers
+	err := tx.Select("id, balance, crypto_balance, version").Where("id = ?", userId).First(&user).Error
+	if err != nil {
+		e.Log.Errorf("creditUserBalance get user balance error:%s", err)
+		return errors.New("获取用户余额失败")
+	}
+
+	// 2. 根据类型选择余额字段和精度
+	var balanceBefore float64
+	var balanceField string
+	var decimalPlaces int
+
+	if isCrypto {
+		balanceField = "crypto_balance"
+		decimalPlaces = 8
+		balanceBefore, _ = strconv.ParseFloat(user.CryptoBalance, 64)
+	} else {
+		balanceField = "balance"
+		decimalPlaces = 2
+		balanceBefore, _ = strconv.ParseFloat(user.Balance, 64)
+	}
+
+	balanceAfter := balanceBefore + amount
+
+	// 3. 更新用户余额（使用乐观锁）
+	result := tx.Model(&models.HsUsers{}).
+		Where("id = ? AND version = ?", userId, user.Version).
+		Updates(map[string]interface{}{
+			balanceField: fmt.Sprintf("%.*f", decimalPlaces, balanceAfter),
+			"version":    gorm.Expr("version + 1"),
+		})
+
+	if result.Error != nil {
+		e.Log.Errorf("creditUserBalance update balance error:%s", result.Error)
+		return errors.New("更新用户余额失败")
+	}
+
+	if result.RowsAffected == 0 {
+		e.Log.Errorf("creditUserBalance update balance conflict for user %d", userId)
+		return errors.New("余额更新冲突，请重试")
+	}
+
+	// 4. 创建流水记录
+	orderIdStr := strconv.Itoa(orderId)
+	userIdStr := strconv.Itoa(userId)
+
+	ledger := models.HsUserLedger{
+		UserId:         userIdStr,
+		CurrencyCode:   currencyCode,
+		Direction:      "1", // 1=入账
+		Amount:         fmt.Sprintf("%.*f", decimalPlaces, amount),
+		BalanceBefore:  fmt.Sprintf("%.*f", decimalPlaces, balanceBefore),
+		BalanceAfter:   fmt.Sprintf("%.*f", decimalPlaces, balanceAfter),
+		BizType:        bizType,
+		BizId:          orderIdStr,
+		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, time.Now().UnixNano()),
+		RefTable:       "ord_giftcard_writeoffs",
+		RefId:          orderIdStr,
+		Remark:         remark,
+		Status:         "1", // 1=已入账
+	}
+	ledger.CreateBy = createBy
+
+	err = tx.Create(&ledger).Error
+	if err != nil {
+		e.Log.Errorf("creditUserBalance create ledger error:%s", err)
+		return errors.New("创建流水记录失败")
+	}
+
+	e.Log.Infof("User %d credited %.*f %s, balance: %.*f -> %.*f",
+		userId, decimalPlaces, amount, currencyCode,
+		decimalPlaces, balanceBefore, decimalPlaces, balanceAfter)
+
+	return nil
 }
 
 // getCurrencyRate 获取货币汇率
@@ -658,70 +841,167 @@ func (e *OrdGiftcardWriteoffs) updateInviterFrozenBalance(tx *gorm.DB, inviterId
 	convertedAmount := sourceAmount
 	targetCurrency := sourceCurrency
 
-	// 3. 更新邀请人冻结余额（使用乐观锁）
-	var balanceBefore float64
-	var balanceAfter float64
-	var balanceField string
+	// 3. 检查冻结余额限制（根据CurrencyType分别处理）
+	var currencyType string
+	if isCrypto {
+		currencyType = "crypto"
+	} else {
+		currencyType = "fiat"
+	}
+
+	var frozenLimitConfig models.HsConfigFrozenLimit
+	err = tx.Where("currency_type = ? AND currency_code = ? AND is_active = 1", currencyType, targetCurrency).
+		First(&frozenLimitConfig).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		e.Log.Errorf("Get frozen limit config error:%s \r\n", err)
+		return fmt.Errorf("获取冻结余额限制配置失败")
+	}
+
+	// 4. 准备余额字段和精度
+	var frozenBalanceBefore float64
+	var frozenBalanceField string
+	var availableBalanceBefore float64
+	var availableBalanceField string
 	var decimalPlaces int
 
 	if isCrypto {
 		// 虚拟币冻结余额（8位小数）
-		balanceField = "crypto_frozen_balance"
+		frozenBalanceField = "crypto_frozen_balance"
+		availableBalanceField = "crypto_balance"
 		decimalPlaces = 8
-		balanceBefore, _ = strconv.ParseFloat(inviter.CryptoFrozenBalance, 64)
+		frozenBalanceBefore, _ = strconv.ParseFloat(inviter.CryptoFrozenBalance, 64)
+		availableBalanceBefore, _ = strconv.ParseFloat(inviter.CryptoBalance, 64)
 	} else {
 		// 法币冻结余额（2位小数）
-		balanceField = "frozen_balance"
+		frozenBalanceField = "frozen_balance"
+		availableBalanceField = "balance"
 		decimalPlaces = 2
-		balanceBefore, _ = strconv.ParseFloat(inviter.FrozenBalance, 64)
+		frozenBalanceBefore, _ = strconv.ParseFloat(inviter.FrozenBalance, 64)
+		availableBalanceBefore, _ = strconv.ParseFloat(inviter.Balance, 64)
 	}
 
-	balanceAfter = balanceBefore + convertedAmount
+	// 5. 检查是否超过限制，计算冻结部分和可用部分
+	var frozenAmount float64
+	var availableAmount float64
+
+	if frozenLimitConfig.Id > 0 {
+		frozenLimit, _ := strconv.ParseFloat(frozenLimitConfig.FrozenLimitAmount, 64)
+		potentialFrozenBalance := frozenBalanceBefore + convertedAmount
+
+		if potentialFrozenBalance > frozenLimit {
+			// 超过限制，分配到冻结和可用两部分
+			frozenAmount = frozenLimit - frozenBalanceBefore
+			if frozenAmount < 0 {
+				frozenAmount = 0
+			}
+			availableAmount = convertedAmount - frozenAmount
+
+			e.Log.Infof("Inviter %s frozen balance would exceed limit: current=%.8f, add=%.8f, limit=%.8f, currency=%s, type=%s. Split: frozen=%.8f, available=%.8f",
+				inviterId, frozenBalanceBefore, convertedAmount, frozenLimit, targetCurrency, currencyType, frozenAmount, availableAmount)
+		} else {
+			// 未超过限制，全部增加到冻结余额
+			frozenAmount = convertedAmount
+			availableAmount = 0
+		}
+	} else {
+		// 没有限制配置，全部增加到冻结余额
+		frozenAmount = convertedAmount
+		availableAmount = 0
+	}
+
+	// 6. 更新邀请人余额（使用乐观锁）
+	frozenBalanceAfter := frozenBalanceBefore + frozenAmount
+	availableBalanceAfter := availableBalanceBefore + availableAmount
+
+	updateFields := map[string]interface{}{
+		"version": gorm.Expr("version + 1"),
+	}
+
+	if frozenAmount > 0 {
+		updateFields[frozenBalanceField] = fmt.Sprintf("%.*f", decimalPlaces, frozenBalanceAfter)
+	}
+
+	if availableAmount > 0 {
+		updateFields[availableBalanceField] = fmt.Sprintf("%.*f", decimalPlaces, availableBalanceAfter)
+	}
 
 	result := tx.Model(&models.HsUsers{}).
 		Where("id = ? AND version = ?", inviterId, inviter.Version).
-		Updates(map[string]interface{}{
-			balanceField: fmt.Sprintf("%.*f", decimalPlaces, balanceAfter),
-			"version":    gorm.Expr("version + 1"),
-		})
+		Updates(updateFields)
 
 	if result.Error != nil {
-		e.Log.Errorf("Update inviter %s frozen balance error:%s \r\n", inviterId, result.Error)
-		return errors.New("更新邀请人冻结余额失败")
+		e.Log.Errorf("Update inviter %s balance error:%s \r\n", inviterId, result.Error)
+		return errors.New("更新邀请人余额失败")
 	}
 
 	if result.RowsAffected == 0 {
-		e.Log.Errorf("Update inviter %s frozen balance conflict", inviterId)
-		return errors.New("邀请人冻结余额更新冲突，请重试")
+		e.Log.Errorf("Update inviter %s balance conflict", inviterId)
+		return errors.New("邀请人余额更新冲突，请重试")
 	}
 
-	// 5. 创建邀请人流水记录
-	bizType := "invite_commission_frozen_fiat"
-	if isCrypto {
-		bizType = "invite_commission_frozen_crypto"
+	// 7. 创建邀请人流水记录
+	nanoTime := time.Now().UnixNano()
+
+	// 7.1 如果有冻结部分，创建冻结流水
+	if frozenAmount > 0 {
+		bizType := "invite_commission_frozen_fiat"
+		if isCrypto {
+			bizType = "invite_commission_frozen_crypto"
+		}
+
+		ledger := models.HsUserLedger{
+			UserId:         inviterId,
+			CurrencyCode:   targetCurrency,
+			Direction:      "1", // 1=入账
+			Amount:         fmt.Sprintf("%.*f", decimalPlaces, frozenAmount),
+			BalanceBefore:  fmt.Sprintf("%.*f", decimalPlaces, frozenBalanceBefore),
+			BalanceAfter:   fmt.Sprintf("%.*f", decimalPlaces, frozenBalanceAfter),
+			BizType:        bizType,
+			BizId:          orderIdStr,
+			IdempotencyKey: fmt.Sprintf("INVITE_COMMISSION_FROZEN_L%s:%d:%d", level, orderId, nanoTime),
+			RefTable:       "hs_invite_commissions",
+			RefId:          orderIdStr,
+			Remark:         fmt.Sprintf("邀请分成冻结（%s级），订单号: %d", level, orderId),
+			Status:         "1", // 1=已入账
+		}
+		ledger.CreateBy = createBy
+
+		err = tx.Create(&ledger).Error
+		if err != nil {
+			e.Log.Errorf("Create inviter %s frozen ledger error:%s \r\n", inviterId, err)
+			return errors.New("创建邀请人冻结流水记录失败")
+		}
 	}
 
-	ledger := models.HsUserLedger{
-		UserId:         inviterId,
-		CurrencyCode:   targetCurrency,
-		Direction:      "1", // 1=入账
-		Amount:         fmt.Sprintf("%.*f", decimalPlaces, convertedAmount),
-		BalanceBefore:  fmt.Sprintf("%.*f", decimalPlaces, balanceBefore),
-		BalanceAfter:   fmt.Sprintf("%.*f", decimalPlaces, balanceAfter),
-		BizType:        bizType,
-		BizId:          orderIdStr,
-		IdempotencyKey: fmt.Sprintf("INVITE_COMMISSION_FROZEN_L%s:%d:%d", level, orderId, time.Now().UnixNano()),
-		RefTable:       "hs_invite_commissions",
-		RefId:          orderIdStr,
-		Remark:         fmt.Sprintf("邀请分成冻结（%s级），订单号: %d", level, orderId),
-		Status:         "1", // 1=已入账
-	}
-	ledger.CreateBy = createBy
+	// 7.2 如果有可用部分，创建可用流水
+	if availableAmount > 0 {
+		bizType := "invite_commission_available_fiat"
+		if isCrypto {
+			bizType = "invite_commission_available_crypto"
+		}
 
-	err = tx.Create(&ledger).Error
-	if err != nil {
-		e.Log.Errorf("Create inviter %s ledger error:%s \r\n", inviterId, err)
-		return errors.New("创建邀请人流水记录失败")
+		ledger := models.HsUserLedger{
+			UserId:         inviterId,
+			CurrencyCode:   targetCurrency,
+			Direction:      "1", // 1=入账
+			Amount:         fmt.Sprintf("%.*f", decimalPlaces, availableAmount),
+			BalanceBefore:  fmt.Sprintf("%.*f", decimalPlaces, availableBalanceBefore),
+			BalanceAfter:   fmt.Sprintf("%.*f", decimalPlaces, availableBalanceAfter),
+			BizType:        bizType,
+			BizId:          orderIdStr,
+			IdempotencyKey: fmt.Sprintf("INVITE_COMMISSION_AVAILABLE_L%s:%d:%d", level, orderId, nanoTime+1),
+			RefTable:       "hs_invite_commissions",
+			RefId:          orderIdStr,
+			Remark:         fmt.Sprintf("邀请分成可用（%s级，超冻结限额），订单号: %d", level, orderId),
+			Status:         "1", // 1=已入账
+		}
+		ledger.CreateBy = createBy
+
+		err = tx.Create(&ledger).Error
+		if err != nil {
+			e.Log.Errorf("Create inviter %s available ledger error:%s \r\n", inviterId, err)
+			return errors.New("创建邀请人可用流水记录失败")
+		}
 	}
 
 	return nil
@@ -810,4 +1090,231 @@ func (e *OrdGiftcardWriteoffs) updateInviterAvailableBalance(tx *gorm.DB, invite
 	}
 
 	return nil
+}
+
+// ValuesConfigStruct 面额配置结构
+type ValuesConfigStruct struct {
+	Fixed []float64 `json:"fixed"` // 固定面额列表
+	Range *struct {
+		Min float64 `json:"min"` // 最小值
+		Max float64 `json:"max"` // 最大值
+	} `json:"range"` // 面额区间
+}
+
+// validateDenomination 校验金额是否符合入账面额规则
+func (e *OrdGiftcardWriteoffs) validateDenomination(amount float64, valuesConfig string) error {
+	if valuesConfig == "" {
+		// 没有配置面额规则，跳过校验
+		return nil
+	}
+
+	// 解析面额配置
+	var config ValuesConfigStruct
+	if err := json.Unmarshal([]byte(valuesConfig), &config); err != nil {
+		e.Log.Warnf("Failed to parse valuesConfig: %s, error: %s", valuesConfig, err.Error())
+		// 解析失败时跳过校验，避免阻塞业务
+		return nil
+	}
+
+	// 校验固定面额
+	if len(config.Fixed) > 0 {
+		for _, fixedValue := range config.Fixed {
+			// 使用小数点后两位比较（避免浮点数精度问题）
+			if fmt.Sprintf("%.2f", amount) == fmt.Sprintf("%.2f", fixedValue) {
+				return nil // 匹配固定面额
+			}
+		}
+	}
+
+	// 校验面额区间
+	if config.Range != nil {
+		if amount >= config.Range.Min && amount <= config.Range.Max {
+			return nil // 在区间范围内
+		}
+	}
+
+	// 如果既没有固定面额也没有区间配置，跳过校验
+	if len(config.Fixed) == 0 && config.Range == nil {
+		return nil
+	}
+
+	// 构建错误信息
+	var validValues []string
+	if len(config.Fixed) > 0 {
+		fixedStrs := make([]string, len(config.Fixed))
+		for i, v := range config.Fixed {
+			fixedStrs[i] = fmt.Sprintf("%.2f", v)
+		}
+		validValues = append(validValues, fmt.Sprintf("固定面额: %v", fixedStrs))
+	}
+	if config.Range != nil {
+		validValues = append(validValues, fmt.Sprintf("区间: %.2f - %.2f", config.Range.Min, config.Range.Max))
+	}
+
+	return fmt.Errorf("允许的面额为 %s", strings.Join(validValues, " 或 "))
+}
+
+// CalculateUserLocalCurrency 计算用户入账金额（辅助接口）
+func (e *OrdGiftcardWriteoffs) CalculateUserLocalCurrency(c *dto.OrdGiftcardWriteoffsCalculateReq) (*dto.OrdGiftcardWriteoffsCalculateResp, error) {
+	// 1. 查询订单信息
+	var order models.OrdUserOrders
+	err := e.Orm.Where("id = ?", c.OrderId).First(&order).Error
+	if err != nil {
+		e.Log.Errorf("OrdGiftcardWriteoffsService CalculateUserLocalCurrency get order error:%s", err)
+		return nil, errors.New("获取订单信息失败")
+	}
+
+	// 获取用户ID
+	userId := order.UserId
+
+	// 2. 查询用户货币代码
+	var userCurrencyCode string
+	err = e.Orm.Table("hs_users").
+		Select("hs_config_regions.currency_code").
+		Joins("LEFT JOIN hs_config_regions ON hs_users.region_id = hs_config_regions.id").
+		Where("hs_users.id = ?", userId).
+		Scan(&userCurrencyCode).Error
+	if err != nil {
+		e.Log.Errorf("OrdGiftcardWriteoffsService CalculateUserLocalCurrency get user currency error:%s", err)
+		return nil, errors.New("获取用户信息失败")
+	}
+
+	// 3. 获取礼品卡区域货币（必须提供折扣ID）
+	var sourceCurrencyCode string
+	var giftcard models.OrdGiftcard
+	var hasGiftcardConfig bool
+
+	if c.GiftCardDiscountId <= 0 {
+		return nil, errors.New("必须提供礼品卡折扣ID")
+	}
+
+	// 查询折扣配置
+	var discountConfig models.OrdGiftcardDiscounts
+	err = e.Orm.Where("id = ?", c.GiftCardDiscountId).First(&discountConfig).Error
+	if err != nil {
+		e.Log.Errorf("OrdGiftcardWriteoffsService CalculateUserLocalCurrency get discount config error:%s", err)
+		return nil, errors.New("查询折扣配置失败")
+	}
+
+	// 查询礼品卡配置
+	if discountConfig.GiftcardId <= 0 {
+		return nil, errors.New("折扣配置未关联礼品卡")
+	}
+
+	err = e.Orm.Where("id = ?", discountConfig.GiftcardId).First(&giftcard).Error
+	if err != nil {
+		e.Log.Errorf("OrdGiftcardWriteoffsService CalculateUserLocalCurrency get giftcard error:%s", err)
+		return nil, errors.New("查询礼品卡配置失败")
+	}
+	hasGiftcardConfig = true
+
+	// 查询礼品卡区域获取货币代码
+	if giftcard.RegionId == "" || giftcard.RegionId == "0" {
+		return nil, errors.New("礼品卡未配置区域")
+	}
+
+	var region models.OrdGiftcardRegion
+	regionId, _ := strconv.Atoi(giftcard.RegionId)
+	err = e.Orm.Where("id = ?", regionId).First(&region).Error
+	if err != nil {
+		e.Log.Errorf("OrdGiftcardWriteoffsService CalculateUserLocalCurrency get region error:%s", err)
+		return nil, errors.New("查询礼品卡区域失败")
+	}
+
+	if region.CurrencyCode == "" {
+		return nil, errors.New("礼品卡区域未配置货币代码")
+	}
+
+	sourceCurrencyCode = region.CurrencyCode
+	e.Log.Infof("Using gift card region currency: %s (region_id: %s)", sourceCurrencyCode, giftcard.RegionId)
+
+	// 4. 计算配置汇率和目标货币（使用礼品卡区域货币）
+
+	isCrypto := order.BalanceType == 2
+	var configRate string
+	var targetCurrency string
+
+	if isCrypto {
+		targetCurrency = "USD"
+		if sourceCurrencyCode == "USD" {
+			configRate = "1.00000000"
+		} else {
+			rate, err := e.getCurrencyRate(e.Orm, sourceCurrencyCode, "USD")
+			if err != nil {
+				return nil, err
+			}
+			configRate = rate
+		}
+	} else {
+		targetCurrency = userCurrencyCode
+		if sourceCurrencyCode == userCurrencyCode {
+			configRate = "1.00000000"
+		} else {
+			rate, err := e.getCurrencyRateViaUSD(e.Orm, sourceCurrencyCode, userCurrencyCode)
+			if err != nil {
+				return nil, err
+			}
+			configRate = rate
+		}
+	}
+
+	// 5. 计算用户本地货币金额
+	cardValueFloat, err := strconv.ParseFloat(c.RecognizedCardValue, 64)
+	if err != nil {
+		e.Log.Errorf("OrdGiftcardWriteoffsService CalculateUserLocalCurrency parse card value error:%s", err)
+		return nil, errors.New("卡片面值格式错误")
+	}
+
+	configRateFloat, _ := strconv.ParseFloat(configRate, 64)
+	userLocalAmount := cardValueFloat * configRateFloat
+	userLocalCurrencyAmount := fmt.Sprintf("%.8f", userLocalAmount)
+
+	// 6. 如果提供了礼品卡配置，进行面额校验
+	var denominationValidation *dto.OrdGiftcardWriteoffsDenominationValidation
+	if hasGiftcardConfig && giftcard.ValuesConfig != "" {
+		// 执行面额校验
+		validationErr := e.validateDenomination(userLocalAmount, giftcard.ValuesConfig)
+
+		denominationValidation = &dto.OrdGiftcardWriteoffsDenominationValidation{
+			IsValid: validationErr == nil,
+		}
+
+		if validationErr != nil {
+			denominationValidation.ErrorMessage = validationErr.Error()
+		}
+
+		// 解析配置以返回允许的面额信息
+		var config ValuesConfigStruct
+		if err := json.Unmarshal([]byte(giftcard.ValuesConfig), &config); err == nil {
+			// 固定面额
+			if len(config.Fixed) > 0 {
+				denominationValidation.AllowedFixed = make([]string, len(config.Fixed))
+				for i, v := range config.Fixed {
+					denominationValidation.AllowedFixed[i] = fmt.Sprintf("%.2f", v)
+				}
+			}
+			// 面额区间
+			if config.Range != nil {
+				denominationValidation.AllowedRange = &struct {
+					Min string `json:"min" comment:"最小值"`
+					Max string `json:"max" comment:"最大值"`
+				}{
+					Min: fmt.Sprintf("%.2f", config.Range.Min),
+					Max: fmt.Sprintf("%.2f", config.Range.Max),
+				}
+			}
+		}
+	}
+
+	// 7. 构建响应
+	resp := &dto.OrdGiftcardWriteoffsCalculateResp{
+		UserLocalCurrencyAmount: userLocalCurrencyAmount,
+		UserCurrencyCode:        targetCurrency,
+		ConfigRate:              configRate,
+		IsCrypto:                isCrypto,
+		OrderCurrencyCode:       sourceCurrencyCode, // 使用实际的源货币代码（可能是礼品卡区域货币）
+		DenominationValidation:  denominationValidation,
+	}
+
+	return resp, nil
 }

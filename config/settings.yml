@@ -48,6 +48,14 @@ settings:
   extend: # 扩展项使用说明
     demo:
       name: data
+    upload:
+      path: static/uploadfile/
+    pandapay:
+      apiUrl: https://xxx/api
+      merchantId: 261
+      appSecret: your_app_secret_here
+      notifyUrl: http://your-domain.com/api/v1/callback/pandapay
+      currency: NGN
   cache:
    redis:
      addr: 127.0.0.1:6379

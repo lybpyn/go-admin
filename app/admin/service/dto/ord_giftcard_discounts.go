@@ -9,16 +9,18 @@ import (
 
 type OrdGiftcardDiscountsGetPageReq struct {
 	dto.Pagination     `search:"-"`
-    OrdGiftcardDiscountsOrder
+    GiftcardId int `form:"giftcard_id" search:"type:exact;column:giftcard_id;table:ord_giftcard_discounts" comment:"礼品卡ID"`
+  
+  //  OrdGiftcardDiscountsOrder
 }
 
 type OrdGiftcardDiscountsOrder struct {
-    Id string `form:"idOrder"  search:"type:order;column:id;table:ord_giftcard_discounts"`
-    GiftcardId string `form:"giftcardIdOrder"  search:"type:order;column:giftcard_id;table:ord_giftcard_discounts"`
+    Id int `form:"idOrder"  search:"type:order;column:id;table:ord_giftcard_discounts"`
+    GiftcardId int `form:"giftcardIdOrder"  search:"type:order;column:giftcard_id;table:ord_giftcard_discounts"`
     CardType string `form:"cardTypeOrder"  search:"type:order;column:card_type;table:ord_giftcard_discounts"`
     DiscountRate string `form:"discountRateOrder"  search:"type:order;column:discount_rate;table:ord_giftcard_discounts"`
-    CreateBy string `form:"createByOrder"  search:"type:order;column:create_by;table:ord_giftcard_discounts"`
-    UpdateBy string `form:"updateByOrder"  search:"type:order;column:update_by;table:ord_giftcard_discounts"`
+    CreateBy int `form:"createByOrder"  search:"type:order;column:create_by;table:ord_giftcard_discounts"`
+    UpdateBy int `form:"updateByOrder"  search:"type:order;column:update_by;table:ord_giftcard_discounts"`
     CreatedAt string `form:"createdAtOrder"  search:"type:order;column:created_at;table:ord_giftcard_discounts"`
     UpdatedAt string `form:"updatedAtOrder"  search:"type:order;column:updated_at;table:ord_giftcard_discounts"`
     DeletedAt string `form:"deletedAtOrder"  search:"type:order;column:deleted_at;table:ord_giftcard_discounts"`
@@ -31,7 +33,7 @@ func (m *OrdGiftcardDiscountsGetPageReq) GetNeedSearch() interface{} {
 
 type OrdGiftcardDiscountsInsertReq struct {
     Id int `json:"-" comment:""` // 
-    GiftcardId string `json:"giftcardId" comment:"礼品卡ID -> ord_giftcard.id"`
+    GiftcardId int `json:"giftcardId" comment:"礼品卡ID -> ord_giftcard.id"`
     CardType string `json:"cardType" comment:"卡类型"`
     DiscountRate string `json:"discountRate" comment:"折扣汇率，例如0.95 表示95折"`
     common.ControlBy
@@ -53,7 +55,7 @@ func (s *OrdGiftcardDiscountsInsertReq) GetId() interface{} {
 
 type OrdGiftcardDiscountsUpdateReq struct {
     Id int `uri:"id" comment:""` // 
-    GiftcardId string `json:"giftcardId" comment:"礼品卡ID -> ord_giftcard.id"`
+    GiftcardId int `json:"giftcardId" comment:"礼品卡ID -> ord_giftcard.id"`
     CardType string `json:"cardType" comment:"卡类型"`
     DiscountRate string `json:"discountRate" comment:"折扣汇率，例如0.95 表示95折"`
     common.ControlBy

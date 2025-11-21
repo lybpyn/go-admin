@@ -22,6 +22,7 @@ func registerOrdGiftcardWriteoffsRouter(v1 *gin.RouterGroup, authMiddleware *jwt
 		r.GET("/:id", actions.PermissionAction(), api.Get)
 		r.POST("", api.Insert)
 		r.POST("/batch", api.BatchInsert)
+		r.POST("/calculate", api.CalculateUserLocalCurrency)
 		r.PUT("/:id", actions.PermissionAction(), api.Update)
 		r.DELETE("", api.Delete)
 	}

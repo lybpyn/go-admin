@@ -151,6 +151,7 @@ func (e HsUserWithdrawal) Insert(c *gin.Context) {
 // @Router /api/v1/hs-user-withdrawal/{id} [put]
 // @Security Bearer
 func (e HsUserWithdrawal) Update(c *gin.Context) {
+	return
     req := dto.HsUserWithdrawalUpdateReq{}
     s := service.HsUserWithdrawal{}
     err := e.MakeContext(c).
@@ -183,18 +184,19 @@ func (e HsUserWithdrawal) Update(c *gin.Context) {
 // @Router /api/v1/hs-user-withdrawal [delete]
 // @Security Bearer
 func (e HsUserWithdrawal) Delete(c *gin.Context) {
-    s := service.HsUserWithdrawal{}
-    req := dto.HsUserWithdrawalDeleteReq{}
-    err := e.MakeContext(c).
-        MakeOrm().
-        Bind(&req).
-        MakeService(&s.Service).
-        Errors
-    if err != nil {
-        e.Logger.Error(err)
-        e.Error(500, err, err.Error())
-        return
-    }
+	return
+	s := service.HsUserWithdrawal{}
+	req := dto.HsUserWithdrawalDeleteReq{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
 
 	// req.SetUpdateBy(user.GetUserId(c))
 	p := actions.GetPermissionFromContext(c)
@@ -202,7 +204,81 @@ func (e HsUserWithdrawal) Delete(c *gin.Context) {
 	err = s.Remove(&req, p)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("删除用户余额提现申请表失败，\r\n失败信息 %s", err.Error()))
-        return
+		return
 	}
-	e.OK( req.GetId(), "删除成功")
+	e.OK(req.GetId(), "删除成功")
+}
+
+// Approve 审核通过提现申请
+// @Summary 审核通过提现申请
+// @Description 审核通过提现申请，bank方式将自动调用PandaPay代付接口转账，crypto方式不调用
+// @Tags 用户余额提现申请表
+// @Accept application/json
+// @Product application/json
+// @Param id path int true "提现记录ID"
+// @Param data body dto.HsUserWithdrawalApproveReq true "审核请求"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "审核成功"}"
+// @Router /api/v1/hs-user-withdrawal/{id}/approve [post]
+// @Security Bearer
+func (e HsUserWithdrawal) Approve(c *gin.Context) {
+	req := dto.HsUserWithdrawalApproveReq{}
+	s := service.HsUserWithdrawal{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
+
+	req.SetUpdateBy(user.GetUserId(c))
+	p := actions.GetPermissionFromContext(c)
+
+	err = s.Approve(&req, p)
+	if err != nil {
+		e.Error(500, err, fmt.Sprintf("审核提现申请失败，\r\n失败信息 %s", err.Error()))
+		return
+	}
+
+	e.OK(req.GetId(), "审核通过成功")
+}
+
+// Reject 拒绝提现申请
+// @Summary 拒绝提现申请
+// @Description 拒绝提现申请，需要提供拒绝原因
+// @Tags 用户余额提现申请表
+// @Accept application/json
+// @Product application/json
+// @Param id path int true "提现记录ID"
+// @Param data body dto.HsUserWithdrawalRejectReq true "拒绝请求"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "拒绝成功"}"
+// @Router /api/v1/hs-user-withdrawal/{id}/reject [post]
+// @Security Bearer
+func (e HsUserWithdrawal) Reject(c *gin.Context) {
+	req := dto.HsUserWithdrawalRejectReq{}
+	s := service.HsUserWithdrawal{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
+
+	req.SetUpdateBy(user.GetUserId(c))
+	p := actions.GetPermissionFromContext(c)
+
+	err = s.Reject(&req, p)
+	if err != nil {
+		e.Error(500, err, fmt.Sprintf("拒绝提现申请失败，\r\n失败信息 %s", err.Error()))
+		return
+	}
+
+	e.OK(req.GetId(), "拒绝成功")
 }

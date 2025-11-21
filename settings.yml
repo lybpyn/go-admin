@@ -48,6 +48,14 @@ settings:
   extend: # 扩展项使用说明
     demo:
       name: data
+    upload:
+      path: /home/ll/release/uploads
+    pandapay:
+      apiUrl: https://checkout.panda-pay.net.cn/api/payout/submit
+      merchantId: P10730
+      appSecret: sUBI7ooN51T98T1TWtzarkMJpWvuAgXn
+      notifyUrl: http://adminpanel.cardpartner.io/api/v1/callback/pandapay
+      currency: NGN
   cache:
    redis:
      addr: 127.0.0.1:6379
