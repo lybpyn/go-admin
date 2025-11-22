@@ -1,8 +1,6 @@
 package dto
 
 import (
-    "time"
-
 	"go-admin/app/admin/models"
 	"go-admin/common/dto"
 	common "go-admin/common/models"
@@ -17,8 +15,6 @@ type OrdConfigCurrencyRatesGetPageReq struct {
     RateType string `form:"rateType"  search:"type:exact;column:rate_type;table:ord_config_currency_rates" comment:"汇率类型: standard=标准, buying=买入, selling=卖出"`
     Source string `form:"source"  search:"type:exact;column:source;table:ord_config_currency_rates" comment:"汇率来源,如 manual, api, coingecko"`
     Status string `form:"status"  search:"type:exact;column:status;table:ord_config_currency_rates" comment:"状态: 1=启用, 0=禁用"`
-    ValidFrom time.Time `form:"validFrom"  search:"type:gte;column:valid_from;table:ord_config_currency_rates" comment:"生效开始时间"`
-    ValidTo time.Time `form:"validTo"  search:"type:lte;column:valid_to;table:ord_config_currency_rates" comment:"生效结束时间"`
     OrdConfigCurrencyRatesOrder
 }
 
@@ -31,8 +27,6 @@ type OrdConfigCurrencyRatesOrder struct {
     RateType string `form:"rateTypeOrder"  search:"type:order;column:rate_type;table:ord_config_currency_rates"`
     Source string `form:"sourceOrder"  search:"type:order;column:source;table:ord_config_currency_rates"`
     Status string `form:"statusOrder"  search:"type:order;column:status;table:ord_config_currency_rates"`
-    ValidFrom string `form:"validFromOrder"  search:"type:order;column:valid_from;table:ord_config_currency_rates"`
-    ValidTo string `form:"validToOrder"  search:"type:order;column:valid_to;table:ord_config_currency_rates"`
     CreateBy string `form:"createByOrder"  search:"type:order;column:create_by;table:ord_config_currency_rates"`
     UpdateBy string `form:"updateByOrder"  search:"type:order;column:update_by;table:ord_config_currency_rates"`
     CreatedAt string `form:"createdAtOrder"  search:"type:order;column:created_at;table:ord_config_currency_rates"`
@@ -54,8 +48,6 @@ type OrdConfigCurrencyRatesInsertReq struct {
     RateType string `json:"rateType" comment:"汇率类型: standard=标准, buying=买入, selling=卖出"`
     Source string `json:"source" comment:"汇率来源,如 manual, api, coingecko"`
     Status string `json:"status" comment:"状态: 1=启用, 0=禁用"`
-    ValidFrom time.Time `json:"validFrom" comment:"生效开始时间"`
-    ValidTo time.Time `json:"validTo" comment:"生效结束时间"`
     common.ControlBy
 }
 
@@ -70,8 +62,6 @@ func (s *OrdConfigCurrencyRatesInsertReq) Generate(model *models.OrdConfigCurren
     model.RateType = s.RateType
     model.Source = s.Source
     model.Status = s.Status
-    model.ValidFrom = s.ValidFrom
-    model.ValidTo = s.ValidTo
     model.CreateBy = s.CreateBy // 添加这而，需要记录是被谁创建的
 }
 
@@ -88,8 +78,6 @@ type OrdConfigCurrencyRatesUpdateReq struct {
     RateType string `json:"rateType" comment:"汇率类型: standard=标准, buying=买入, selling=卖出"`
     Source string `json:"source" comment:"汇率来源,如 manual, api, coingecko"`
     Status string `json:"status" comment:"状态: 1=启用, 0=禁用"`
-    ValidFrom time.Time `json:"validFrom" comment:"生效开始时间"`
-    ValidTo time.Time `json:"validTo" comment:"生效结束时间"`
     common.ControlBy
 }
 
@@ -104,8 +92,6 @@ func (s *OrdConfigCurrencyRatesUpdateReq) Generate(model *models.OrdConfigCurren
     model.RateType = s.RateType
     model.Source = s.Source
     model.Status = s.Status
-    model.ValidFrom = s.ValidFrom
-    model.ValidTo = s.ValidTo
     model.UpdateBy = s.UpdateBy // 添加这而，需要记录是被谁更新的
 }
 

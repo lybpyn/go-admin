@@ -17,7 +17,7 @@ import (
 // Client PandaPay客户端
 type Client struct {
 	ApiUrl     string
-	MerchantId int32
+	MerchantId int
 	AppSecret  string
 	NotifyUrl  string
 	Currency   string
@@ -37,7 +37,7 @@ func NewClient() *Client {
 
 // PayoutRequest 代付请求参数
 type PayoutRequest struct {
-	MerchantId      int32       `json:"merchantId"`
+	MerchantId      int         `json:"merchantId"`
 	MerchantOrderId string      `json:"merchantOrderId"`
 	Amount          float64     `json:"amount"`
 	Currency        string      `json:"currency,omitempty"`
@@ -85,7 +85,7 @@ type PayoutResponse struct {
 // 签名格式: merchantId=999&merchantOrderId=1000&amount=100.00&appSecret=商户appSecret
 // 进行MD5加密并转小写
 func (c *Client) generateSign(merchantOrderId string, amount float64) string {
-	// 格式化金额为两位小数
+	// 格式化金额为两位小数字符串（签名用）
 	amountStr := fmt.Sprintf("%.2f", amount)
 
 	// 拼接签名字符串
@@ -113,18 +113,42 @@ func (c *Client) SubmitPayout(req *PayoutRequest) (*PayoutResponse, error) {
 		req.Timestamp = time.Now().UnixMilli()
 	}
 
+	// 格式化金额为两位小数（确保签名和JSON中格式一致）
+	amountStr := fmt.Sprintf("%.2f", req.Amount)
+
 	// 生成签名
 	req.Sign = c.generateSign(req.MerchantOrderId, req.Amount)
 
+	// 日志：打印签名信息（用于调试）
+	signStr := fmt.Sprintf("merchantId=%d&merchantOrderId=%s&amount=%s&appSecret=%s",
+		req.MerchantId, req.MerchantOrderId, amountStr, c.AppSecret)
+	fmt.Printf("[PandaPay] 签名字符串: %s\n", signStr)
+	fmt.Printf("[PandaPay] 生成签名: %s\n", req.Sign)
+
+	// 手动构建JSON，确保amount字段保持两位小数格式
+	reqBodyMap := map[string]interface{}{
+		"merchantId":      req.MerchantId,
+		"merchantOrderId": req.MerchantOrderId,
+		"amount":          json.Number(amountStr), // 使用json.Number确保格式
+		"currency":        req.Currency,
+		"timestamp":       req.Timestamp,
+		"sign":            req.Sign,
+		"notifyUrl":       req.NotifyUrl,
+		"fundAccount":     req.FundAccount,
+	}
+
 	// 序列化请求
-	reqBody, err := json.Marshal(req)
+	reqBody, err := json.Marshal(reqBodyMap)
 	if err != nil {
 		return nil, fmt.Errorf("序列化请求失败: %w", err)
 	}
 
-	// 发送HTTP请求
-	url := c.ApiUrl + "/payout/submit"
-	httpReq, err := http.NewRequest("POST", url, bytes.NewReader(reqBody))
+	// 日志：打印请求体（用于调试）
+	fmt.Printf("[PandaPay] 请求URL: %s\n", c.ApiUrl)
+	fmt.Printf("[PandaPay] 请求体: %s\n", string(reqBody))
+
+	// 发送HTTP请求（配置中已包含完整URL，不再拼接）
+	httpReq, err := http.NewRequest("POST", c.ApiUrl, bytes.NewReader(reqBody))
 	if err != nil {
 		return nil, fmt.Errorf("创建HTTP请求失败: %w", err)
 	}
@@ -156,8 +180,15 @@ func (c *Client) SubmitPayout(req *PayoutRequest) (*PayoutResponse, error) {
 	}
 
 	// 检查业务状态码
-	if resp.Code != 200 && resp.Code != 0 {
+	// 200/0: 成功
+	// 1002: 已转账过，视为成功继续执行
+	if resp.Code != 200 && resp.Code != 0 && resp.Code != 1002 {
 		return &resp, fmt.Errorf("代付请求失败: %s (code: %d)", resp.Message, resp.Code)
+	}
+
+	// 如果是1002，记录日志
+	if resp.Code == 1002 {
+		fmt.Printf("[PandaPay] 订单已转账过 (code: 1002), 继续执行\n")
 	}
 
 	return &resp, nil

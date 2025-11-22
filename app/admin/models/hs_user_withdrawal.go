@@ -19,7 +19,7 @@ type HsUserWithdrawal struct {
     Method string `json:"method" gorm:"type:varchar(32);comment:提现方式：bank/crypto"` 
     AccountInfo string `json:"accountInfo" gorm:"type:json;comment:提现账户信息（脱敏）"` 
     Status string `json:"status" gorm:"type:varchar(16);comment:状态：pending/review/processing/success/failed/canceled"` 
-    HandlerId string `json:"handlerId" gorm:"type:int(11);comment:接单管理员ID（关联sys_user.user_id）"` 
+    HandlerId int `json:"handlerId" gorm:"type:int(11);comment:接单管理员ID（关联sys_user.user_id）"` 
     HandlerName string `json:"handlerName" gorm:"type:varchar(128);comment:接单管理员名称（冗余字段）"` 
     ClaimedAt time.Time `json:"claimedAt" gorm:"type:datetime(3);comment:接单时间"` 
     IsClaimed string `json:"isClaimed" gorm:"type:tinyint(1);comment:是否已接单：0=未接单(可接单), 1=已接单(已锁定)"` 

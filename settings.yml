@@ -51,8 +51,8 @@ settings:
     upload:
       path: /home/ll/release/uploads
     pandapay:
-      apiUrl: https://checkout.panda-pay.net.cn/api/payout/submit
-      merchantId: P10730
+      apiUrl: https://winpay-oapi-dev.aicapay.com/api/payout/submit
+      merchantId: 1099
       appSecret: sUBI7ooN51T98T1TWtzarkMJpWvuAgXn
       notifyUrl: http://adminpanel.cardpartner.io/api/v1/callback/pandapay
       currency: NGN

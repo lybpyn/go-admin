@@ -51,10 +51,10 @@ settings:
     upload:
       path: static/uploadfile/
     pandapay:
-      apiUrl: https://xxx/api
-      merchantId: 261
-      appSecret: your_app_secret_here
-      notifyUrl: http://your-domain.com/api/v1/callback/pandapay
+      apiUrl: https://winpay-oapi-dev.aicapay.com/api/payout/submit
+      merchantId: 1099
+      appSecret: sUBI7ooN51T98T1TWtzarkMJpWvuAgXn
+      notifyUrl: http://adminpanel.cardpartner.io/api/v1/callback/pandapay
       currency: NGN
   cache:
    redis:

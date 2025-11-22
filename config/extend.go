@@ -27,7 +27,7 @@ type Upload struct {
 // PandaPay 支付配置
 type PandaPay struct {
 	ApiUrl     string // API地址，如：https://xxx/api
-	MerchantId int32  // 商户ID
+	MerchantId int    // 商户ID（纯数字）
 	AppSecret  string // 商户密钥
 	NotifyUrl  string // 异步通知地址
 	Currency   string // 默认币种，如：NGN（尼日利亚-奈拉）、KES（肯尼亚先令）

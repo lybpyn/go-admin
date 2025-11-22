@@ -180,7 +180,17 @@ func (e *HsUserWithdrawal) Remove(d *dto.HsUserWithdrawalDeleteReq, p *actions.D
 }
 
 // BankAccountInfo 银行账户信息结构（从accountInfo JSON解析）
+// 支持新格式：{"bank_id": 1, "bank_name": "Bank of America", "card_type": 1, "branch_name": "", "card_number": "****3659", "card_holder_name": "wwww"}
 type BankAccountInfo struct {
+	// 新格式字段
+	BankId         int    `json:"bank_id"`
+	BankName       string `json:"bank_name"`
+	CardType       int    `json:"card_type"`
+	BranchName     string `json:"branch_name"`
+	CardNumber     string `json:"card_number"`
+	CardHolderName string `json:"card_holder_name"`
+
+	// 旧格式字段（兼容）
 	AccountName   string `json:"accountName"`
 	BankCode      string `json:"bankCode"`
 	AccountNumber string `json:"accountNumber"`
@@ -213,7 +223,7 @@ func (e *HsUserWithdrawal) Approve(c *dto.HsUserWithdrawalApproveReq, p *actions
 	}
 
 	// 解析金额
-	amount, err := pandapay.ParseAmount(withdrawal.Amount)
+	amount, err := pandapay.ParseAmount(withdrawal.NetAmount)
 	if err != nil {
 		return fmt.Errorf("金额解析失败: %w", err)
 	}
@@ -232,9 +242,50 @@ func (e *HsUserWithdrawal) Approve(c *dto.HsUserWithdrawalApproveReq, p *actions
 			return fmt.Errorf("解析账户信息失败: %w", err)
 		}
 
+		// 判断是新格式还是旧格式，并统一处理
+		var accountName, bankCode, accountNumber, email, mobile, address string
+
+		if accountInfo.BankId > 0 {
+			// 新格式：{"bank_id": 1, "bank_name": "...", "card_holder_name": "...", "card_number": "..."}
+			e.Log.Infof("使用新格式账户信息，BankId: %d", accountInfo.BankId)
+
+			// 根据bank_id查询银行编码
+			var bank models.HsBanks
+			err := e.Orm.Where("id = ? AND status = 1", accountInfo.BankId).First(&bank).Error
+			if err != nil {
+				if errors.Is(err, gorm.ErrRecordNotFound) {
+					return fmt.Errorf("银行信息不存在或已禁用，BankId: %d", accountInfo.BankId)
+				}
+				e.Log.Errorf("查询银行信息失败: %s", err)
+				return fmt.Errorf("查询银行信息失败: %w", err)
+			}
+
+			// 映射新格式字段
+			accountName = accountInfo.CardHolderName
+			bankCode = bank.BankCode
+			accountNumber = accountInfo.CardNumber
+			email = ""    // 新格式没有email
+			mobile = ""   // 新格式没有mobile
+			address = ""  // 可以使用分行名称
+			if accountInfo.BranchName != "" {
+				address = accountInfo.BranchName
+			}
+
+			e.Log.Infof("银行信息: BankName=%s, BankCode=%s, CardHolder=%s", bank.Name, bankCode, accountName)
+		} else {
+			// 旧格式：{"accountName": "...", "bankCode": "...", "accountNumber": "..."}
+			e.Log.Infof("使用旧格式账户信息")
+			accountName = accountInfo.AccountName
+			bankCode = accountInfo.BankCode
+			accountNumber = accountInfo.AccountNumber
+			email = accountInfo.Email
+			mobile = accountInfo.Mobile
+			address = accountInfo.Address
+		}
+
 		// 验证必填字段
-		if accountInfo.AccountName == "" || accountInfo.BankCode == "" || accountInfo.AccountNumber == "" {
-			return errors.New("银行账户信息不完整")
+		if accountName == "" || bankCode == "" || accountNumber == "" {
+			return errors.New("银行账户信息不完整：缺少持卡人姓名、银行编码或卡号")
 		}
 
 		// 构建PandaPay请求
@@ -243,12 +294,12 @@ func (e *HsUserWithdrawal) Approve(c *dto.HsUserWithdrawalApproveReq, p *actions
 			withdrawal.WithdrawNo,
 			amount,
 			withdrawal.CurrencyCode,
-			accountInfo.AccountName,
-			accountInfo.BankCode,
-			accountInfo.AccountNumber,
-			accountInfo.Email,
-			accountInfo.Mobile,
-			accountInfo.Address,
+			accountName,
+			bankCode,
+			accountNumber,
+			email,
+			mobile,
+			address,
 		)
 
 		// 调用PandaPay代付接口

@@ -72,7 +72,7 @@ type HsUserWithdrawalInsertReq struct {
     Method string `json:"method" comment:"提现方式：bank/crypto"`
     AccountInfo string `json:"accountInfo" comment:"提现账户信息（脱敏）"`
     Status string `json:"status" comment:"状态：pending/review/processing/success/failed/canceled"`
-    HandlerId string `json:"handlerId" comment:"接单管理员ID（关联sys_user.user_id）"`
+    HandlerId int `json:"handlerId" comment:"接单管理员ID（关联sys_user.user_id）"`
     HandlerName string `json:"handlerName" comment:"接单管理员名称（冗余字段）"`
     ClaimedAt time.Time `json:"claimedAt" comment:"接单时间"`
     IsClaimed string `json:"isClaimed" comment:"是否已接单：0=未接单(可接单), 1=已接单(已锁定)"`
@@ -112,7 +112,7 @@ func (s *HsUserWithdrawalInsertReq) GetId() interface{} {
 }
 
 type HsUserWithdrawalUpdateReq struct {
-    Id int `uri:"id" comment:""` // 
+    Id int `uri:"id" comment:""` //
     WithdrawNo string `json:"withdrawNo" comment:"提现单号，唯一"`
     UserId string `json:"userId" comment:"用户ID"`
     CurrencyCode string `json:"currencyCode" comment:"ISO 4217币种代码，如 USD/CNY"`
@@ -122,7 +122,7 @@ type HsUserWithdrawalUpdateReq struct {
     Method string `json:"method" comment:"提现方式：bank/crypto"`
     AccountInfo string `json:"accountInfo" comment:"提现账户信息（脱敏）"`
     Status string `json:"status" comment:"状态：pending/review/processing/success/failed/canceled"`
-    HandlerId string `json:"handlerId" comment:"接单管理员ID（关联sys_user.user_id）"`
+    HandlerId int `json:"handlerId" comment:"接单管理员ID（关联sys_user.user_id）"`
     HandlerName string `json:"handlerName" comment:"接单管理员名称（冗余字段）"`
     ClaimedAt time.Time `json:"claimedAt" comment:"接单时间"`
     IsClaimed string `json:"isClaimed" comment:"是否已接单：0=未接单(可接单), 1=已接单(已锁定)"`

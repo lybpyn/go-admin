@@ -154,16 +154,18 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 	// 从订单中获取用户ID
 	userId := order.UserId
 
-	// 2. 查询用户货币代码
-	var userCurrencyCode string
-	err = e.Orm.Table("hs_users").
-		Select("hs_config_regions.currency_code").
-		Joins("LEFT JOIN hs_config_regions ON hs_users.region_id = hs_config_regions.id").
-		Where("hs_users.id = ?", userId).
-		Scan(&userCurrencyCode).Error
+	// 2. 查询用户货币代码（直接从用户表读取）
+	var user models.HsUsers
+	err = e.Orm.Select("currency_code").Where("id = ?", userId).First(&user).Error
 	if err != nil {
-		e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert get user currency error:%s", err)
+		e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert get user error:%s", err)
 		return errors.New("获取用户信息失败")
+	}
+
+	userCurrencyCode := user.CurrencyCode
+	if userCurrencyCode == "" {
+		e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert user currency code is empty for user %d", userId)
+		return errors.New("用户未设置货币代码")
 	}
 
 	// 3. 计算配置汇率和目标货币
@@ -794,25 +796,14 @@ func (e *OrdGiftcardWriteoffs) getInviterCommissionConfig(tx *gorm.DB, inviterId
 		return nil, fmt.Errorf("获取邀请人信息失败")
 	}
 
-	// 7. 获取邀请人的等级配置，解析level_privileges获取gift_card_discount
+	// 7. 获取邀请人的等级配置，使用rebate_rate作为返利比例
 	var frozenRate float64 = 1.0 // 默认100%进入冻结余额
 	if inviter.LevelId != "" && inviter.LevelId != "0" {
 		var userLevel models.HsConfgiUserLevels
 		err = tx.Where("id = ? AND is_active = 1", inviter.LevelId).First(&userLevel).Error
-		if err == nil && userLevel.LevelPrivileges != "" {
-			var privileges map[string]interface{}
-			err = json.Unmarshal([]byte(userLevel.LevelPrivileges), &privileges)
-			if err == nil {
-				// 获取gift_card_discount值
-				if discount, ok := privileges["gift_card_discount"]; ok {
-					switch v := discount.(type) {
-					case float64:
-						frozenRate = v
-					case string:
-						frozenRate, _ = strconv.ParseFloat(v, 64)
-					}
-				}
-			}
+		if err == nil && userLevel.RebateRate != "" {
+			// 直接使用rebate_rate字段
+			frozenRate, _ = strconv.ParseFloat(userLevel.RebateRate, 64)
 		}
 	}
 
@@ -826,12 +817,9 @@ func (e *OrdGiftcardWriteoffs) getInviterCommissionConfig(tx *gorm.DB, inviterId
 func (e *OrdGiftcardWriteoffs) updateInviterFrozenBalance(tx *gorm.DB, inviterId string, sourceAmount float64, sourceCurrency string, isCrypto bool, orderId int, level string, createBy int) error {
 	orderIdStr := strconv.Itoa(orderId)
 
-	// 1. 获取邀请人信息和所在区域的货币代码
+	// 1. 获取邀请人信息（直接从用户表读取货币代码）
 	var inviter models.HsUsers
-	err := tx.Select("hs_users.*, hs_config_regions.currency_code").
-		Joins("LEFT JOIN hs_config_regions ON hs_users.region_id = hs_config_regions.id").
-		Where("hs_users.id = ?", inviterId).
-		First(&inviter).Error
+	err := tx.Where("id = ?", inviterId).First(&inviter).Error
 	if err != nil {
 		e.Log.Errorf("Get inviter %s error:%s \r\n", inviterId, err)
 		return fmt.Errorf("获取邀请人信息失败")
@@ -1167,16 +1155,18 @@ func (e *OrdGiftcardWriteoffs) CalculateUserLocalCurrency(c *dto.OrdGiftcardWrit
 	// 获取用户ID
 	userId := order.UserId
 
-	// 2. 查询用户货币代码
-	var userCurrencyCode string
-	err = e.Orm.Table("hs_users").
-		Select("hs_config_regions.currency_code").
-		Joins("LEFT JOIN hs_config_regions ON hs_users.region_id = hs_config_regions.id").
-		Where("hs_users.id = ?", userId).
-		Scan(&userCurrencyCode).Error
+	// 2. 查询用户货币代码（直接从用户表读取）
+	var user models.HsUsers
+	err = e.Orm.Select("currency_code").Where("id = ?", userId).First(&user).Error
 	if err != nil {
-		e.Log.Errorf("OrdGiftcardWriteoffsService CalculateUserLocalCurrency get user currency error:%s", err)
+		e.Log.Errorf("OrdGiftcardWriteoffsService CalculateUserLocalCurrency get user error:%s", err)
 		return nil, errors.New("获取用户信息失败")
+	}
+
+	userCurrencyCode := user.CurrencyCode
+	if userCurrencyCode == "" {
+		e.Log.Errorf("OrdGiftcardWriteoffsService CalculateUserLocalCurrency user currency code is empty for user %d", userId)
+		return nil, errors.New("用户未设置货币代码")
 	}
 
 	// 3. 获取礼品卡区域货币（必须提供折扣ID）

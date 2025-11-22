@@ -1,7 +1,6 @@
 package dto
 
 import (
-
 	"go-admin/app/admin/models"
 	"go-admin/common/dto"
 	common "go-admin/common/models"
@@ -23,6 +22,7 @@ type HsUsersGetPageReq struct {
     InviteCode string `form:"inviteCode"  search:"type:exact;column:invite_code;table:hs_users" comment:""`
     Status string `form:"status"  search:"type:exact;column:status;table:hs_users" comment:"状态：1正常，0封禁"`
     Version string `form:"version"  search:"type:exact;column:version;table:hs_users" comment:""`
+    CurrencyCode string `form:"currencyCode"  search:"type:exact;column:currency_code;table:hs_users" comment:"用户所属地区货币"`
     HsUsersOrder
 }
 
@@ -42,6 +42,7 @@ type HsUsersOrder struct {
     InviteCode string `form:"inviteCodeOrder"  search:"type:order;column:invite_code;table:hs_users"`
     Status string `form:"statusOrder"  search:"type:order;column:status;table:hs_users"`
     Version string `form:"versionOrder"  search:"type:order;column:version;table:hs_users"`
+    CurrencyCode string `form:"currencyCodeOrder"  search:"type:order;column:currency_code;table:hs_users"`
     CreateBy string `form:"createByOrder"  search:"type:order;column:create_by;table:hs_users"`
     UpdateBy string `form:"updateByOrder"  search:"type:order;column:update_by;table:hs_users"`
     CreatedAt string `form:"createdAtOrder"  search:"type:order;column:created_at;table:hs_users"`
@@ -70,6 +71,7 @@ type HsUsersInsertReq struct {
     InviteCode string `json:"inviteCode" comment:""`
     Status string `json:"status" comment:"状态：1正常，0封禁"`
     Version string `json:"version" comment:""`
+    CurrencyCode string `json:"currencyCode" comment:"用户所属地区货币，如 NGN/KES/USD"`
     common.ControlBy
 }
 
@@ -91,6 +93,7 @@ func (s *HsUsersInsertReq) Generate(model *models.HsUsers)  {
     model.InviteCode = s.InviteCode
     model.Status = s.Status
     model.Version = s.Version
+    model.CurrencyCode = s.CurrencyCode
     model.CreateBy = s.CreateBy // 添加这而，需要记录是被谁创建的
 }
 
@@ -114,6 +117,7 @@ type HsUsersUpdateReq struct {
     InviteCode string `json:"inviteCode" comment:""`
     Status string `json:"status" comment:"状态：1正常，0封禁"`
     Version string `json:"version" comment:""`
+    CurrencyCode string `json:"currencyCode" comment:"用户所属地区货币，如 NGN/KES/USD"`
     common.ControlBy
 }
 
@@ -135,6 +139,7 @@ func (s *HsUsersUpdateReq) Generate(model *models.HsUsers)  {
     model.InviteCode = s.InviteCode
     model.Status = s.Status
     model.Version = s.Version
+    model.CurrencyCode = s.CurrencyCode
     model.UpdateBy = s.UpdateBy // 添加这而，需要记录是被谁更新的
 }
 
