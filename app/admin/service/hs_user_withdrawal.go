@@ -271,7 +271,7 @@ func (e *HsUserWithdrawal) Approve(c *dto.HsUserWithdrawalApproveReq, p *actions
 				address = accountInfo.BranchName
 			}
 
-			e.Log.Infof("银行信息: BankName=%s, BankCode=%s, CardHolder=%s", bank.Name, bankCode, accountName)
+			e.Log.Infof("银行信息: BankName=%s, BankCode=%s, CardHolder=%s", bank.BankName, bankCode, accountName)
 		} else {
 			// 旧格式：{"accountName": "...", "bankCode": "...", "accountNumber": "..."}
 			e.Log.Infof("使用旧格式账户信息")
