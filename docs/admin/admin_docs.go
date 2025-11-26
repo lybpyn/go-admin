@@ -10309,7 +10309,7 @@ const docTemplateadmin = `{
                         "Bearer": []
                     }
                 ],
-                "description": "根据订单ID、卡片面值和折扣率，计算用户将获得的本地货币金额。可选传入折扣率参数，如果不传则使用礼品卡折扣配置中的折扣率",
+                "description": "根据订单ID、卡片面值和折扣率，计算用户将获得的本地货币金额。计算公式：用户入账金额 = 卡片面值 × 折扣率 × 汇率。可选传入折扣率参数，如果不传则使用礼品卡折扣配置中的折扣率",
                 "consumes": [
                     "application/json"
                 ],
@@ -12906,32 +12906,20 @@ const docTemplateadmin = `{
                 "bankCode": {
                     "type": "string"
                 },
-                "country": {
+                "bankName": {
                     "type": "string"
+                },
+                "bankNameShort": {
+                    "type": "string"
+                },
+                "channelType": {
+                    "type": "integer"
                 },
                 "createBy": {
                     "type": "integer"
                 },
-                "extra": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "note": {
-                    "type": "string"
-                },
-                "routingNumber": {
-                    "type": "string"
-                },
                 "status": {
-                    "type": "string"
-                },
-                "supportsInternational": {
-                    "type": "string"
-                },
-                "swiftCode": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -12944,35 +12932,23 @@ const docTemplateadmin = `{
                 "bankCode": {
                     "type": "string"
                 },
-                "country": {
+                "bankName": {
                     "type": "string"
+                },
+                "bankNameShort": {
+                    "type": "string"
+                },
+                "channelType": {
+                    "type": "integer"
                 },
                 "createBy": {
                     "type": "integer"
                 },
-                "extra": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
-                "name": {
-                    "type": "string"
-                },
-                "note": {
-                    "type": "string"
-                },
-                "routingNumber": {
-                    "type": "string"
-                },
                 "status": {
-                    "type": "string"
-                },
-                "supportsInternational": {
-                    "type": "string"
-                },
-                "swiftCode": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -18043,8 +18019,14 @@ const docTemplateadmin = `{
                 "bankCode": {
                     "type": "string"
                 },
-                "country": {
+                "bankName": {
                     "type": "string"
+                },
+                "bankNameShort": {
+                    "type": "string"
+                },
+                "channelType": {
+                    "type": "integer"
                 },
                 "createBy": {
                     "type": "integer"
@@ -18052,29 +18034,11 @@ const docTemplateadmin = `{
                 "createdAt": {
                     "type": "string"
                 },
-                "extra": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
-                "name": {
-                    "type": "string"
-                },
-                "note": {
-                    "type": "string"
-                },
-                "routingNumber": {
-                    "type": "string"
-                },
                 "status": {
-                    "type": "string"
-                },
-                "supportsInternational": {
-                    "type": "string"
-                },
-                "swiftCode": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"

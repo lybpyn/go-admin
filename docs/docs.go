@@ -12906,32 +12906,20 @@ const docTemplate = `{
                 "bankCode": {
                     "type": "string"
                 },
-                "country": {
+                "bankName": {
                     "type": "string"
+                },
+                "bankNameShort": {
+                    "type": "string"
+                },
+                "channelType": {
+                    "type": "integer"
                 },
                 "createBy": {
                     "type": "integer"
                 },
-                "extra": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "note": {
-                    "type": "string"
-                },
-                "routingNumber": {
-                    "type": "string"
-                },
                 "status": {
-                    "type": "string"
-                },
-                "supportsInternational": {
-                    "type": "string"
-                },
-                "swiftCode": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -12944,35 +12932,23 @@ const docTemplate = `{
                 "bankCode": {
                     "type": "string"
                 },
-                "country": {
+                "bankName": {
                     "type": "string"
+                },
+                "bankNameShort": {
+                    "type": "string"
+                },
+                "channelType": {
+                    "type": "integer"
                 },
                 "createBy": {
                     "type": "integer"
                 },
-                "extra": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
-                "name": {
-                    "type": "string"
-                },
-                "note": {
-                    "type": "string"
-                },
-                "routingNumber": {
-                    "type": "string"
-                },
                 "status": {
-                    "type": "string"
-                },
-                "supportsInternational": {
-                    "type": "string"
-                },
-                "swiftCode": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -18043,8 +18019,14 @@ const docTemplate = `{
                 "bankCode": {
                     "type": "string"
                 },
-                "country": {
+                "bankName": {
                     "type": "string"
+                },
+                "bankNameShort": {
+                    "type": "string"
+                },
+                "channelType": {
+                    "type": "integer"
                 },
                 "createBy": {
                     "type": "integer"
@@ -18052,29 +18034,11 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
-                "extra": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
-                "name": {
-                    "type": "string"
-                },
-                "note": {
-                    "type": "string"
-                },
-                "routingNumber": {
-                    "type": "string"
-                },
                 "status": {
-                    "type": "string"
-                },
-                "supportsInternational": {
-                    "type": "string"
-                },
-                "swiftCode": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
