@@ -11,7 +11,6 @@ type OrdConfigCurrencyRatesGetPageReq struct {
     BaseCurrencyCode string `form:"baseCurrencyCode"  search:"type:exact;column:base_currency_code;table:ord_config_currency_rates" comment:"基准货币代码 (ISO 4217)"`
     QuoteCurrencyCode string `form:"quoteCurrencyCode"  search:"type:exact;column:quote_currency_code;table:ord_config_currency_rates" comment:"报价货币代码 (ISO 4217)"`
     Rate string `form:"rate"  search:"type:exact;column:rate;table:ord_config_currency_rates" comment:"汇率: 1 base_currency = rate quote_currency"`
-    RegionCode string `form:"regionCode"  search:"type:exact;column:region_code;table:ord_config_currency_rates" comment:"地区代码,为空表示全局汇率"`
     RateType string `form:"rateType"  search:"type:exact;column:rate_type;table:ord_config_currency_rates" comment:"汇率类型: standard=标准, buying=买入, selling=卖出"`
     Source string `form:"source"  search:"type:exact;column:source;table:ord_config_currency_rates" comment:"汇率来源,如 manual, api, coingecko"`
     Status string `form:"status"  search:"type:exact;column:status;table:ord_config_currency_rates" comment:"状态: 1=启用, 0=禁用"`
@@ -23,7 +22,6 @@ type OrdConfigCurrencyRatesOrder struct {
     BaseCurrencyCode string `form:"baseCurrencyCodeOrder"  search:"type:order;column:base_currency_code;table:ord_config_currency_rates"`
     QuoteCurrencyCode string `form:"quoteCurrencyCodeOrder"  search:"type:order;column:quote_currency_code;table:ord_config_currency_rates"`
     Rate string `form:"rateOrder"  search:"type:order;column:rate;table:ord_config_currency_rates"`
-    RegionCode string `form:"regionCodeOrder"  search:"type:order;column:region_code;table:ord_config_currency_rates"`
     RateType string `form:"rateTypeOrder"  search:"type:order;column:rate_type;table:ord_config_currency_rates"`
     Source string `form:"sourceOrder"  search:"type:order;column:source;table:ord_config_currency_rates"`
     Status string `form:"statusOrder"  search:"type:order;column:status;table:ord_config_currency_rates"`
@@ -32,7 +30,7 @@ type OrdConfigCurrencyRatesOrder struct {
     CreatedAt string `form:"createdAtOrder"  search:"type:order;column:created_at;table:ord_config_currency_rates"`
     UpdatedAt string `form:"updatedAtOrder"  search:"type:order;column:updated_at;table:ord_config_currency_rates"`
     DeletedAt string `form:"deletedAtOrder"  search:"type:order;column:deleted_at;table:ord_config_currency_rates"`
-    
+
 }
 
 func (m *OrdConfigCurrencyRatesGetPageReq) GetNeedSearch() interface{} {
@@ -44,7 +42,6 @@ type OrdConfigCurrencyRatesInsertReq struct {
     BaseCurrencyCode string `json:"baseCurrencyCode" comment:"基准货币代码 (ISO 4217)"`
     QuoteCurrencyCode string `json:"quoteCurrencyCode" comment:"报价货币代码 (ISO 4217)"`
     Rate string `json:"rate" comment:"汇率: 1 base_currency = rate quote_currency"`
-    RegionCode string `json:"regionCode" comment:"地区代码,为空表示全局汇率"`
     RateType string `json:"rateType" comment:"汇率类型: standard=标准, buying=买入, selling=卖出"`
     Source string `json:"source" comment:"汇率来源,如 manual, api, coingecko"`
     Status string `json:"status" comment:"状态: 1=启用, 0=禁用"`
@@ -58,7 +55,6 @@ func (s *OrdConfigCurrencyRatesInsertReq) Generate(model *models.OrdConfigCurren
     model.BaseCurrencyCode = s.BaseCurrencyCode
     model.QuoteCurrencyCode = s.QuoteCurrencyCode
     model.Rate = s.Rate
-    model.RegionCode = s.RegionCode
     model.RateType = s.RateType
     model.Source = s.Source
     model.Status = s.Status
@@ -74,7 +70,6 @@ type OrdConfigCurrencyRatesUpdateReq struct {
     BaseCurrencyCode string `json:"baseCurrencyCode" comment:"基准货币代码 (ISO 4217)"`
     QuoteCurrencyCode string `json:"quoteCurrencyCode" comment:"报价货币代码 (ISO 4217)"`
     Rate string `json:"rate" comment:"汇率: 1 base_currency = rate quote_currency"`
-    RegionCode string `json:"regionCode" comment:"地区代码,为空表示全局汇率"`
     RateType string `json:"rateType" comment:"汇率类型: standard=标准, buying=买入, selling=卖出"`
     Source string `json:"source" comment:"汇率来源,如 manual, api, coingecko"`
     Status string `json:"status" comment:"状态: 1=启用, 0=禁用"`
@@ -88,7 +83,6 @@ func (s *OrdConfigCurrencyRatesUpdateReq) Generate(model *models.OrdConfigCurren
     model.BaseCurrencyCode = s.BaseCurrencyCode
     model.QuoteCurrencyCode = s.QuoteCurrencyCode
     model.Rate = s.Rate
-    model.RegionCode = s.RegionCode
     model.RateType = s.RateType
     model.Source = s.Source
     model.Status = s.Status

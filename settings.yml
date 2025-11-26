@@ -50,11 +50,12 @@ settings:
       name: data
     upload:
       path: /home/ll/release/uploads
+      domain: https://file.cardpartner.io
     pandapay:
       apiUrl: https://winpay-oapi-dev.aicapay.com/api/payout/submit
       merchantId: 1099
       appSecret: sUBI7ooN51T98T1TWtzarkMJpWvuAgXn
-      notifyUrl: http://adminpanel.cardpartner.io/api/v1/callback/pandapay
+      notifyUrl: https://adminpanel.cardpartner.io/api/v1/callback/pandapay
       currency: NGN
   cache:
    redis:

@@ -10309,7 +10309,7 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
-                "description": "根据订单ID和卡片面值，计算用户将获得的本地货币金额",
+                "description": "根据订单ID、卡片面值和折扣率，计算用户将获得的本地货币金额。计算公式：用户入账金额 = 卡片面值 × 折扣率 × 汇率。可选传入折扣率参数，如果不传则使用礼品卡折扣配置中的折扣率",
                 "consumes": [
                     "application/json"
                 ],
@@ -13074,6 +13074,9 @@ const docTemplate = `{
                 "createBy": {
                     "type": "integer"
                 },
+                "exp": {
+                    "type": "string"
+                },
                 "isActive": {
                     "type": "string"
                 },
@@ -13083,7 +13086,7 @@ const docTemplate = `{
                 "levelName": {
                     "type": "string"
                 },
-                "levelPrivileges": {
+                "rebateRate": {
                     "type": "string"
                 },
                 "sortOrder": {
@@ -13103,6 +13106,9 @@ const docTemplate = `{
                 "createBy": {
                     "type": "integer"
                 },
+                "exp": {
+                    "type": "string"
+                },
                 "id": {
                     "description": "等级ID",
                     "type": "integer"
@@ -13116,7 +13122,7 @@ const docTemplate = `{
                 "levelName": {
                     "type": "string"
                 },
-                "levelPrivileges": {
+                "rebateRate": {
                     "type": "string"
                 },
                 "sortOrder": {
@@ -15013,7 +15019,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "handlerId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "handlerName": {
                     "type": "string"
@@ -15095,7 +15101,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "handlerId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "handlerName": {
                     "type": "string"
@@ -15163,7 +15169,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "handlerId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "handlerName": {
                     "type": "string"
@@ -15245,6 +15251,9 @@ const docTemplate = `{
                 "createBy": {
                     "type": "integer"
                 },
+                "currencyCode": {
+                    "type": "string"
+                },
                 "experience": {
                     "type": "string"
                 },
@@ -15297,6 +15306,9 @@ const docTemplate = `{
                 },
                 "createBy": {
                     "type": "integer"
+                },
+                "currencyCode": {
+                    "type": "string"
                 },
                 "experience": {
                     "type": "string"
@@ -15885,9 +15897,6 @@ const docTemplate = `{
                 "rateType": {
                     "type": "string"
                 },
-                "regionCode": {
-                    "type": "string"
-                },
                 "source": {
                     "type": "string"
                 },
@@ -15896,12 +15905,6 @@ const docTemplate = `{
                 },
                 "updateBy": {
                     "type": "integer"
-                },
-                "validFrom": {
-                    "type": "string"
-                },
-                "validTo": {
-                    "type": "string"
                 }
             }
         },
@@ -15927,9 +15930,6 @@ const docTemplate = `{
                 "rateType": {
                     "type": "string"
                 },
-                "regionCode": {
-                    "type": "string"
-                },
                 "source": {
                     "type": "string"
                 },
@@ -15938,12 +15938,6 @@ const docTemplate = `{
                 },
                 "updateBy": {
                     "type": "integer"
-                },
-                "validFrom": {
-                    "type": "string"
-                },
-                "validTo": {
-                    "type": "string"
                 }
             }
         },
@@ -16122,9 +16116,6 @@ const docTemplate = `{
                 "createBy": {
                     "type": "integer"
                 },
-                "discountRate": {
-                    "type": "string"
-                },
                 "logo": {
                     "type": "string"
                 },
@@ -16135,7 +16126,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -16147,9 +16138,6 @@ const docTemplate = `{
             "properties": {
                 "createBy": {
                     "type": "integer"
-                },
-                "discountRate": {
-                    "type": "string"
                 },
                 "id": {
                     "description": "分类ID",
@@ -16165,7 +16153,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -16242,9 +16230,6 @@ const docTemplate = `{
             "properties": {
                 "createBy": {
                     "type": "integer"
-                },
-                "discountRate": {
-                    "type": "string"
                 },
                 "extra": {
                     "type": "string"
@@ -16345,9 +16330,6 @@ const docTemplate = `{
                 "createBy": {
                     "type": "integer"
                 },
-                "discountRate": {
-                    "type": "string"
-                },
                 "extra": {
                     "type": "string"
                 },
@@ -16433,6 +16415,9 @@ const docTemplate = `{
                 "recognizedCardValue"
             ],
             "properties": {
+                "discountRate": {
+                    "type": "string"
+                },
                 "giftCardDiscountId": {
                     "type": "integer"
                 },
@@ -16452,6 +16437,9 @@ const docTemplate = `{
                 },
                 "denominationValidation": {
                     "$ref": "#/definitions/dto.OrdGiftcardWriteoffsDenominationValidation"
+                },
+                "discountRate": {
+                    "type": "string"
                 },
                 "isCrypto": {
                     "type": "boolean"
@@ -18146,6 +18134,9 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
+                "exp": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -18158,7 +18149,7 @@ const docTemplate = `{
                 "levelName": {
                     "type": "string"
                 },
-                "levelPrivileges": {
+                "rebateRate": {
                     "type": "string"
                 },
                 "sortOrder": {
@@ -19147,7 +19138,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "handlerId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "handlerName": {
                     "type": "string"
@@ -19209,6 +19200,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "cryptoFrozenBalance": {
+                    "type": "string"
+                },
+                "currencyCode": {
                     "type": "string"
                 },
                 "experience": {
@@ -19547,9 +19541,6 @@ const docTemplate = `{
                 "rateType": {
                     "type": "string"
                 },
-                "regionCode": {
-                    "type": "string"
-                },
                 "source": {
                     "type": "string"
                 },
@@ -19560,12 +19551,6 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "updatedAt": {
-                    "type": "string"
-                },
-                "validFrom": {
-                    "type": "string"
-                },
-                "validTo": {
                     "type": "string"
                 }
             }
@@ -19661,9 +19646,6 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
-                "discountRate": {
-                    "type": "string"
-                },
                 "extra": {
                     "type": "string"
                 },
@@ -19699,9 +19681,6 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
-                "discountRate": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
@@ -19715,7 +19694,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"

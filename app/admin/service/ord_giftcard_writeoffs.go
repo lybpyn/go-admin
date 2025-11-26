@@ -1173,6 +1173,7 @@ func (e *OrdGiftcardWriteoffs) CalculateUserLocalCurrency(c *dto.OrdGiftcardWrit
 	var sourceCurrencyCode string
 	var giftcard models.OrdGiftcard
 	var hasGiftcardConfig bool
+	var usedDiscountRate string // 记录使用的折扣率
 
 	if c.GiftCardDiscountId <= 0 {
 		return nil, errors.New("必须提供礼品卡折扣ID")
@@ -1184,6 +1185,15 @@ func (e *OrdGiftcardWriteoffs) CalculateUserLocalCurrency(c *dto.OrdGiftcardWrit
 	if err != nil {
 		e.Log.Errorf("OrdGiftcardWriteoffsService CalculateUserLocalCurrency get discount config error:%s", err)
 		return nil, errors.New("查询折扣配置失败")
+	}
+
+	// 确定使用哪个折扣率：优先使用传入的参数，否则使用配置的折扣率
+	if c.DiscountRate != "" {
+		usedDiscountRate = c.DiscountRate
+		e.Log.Infof("Using discount rate from request parameter: %s", usedDiscountRate)
+	} else {
+		usedDiscountRate = discountConfig.DiscountRate
+		e.Log.Infof("Using discount rate from config: %s", usedDiscountRate)
 	}
 
 	// 查询礼品卡配置
@@ -1248,15 +1258,25 @@ func (e *OrdGiftcardWriteoffs) CalculateUserLocalCurrency(c *dto.OrdGiftcardWrit
 		}
 	}
 
-	// 5. 计算用户本地货币金额
+	// 5. 计算用户本地货币金额（使用折扣率）
 	cardValueFloat, err := strconv.ParseFloat(c.RecognizedCardValue, 64)
 	if err != nil {
 		e.Log.Errorf("OrdGiftcardWriteoffsService CalculateUserLocalCurrency parse card value error:%s", err)
 		return nil, errors.New("卡片面值格式错误")
 	}
 
+	// 解析折扣率
+	var discountRateFloat float64 = 1.0 // 默认折扣率为1.0（无折扣）
+	if usedDiscountRate != "" && usedDiscountRate != "0" {
+		parsedRate, err := strconv.ParseFloat(usedDiscountRate, 64)
+		if err == nil && parsedRate > 0 {
+			discountRateFloat = parsedRate
+		}
+	}
+
+	// 用户入账金额 = 卡片面值 × 折扣率 × 汇率
 	configRateFloat, _ := strconv.ParseFloat(configRate, 64)
-	userLocalAmount := cardValueFloat * configRateFloat
+	userLocalAmount := cardValueFloat * discountRateFloat * configRateFloat
 	userLocalCurrencyAmount := fmt.Sprintf("%.8f", userLocalAmount)
 
 	// 6. 如果提供了礼品卡配置，进行面额校验
@@ -1301,8 +1321,9 @@ func (e *OrdGiftcardWriteoffs) CalculateUserLocalCurrency(c *dto.OrdGiftcardWrit
 		UserLocalCurrencyAmount: userLocalCurrencyAmount,
 		UserCurrencyCode:        targetCurrency,
 		ConfigRate:              configRate,
+		DiscountRate:            usedDiscountRate,        // 返回使用的折扣率
 		IsCrypto:                isCrypto,
-		OrderCurrencyCode:       sourceCurrencyCode, // 使用实际的源货币代码（可能是礼品卡区域货币）
+		OrderCurrencyCode:       sourceCurrencyCode,      // 使用实际的源货币代码（可能是礼品卡区域货币）
 		DenominationValidation:  denominationValidation,
 	}
 

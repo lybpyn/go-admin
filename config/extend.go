@@ -21,7 +21,8 @@ type AMap struct {
 
 // Upload 文件上传配置
 type Upload struct {
-	Path string // 上传文件存储路径
+	Path   string // 上传文件存储路径
+	Domain string // 文件服务器域名，如：http://file.cardpartner.io
 }
 
 // PandaPay 支付配置

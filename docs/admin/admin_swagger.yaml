@@ -128,13 +128,15 @@ definitions:
     properties:
       createBy:
         type: integer
+      exp:
+        type: string
       isActive:
         type: string
       levelIcon:
         type: string
       levelName:
         type: string
-      levelPrivileges:
+      rebateRate:
         type: string
       sortOrder:
         type: integer
@@ -147,6 +149,8 @@ definitions:
     properties:
       createBy:
         type: integer
+      exp:
+        type: string
       id:
         description: 等级ID
         type: integer
@@ -156,7 +160,7 @@ definitions:
         type: string
       levelName:
         type: string
-      levelPrivileges:
+      rebateRate:
         type: string
       sortOrder:
         type: integer
@@ -1367,6 +1371,17 @@ definitions:
       userId:
         type: string
     type: object
+  dto.HsUserWithdrawalApproveReq:
+    properties:
+      createBy:
+        type: integer
+      id:
+        type: integer
+      remark:
+        type: string
+      updateBy:
+        type: integer
+    type: object
   dto.HsUserWithdrawalDeleteReq:
     properties:
       ids:
@@ -1391,7 +1406,7 @@ definitions:
       fee:
         type: string
       handlerId:
-        type: string
+        type: integer
       handlerName:
         type: string
       isClaimed:
@@ -1415,6 +1430,19 @@ definitions:
       withdrawNo:
         type: string
     type: object
+  dto.HsUserWithdrawalRejectReq:
+    properties:
+      createBy:
+        type: integer
+      id:
+        type: integer
+      reason:
+        type: string
+      updateBy:
+        type: integer
+    required:
+    - reason
+    type: object
   dto.HsUserWithdrawalUpdateReq:
     properties:
       accountInfo:
@@ -1432,7 +1460,7 @@ definitions:
       fee:
         type: string
       handlerId:
-        type: string
+        type: integer
       handlerName:
         type: string
       id:
@@ -1477,7 +1505,7 @@ definitions:
       fee:
         type: string
       handlerId:
-        type: string
+        type: integer
       handlerName:
         type: string
       id:
@@ -1532,6 +1560,8 @@ definitions:
         type: string
       createBy:
         type: integer
+      currencyCode:
+        type: string
       experience:
         type: string
       firstname:
@@ -1567,6 +1597,8 @@ definitions:
         type: string
       createBy:
         type: integer
+      currencyCode:
+        type: string
       experience:
         type: string
       firstname:
@@ -1954,18 +1986,12 @@ definitions:
         type: string
       rateType:
         type: string
-      regionCode:
-        type: string
       source:
         type: string
       status:
         type: string
       updateBy:
         type: integer
-      validFrom:
-        type: string
-      validTo:
-        type: string
     type: object
   dto.OrdConfigCurrencyRatesUpdateReq:
     properties:
@@ -1982,18 +2008,12 @@ definitions:
         type: string
       rateType:
         type: string
-      regionCode:
-        type: string
       source:
         type: string
       status:
         type: string
       updateBy:
         type: integer
-      validFrom:
-        type: string
-      validTo:
-        type: string
     type: object
   dto.OrdCurrencyRatesDeleteReq:
     properties:
@@ -2110,8 +2130,6 @@ definitions:
     properties:
       createBy:
         type: integer
-      discountRate:
-        type: string
       logo:
         type: string
       name:
@@ -2119,7 +2137,7 @@ definitions:
       sortOrder:
         type: integer
       status:
-        type: string
+        type: integer
       updateBy:
         type: integer
     type: object
@@ -2127,8 +2145,6 @@ definitions:
     properties:
       createBy:
         type: integer
-      discountRate:
-        type: string
       id:
         description: 分类ID
         type: integer
@@ -2139,7 +2155,7 @@ definitions:
       sortOrder:
         type: integer
       status:
-        type: string
+        type: integer
       updateBy:
         type: integer
     type: object
@@ -2189,8 +2205,6 @@ definitions:
     properties:
       createBy:
         type: integer
-      discountRate:
-        type: string
       extra:
         type: string
       name:
@@ -2256,8 +2270,6 @@ definitions:
     properties:
       createBy:
         type: integer
-      discountRate:
-        type: string
       extra:
         type: string
       id:
@@ -2312,6 +2324,8 @@ definitions:
     type: object
   dto.OrdGiftcardWriteoffsCalculateReq:
     properties:
+      discountRate:
+        type: string
       giftCardDiscountId:
         type: integer
       orderId:
@@ -2328,6 +2342,8 @@ definitions:
         type: string
       denominationValidation:
         $ref: '#/definitions/dto.OrdGiftcardWriteoffsDenominationValidation'
+      discountRate:
+        type: string
       isCrypto:
         type: boolean
       orderCurrencyCode:
@@ -3469,6 +3485,8 @@ definitions:
         type: integer
       createdAt:
         type: string
+      exp:
+        type: string
       id:
         type: integer
       isActive:
@@ -3477,7 +3495,7 @@ definitions:
         type: string
       levelName:
         type: string
-      levelPrivileges:
+      rebateRate:
         type: string
       sortOrder:
         type: integer
@@ -4129,7 +4147,7 @@ definitions:
       fee:
         type: string
       handlerId:
-        type: string
+        type: integer
       handlerName:
         type: string
       id:
@@ -4170,6 +4188,8 @@ definitions:
       cryptoBalance:
         type: string
       cryptoFrozenBalance:
+        type: string
+      currencyCode:
         type: string
       experience:
         type: string
@@ -4393,8 +4413,6 @@ definitions:
         type: string
       rateType:
         type: string
-      regionCode:
-        type: string
       source:
         type: string
       status:
@@ -4402,10 +4420,6 @@ definitions:
       updateBy:
         type: integer
       updatedAt:
-        type: string
-      validFrom:
-        type: string
-      validTo:
         type: string
     type: object
   models.OrdCurrencyRates:
@@ -4468,8 +4482,6 @@ definitions:
         type: integer
       createdAt:
         type: string
-      discountRate:
-        type: string
       extra:
         type: string
       id:
@@ -4493,8 +4505,6 @@ definitions:
         type: integer
       createdAt:
         type: string
-      discountRate:
-        type: string
       id:
         type: integer
       logo:
@@ -4504,7 +4514,7 @@ definitions:
       sortOrder:
         type: integer
       status:
-        type: string
+        type: integer
       updateBy:
         type: integer
       updatedAt:
@@ -8997,6 +9007,60 @@ paths:
       summary: 修改用户余额提现申请表
       tags:
       - 用户余额提现申请表
+  /api/v1/hs-user-withdrawal/{id}/approve:
+    post:
+      consumes:
+      - application/json
+      description: 审核通过提现申请，bank方式将自动调用PandaPay代付接口转账，crypto方式不调用
+      parameters:
+      - description: 提现记录ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 审核请求
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserWithdrawalApproveReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "审核成功"}'
+          schema:
+            $ref: '#/definitions/models.Response'
+      security:
+      - Bearer: []
+      summary: 审核通过提现申请
+      tags:
+      - 用户余额提现申请表
+  /api/v1/hs-user-withdrawal/{id}/reject:
+    post:
+      consumes:
+      - application/json
+      description: 拒绝提现申请，需要提供拒绝原因
+      parameters:
+      - description: 提现记录ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 拒绝请求
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserWithdrawalRejectReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "拒绝成功"}'
+          schema:
+            $ref: '#/definitions/models.Response'
+      security:
+      - Bearer: []
+      summary: 拒绝提现申请
+      tags:
+      - 用户余额提现申请表
   /api/v1/hs-users:
     delete:
       description: 删除用户主表
@@ -11024,7 +11088,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 根据订单ID和卡片面值，计算用户将获得的本地货币金额
+      description: 根据订单ID、卡片面值和折扣率，计算用户将获得的本地货币金额。可选传入折扣率参数，如果不传则使用礼品卡折扣配置中的折扣率
       parameters:
       - description: data
         in: body

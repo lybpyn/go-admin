@@ -11,8 +11,7 @@ type OrdGiftcardCategory struct {
 
     Name string `json:"name" gorm:"type:varchar(128);comment:分类名称，如 Steam、eBay"`
     Logo string `json:"logo" gorm:"type:varchar(255);comment:分类Logo图片URL"`
-    Status string `json:"status" gorm:"type:tinyint(4);comment:状态: 1=启用, 0=禁用"`
-    DiscountRate string `json:"discountRate" gorm:"type:decimal(5,2);comment:汇率折扣展示用"`
+    Status int `json:"status" gorm:"type:tinyint(4);comment:状态: 1=启用, 0=禁用"`
     SortOrder int `json:"sortOrder" gorm:"type:int(11);comment:SortOrder"`
     models.ModelTime
     models.ControlBy

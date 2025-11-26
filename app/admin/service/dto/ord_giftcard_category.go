@@ -17,8 +17,7 @@ type OrdGiftcardCategoryOrder struct {
     Name string `form:"nameOrder"  search:"type:order;column:name;table:ord_giftcard_category"`
     Logo string `form:"logoOrder"  search:"type:order;column:logo;table:ord_giftcard_category"`
     Status string `form:"statusOrder"  search:"type:order;column:status;table:ord_giftcard_category"`
-    DiscountRate string `form:"discountRateOrder"  search:"type:order;column:discount_rate;table:ord_giftcard_category"`
-    SortOrder string `form:"sortOrderOrder"  search:"type:order;column:sort_order;table:ord_giftcard_category"`
+    SortOrder int `form:"sortOrderOrder"  search:"type:order;column:sort_order;table:ord_giftcard_category"`
     CreateBy string `form:"createByOrder"  search:"type:order;column:create_by;table:ord_giftcard_category"`
     UpdateBy string `form:"updateByOrder"  search:"type:order;column:update_by;table:ord_giftcard_category"`
     CreatedAt string `form:"createdAtOrder"  search:"type:order;column:created_at;table:ord_giftcard_category"`
@@ -35,8 +34,7 @@ type OrdGiftcardCategoryInsertReq struct {
     Id int `json:"-" comment:"分类ID"` // 分类ID
     Name string `json:"name" comment:"分类名称，如 Steam、eBay"`
     Logo string `json:"logo" comment:"分类Logo图片URL"`
-    Status string `json:"status" comment:"状态: 1=启用, 0=禁用"`
-    DiscountRate string `json:"discountRate" comment:"汇率折扣展示用"`
+    Status int `json:"status" comment:"状态: 1=启用, 0=禁用"`
     SortOrder int `json:"sortOrder" comment:""`
     common.ControlBy
 }
@@ -48,7 +46,6 @@ func (s *OrdGiftcardCategoryInsertReq) Generate(model *models.OrdGiftcardCategor
     model.Name = s.Name
     model.Logo = s.Logo
     model.Status = s.Status
-    model.DiscountRate = s.DiscountRate
     model.SortOrder = s.SortOrder
     model.CreateBy = s.CreateBy // 添加这而，需要记录是被谁创建的
 }
@@ -61,8 +58,7 @@ type OrdGiftcardCategoryUpdateReq struct {
     Id int `uri:"id" comment:"分类ID"` // 分类ID
     Name string `json:"name" comment:"分类名称，如 Steam、eBay"`
     Logo string `json:"logo" comment:"分类Logo图片URL"`
-    Status string `json:"status" comment:"状态: 1=启用, 0=禁用"`
-    DiscountRate string `json:"discountRate" comment:"汇率折扣展示用"`
+    Status int `json:"status" comment:"状态: 1=启用, 0=禁用"`
     SortOrder int `json:"sortOrder" comment:""`
     common.ControlBy
 }
@@ -74,7 +70,6 @@ func (s *OrdGiftcardCategoryUpdateReq) Generate(model *models.OrdGiftcardCategor
     model.Name = s.Name
     model.Logo = s.Logo
     model.Status = s.Status
-    model.DiscountRate = s.DiscountRate
     model.SortOrder = s.SortOrder
     model.UpdateBy = s.UpdateBy // 添加这而，需要记录是被谁更新的
 }

@@ -6893,6 +6893,92 @@ const docTemplateadmin = `{
                 }
             }
         },
+        "/api/v1/hs-user-withdrawal/{id}/approve": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "审核通过提现申请，bank方式将自动调用PandaPay代付接口转账，crypto方式不调用",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户余额提现申请表"
+                ],
+                "summary": "审核通过提现申请",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "提现记录ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "审核请求",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsUserWithdrawalApproveReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"审核成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/hs-user-withdrawal/{id}/reject": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "拒绝提现申请，需要提供拒绝原因",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户余额提现申请表"
+                ],
+                "summary": "拒绝提现申请",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "提现记录ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "拒绝请求",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsUserWithdrawalRejectReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"拒绝成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/hs-users": {
             "get": {
                 "security": [
@@ -10223,7 +10309,7 @@ const docTemplateadmin = `{
                         "Bearer": []
                     }
                 ],
-                "description": "根据订单ID和卡片面值，计算用户将获得的本地货币金额",
+                "description": "根据订单ID、卡片面值和折扣率，计算用户将获得的本地货币金额。可选传入折扣率参数，如果不传则使用礼品卡折扣配置中的折扣率",
                 "consumes": [
                     "application/json"
                 ],
@@ -12988,6 +13074,9 @@ const docTemplateadmin = `{
                 "createBy": {
                     "type": "integer"
                 },
+                "exp": {
+                    "type": "string"
+                },
                 "isActive": {
                     "type": "string"
                 },
@@ -12997,7 +13086,7 @@ const docTemplateadmin = `{
                 "levelName": {
                     "type": "string"
                 },
-                "levelPrivileges": {
+                "rebateRate": {
                     "type": "string"
                 },
                 "sortOrder": {
@@ -13017,6 +13106,9 @@ const docTemplateadmin = `{
                 "createBy": {
                     "type": "integer"
                 },
+                "exp": {
+                    "type": "string"
+                },
                 "id": {
                     "description": "等级ID",
                     "type": "integer"
@@ -13030,7 +13122,7 @@ const docTemplateadmin = `{
                 "levelName": {
                     "type": "string"
                 },
-                "levelPrivileges": {
+                "rebateRate": {
                     "type": "string"
                 },
                 "sortOrder": {
@@ -14874,6 +14966,23 @@ const docTemplateadmin = `{
                 }
             }
         },
+        "dto.HsUserWithdrawalApproveReq": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.HsUserWithdrawalDeleteReq": {
             "type": "object",
             "properties": {
@@ -14910,7 +15019,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "handlerId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "handlerName": {
                     "type": "string"
@@ -14947,6 +15056,26 @@ const docTemplateadmin = `{
                 }
             }
         },
+        "dto.HsUserWithdrawalRejectReq": {
+            "type": "object",
+            "required": [
+                "reason"
+            ],
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.HsUserWithdrawalUpdateReq": {
             "type": "object",
             "properties": {
@@ -14972,7 +15101,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "handlerId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "handlerName": {
                     "type": "string"
@@ -15040,7 +15169,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "handlerId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "handlerName": {
                     "type": "string"
@@ -15122,6 +15251,9 @@ const docTemplateadmin = `{
                 "createBy": {
                     "type": "integer"
                 },
+                "currencyCode": {
+                    "type": "string"
+                },
                 "experience": {
                     "type": "string"
                 },
@@ -15174,6 +15306,9 @@ const docTemplateadmin = `{
                 },
                 "createBy": {
                     "type": "integer"
+                },
+                "currencyCode": {
+                    "type": "string"
                 },
                 "experience": {
                     "type": "string"
@@ -15762,9 +15897,6 @@ const docTemplateadmin = `{
                 "rateType": {
                     "type": "string"
                 },
-                "regionCode": {
-                    "type": "string"
-                },
                 "source": {
                     "type": "string"
                 },
@@ -15773,12 +15905,6 @@ const docTemplateadmin = `{
                 },
                 "updateBy": {
                     "type": "integer"
-                },
-                "validFrom": {
-                    "type": "string"
-                },
-                "validTo": {
-                    "type": "string"
                 }
             }
         },
@@ -15804,9 +15930,6 @@ const docTemplateadmin = `{
                 "rateType": {
                     "type": "string"
                 },
-                "regionCode": {
-                    "type": "string"
-                },
                 "source": {
                     "type": "string"
                 },
@@ -15815,12 +15938,6 @@ const docTemplateadmin = `{
                 },
                 "updateBy": {
                     "type": "integer"
-                },
-                "validFrom": {
-                    "type": "string"
-                },
-                "validTo": {
-                    "type": "string"
                 }
             }
         },
@@ -15999,9 +16116,6 @@ const docTemplateadmin = `{
                 "createBy": {
                     "type": "integer"
                 },
-                "discountRate": {
-                    "type": "string"
-                },
                 "logo": {
                     "type": "string"
                 },
@@ -16012,7 +16126,7 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -16024,9 +16138,6 @@ const docTemplateadmin = `{
             "properties": {
                 "createBy": {
                     "type": "integer"
-                },
-                "discountRate": {
-                    "type": "string"
                 },
                 "id": {
                     "description": "分类ID",
@@ -16042,7 +16153,7 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"
@@ -16119,9 +16230,6 @@ const docTemplateadmin = `{
             "properties": {
                 "createBy": {
                     "type": "integer"
-                },
-                "discountRate": {
-                    "type": "string"
                 },
                 "extra": {
                     "type": "string"
@@ -16222,9 +16330,6 @@ const docTemplateadmin = `{
                 "createBy": {
                     "type": "integer"
                 },
-                "discountRate": {
-                    "type": "string"
-                },
                 "extra": {
                     "type": "string"
                 },
@@ -16310,6 +16415,9 @@ const docTemplateadmin = `{
                 "recognizedCardValue"
             ],
             "properties": {
+                "discountRate": {
+                    "type": "string"
+                },
                 "giftCardDiscountId": {
                     "type": "integer"
                 },
@@ -16329,6 +16437,9 @@ const docTemplateadmin = `{
                 },
                 "denominationValidation": {
                     "$ref": "#/definitions/dto.OrdGiftcardWriteoffsDenominationValidation"
+                },
+                "discountRate": {
+                    "type": "string"
                 },
                 "isCrypto": {
                     "type": "boolean"
@@ -18023,6 +18134,9 @@ const docTemplateadmin = `{
                 "createdAt": {
                     "type": "string"
                 },
+                "exp": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -18035,7 +18149,7 @@ const docTemplateadmin = `{
                 "levelName": {
                     "type": "string"
                 },
-                "levelPrivileges": {
+                "rebateRate": {
                     "type": "string"
                 },
                 "sortOrder": {
@@ -19024,7 +19138,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "handlerId": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "handlerName": {
                     "type": "string"
@@ -19086,6 +19200,9 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "cryptoFrozenBalance": {
+                    "type": "string"
+                },
+                "currencyCode": {
                     "type": "string"
                 },
                 "experience": {
@@ -19424,9 +19541,6 @@ const docTemplateadmin = `{
                 "rateType": {
                     "type": "string"
                 },
-                "regionCode": {
-                    "type": "string"
-                },
                 "source": {
                     "type": "string"
                 },
@@ -19437,12 +19551,6 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "updatedAt": {
-                    "type": "string"
-                },
-                "validFrom": {
-                    "type": "string"
-                },
-                "validTo": {
                     "type": "string"
                 }
             }
@@ -19538,9 +19646,6 @@ const docTemplateadmin = `{
                 "createdAt": {
                     "type": "string"
                 },
-                "discountRate": {
-                    "type": "string"
-                },
                 "extra": {
                     "type": "string"
                 },
@@ -19576,9 +19681,6 @@ const docTemplateadmin = `{
                 "createdAt": {
                     "type": "string"
                 },
-                "discountRate": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
@@ -19592,7 +19694,7 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "updateBy": {
                     "type": "integer"

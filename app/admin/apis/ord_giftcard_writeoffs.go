@@ -231,7 +231,7 @@ func (e OrdGiftcardWriteoffs) BatchInsert(c *gin.Context) {
 
 // CalculateUserLocalCurrency 计算用户入账金额（辅助接口）
 // @Summary 计算用户入账金额
-// @Description 根据订单ID和卡片面值，计算用户将获得的本地货币金额
+// @Description 根据订单ID、卡片面值和折扣率，计算用户将获得的本地货币金额。计算公式：用户入账金额 = 卡片面值 × 折扣率 × 汇率。可选传入折扣率参数，如果不传则使用礼品卡折扣配置中的折扣率
 // @Tags 礼品卡核销记录表
 // @Accept application/json
 // @Product application/json

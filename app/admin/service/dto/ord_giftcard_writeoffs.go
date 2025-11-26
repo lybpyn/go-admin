@@ -162,13 +162,15 @@ type OrdGiftcardWriteoffsCalculateReq struct {
 	OrderId             int    `json:"orderId" binding:"required" comment:"订单ID"`
 	GiftCardDiscountId  int    `json:"giftCardDiscountId" comment:"礼品卡折扣ID（可选，用于面额校验）"`
 	RecognizedCardValue string `json:"recognizedCardValue" binding:"required" comment:"识别的卡片面值"`
+	DiscountRate        string `json:"discountRate" comment:"折扣率（可选，传入则使用此值计算，不传则使用礼品卡折扣配置）"`
 }
 
 // OrdGiftcardWriteoffsCalculateResp 计算用户入账金额响应
 type OrdGiftcardWriteoffsCalculateResp struct {
-	UserLocalCurrencyAmount string                                      `json:"userLocalCurrencyAmount" comment:"用户将获得的本地货币金额"`
+	UserLocalCurrencyAmount string                                      `json:"userLocalCurrencyAmount" comment:"用户将获得的本地货币金额（卡片面值 × 折扣率 × 汇率）"`
 	UserCurrencyCode        string                                      `json:"userCurrencyCode" comment:"用户的货币代码"`
 	ConfigRate              string                                      `json:"configRate" comment:"配置的汇率"`
+	DiscountRate            string                                      `json:"discountRate" comment:"使用的折扣率"`
 	IsCrypto                bool                                        `json:"isCrypto" comment:"是否虚拟币"`
 	OrderCurrencyCode       string                                      `json:"orderCurrencyCode" comment:"源货币代码（提供折扣ID时为礼品卡区域货币，否则为订单货币）"`
 	DenominationValidation  *OrdGiftcardWriteoffsDenominationValidation `json:"denominationValidation,omitempty" comment:"面额校验信息"`

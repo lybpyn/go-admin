@@ -9,6 +9,11 @@ import (
 
 type OrdGiftcardRegionGetPageReq struct {
 	dto.Pagination     `search:"-"`
+    CategoryId string `form:"categoryId"  search:"type:exact;column:category_id;table:ord_giftcard_region" comment:"所属分类ID"`
+    RegionCode string `form:"regionCode"  search:"type:exact;column:region_code;table:ord_giftcard_region" comment:"地区代码"`
+    CurrencyCode string `form:"currencyCode"  search:"type:exact;column:currency_code;table:ord_giftcard_region" comment:"货币代码"`
+    IsMain string `form:"isMain"  search:"type:exact;column:is_main;table:ord_giftcard_region" comment:"是否默认区域"`
+    Status string `form:"status"  search:"type:exact;column:status;table:ord_giftcard_region" comment:"状态"`
     OrdGiftcardRegionOrder
 }
 

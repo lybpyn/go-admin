@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-admin-team/go-admin-core/sdk/api"
@@ -43,6 +44,43 @@ func getUploadPath() string {
 		return path
 	}
 	return defaultPath
+}
+
+// getDateUploadPath 获取带日期的上传路径，返回本地存储路径和相对URL路径
+// 本地路径：/home/ll/release/uploads/static/images/2025/11/10/
+// URL路径：/static/images/2025/11/10/
+func getDateUploadPath() (localPath string, urlPath string) {
+	basePath := config.ExtConfig.Upload.Path
+	if basePath == "" {
+		basePath = "."
+	}
+	// 确保路径以 / 结尾
+	if !strings.HasSuffix(basePath, "/") {
+		basePath = basePath + "/"
+	}
+
+	// 添加static/images和日期目录
+	now := time.Now()
+	datePath := fmt.Sprintf("images/%d/%02d/%02d/", now.Year(), now.Month(), now.Day())
+
+	localPath = basePath + datePath
+	urlPath = "/" + datePath
+	return
+}
+
+// getFileURL 获取完整的文件访问URL
+func getFileURL(relativePath string) string {
+	domain := config.ExtConfig.Upload.Domain
+	if domain == "" {
+		return relativePath
+	}
+	// 确保domain不以/结尾
+	domain = strings.TrimSuffix(domain, "/")
+	// 确保relativePath以/开头
+	if !strings.HasPrefix(relativePath, "/") {
+		relativePath = "/" + relativePath
+	}
+	return domain + relativePath
 }
 
 // UploadFile 上传图片
@@ -164,23 +202,33 @@ func (e File) singleFile(c *gin.Context, fileResponse FileResponse, urlPrefix st
 		return FileResponse{}, true
 	}
 
-	uploadPath := getUploadPath()
+	// 获取带日期的上传路径
+	localPath, urlPath := getDateUploadPath()
 	fileName := uuid.New().String() + utils.GetExt(files.Filename)
-	if err := utils.IsNotExistMkDir(uploadPath); err != nil {
+
+	// 创建目录
+	if err := utils.IsNotExistMkDir(localPath); err != nil {
 		e.Error(500, errors.New(""), "初始化文件路径失败")
 		return FileResponse{}, true
 	}
 
-	singleFile := uploadPath + fileName
-	if err := c.SaveUploadedFile(files, singleFile); err != nil {
+	// 保存文件到本地
+	localFile := localPath + fileName
+	if err := c.SaveUploadedFile(files, localFile); err != nil {
 		e.Error(500, errors.New(""), "文件保存失败")
 		return FileResponse{}, true
 	}
 
-	fileType, _ := utils.GetType(singleFile)
-	fileResponse = e.buildFileResponse(singleFile, urlPrefix, files.Filename, fileType)
-	fileResponse.Path = "/" + uploadPath + fileName
-	fileResponse.FullPath = "/" + uploadPath + fileName
+	// 构建返回的URL
+	fileType, _ := utils.GetType(localFile)
+	relativePath := "static" + urlPath + fileName
+	fileResponse = FileResponse{
+		Size:     pkg.GetFileSize(localFile),
+		Path:     relativePath,
+		FullPath: getFileURL(relativePath), // 完整URL: http://file.cardpartner.io/static/images/2025/11/10/xxx.jpg
+		Name:     files.Filename,
+		Type:     fileType,
+	}
 	return fileResponse, false
 }
 

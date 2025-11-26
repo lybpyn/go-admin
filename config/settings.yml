@@ -50,6 +50,7 @@ settings:
       name: data
     upload:
       path: static/uploadfile/
+      domain: http://file.cardpartner.io
     pandapay:
       apiUrl: https://winpay-oapi-dev.aicapay.com/api/payout/submit
       merchantId: 1099
