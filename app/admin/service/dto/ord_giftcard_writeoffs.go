@@ -146,7 +146,7 @@ func (e *OrdGiftcardWriteoffsBatchInsertReq) SetUpdateBy(updateBy int) {
 
 // OrdGiftcardWriteoffsBatchItem 批量核销项
 type OrdGiftcardWriteoffsBatchItem struct {
-	GiftCardDiscountId       int    `json:"giftCardDiscountId" comment:"礼品卡折扣ID，关联 ord_giftcard_discounts.id"`
+	GiftCardId               int    `json:"giftCardId" comment:"礼品卡ID，关联 ord_giftcard.id"`
 	AdminRecognizedCode      string `json:"adminRecognizedCode" binding:"required" comment:"管理员识别的兑换码"`
 	RecognizedCardValue      string `json:"recognizedCardValue" comment:"识别的卡片面值"`
 	UserLocalCurrencyAmount  string `json:"userLocalCurrencyAmount" comment:"用户入账的本地货币金额"`
@@ -160,9 +160,9 @@ type OrdGiftcardWriteoffsBatchItem struct {
 // OrdGiftcardWriteoffsCalculateReq 计算用户入账金额请求参数
 type OrdGiftcardWriteoffsCalculateReq struct {
 	OrderId             int    `json:"orderId" binding:"required" comment:"订单ID"`
-	GiftCardDiscountId  int    `json:"giftCardDiscountId" comment:"礼品卡折扣ID（可选，用于面额校验）"`
+	GiftCardId          int    `json:"giftCardId" comment:"礼品卡ID（可选，用于面额校验）"`
 	RecognizedCardValue string `json:"recognizedCardValue" binding:"required" comment:"识别的卡片面值"`
-	DiscountRate        string `json:"discountRate" comment:"折扣率（可选，传入则使用此值计算，不传则使用礼品卡折扣配置）"`
+	DiscountRate        string `json:"discountRate" comment:"折扣率（可选，传入则使用此值计算，不传则使用礼品卡配置）"`
 }
 
 // OrdGiftcardWriteoffsCalculateResp 计算用户入账金额响应

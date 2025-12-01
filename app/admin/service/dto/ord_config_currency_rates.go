@@ -109,3 +109,29 @@ type OrdConfigCurrencyRatesDeleteReq struct {
 func (s *OrdConfigCurrencyRatesDeleteReq) GetId() interface{} {
 	return s.Ids
 }
+
+// OrdConfigCurrencyRatesBatchQueryReq 批量查询汇率请求参数
+type OrdConfigCurrencyRatesBatchQueryReq struct {
+	CurrencyPairs []CurrencyPair `json:"currencyPairs" binding:"required,min=1,max=50" comment:"货币对列表，最多50个"`
+}
+
+// CurrencyPair 货币对
+type CurrencyPair struct {
+	BaseCurrencyCode  string `json:"baseCurrencyCode" binding:"required" comment:"基准货币代码"`
+	QuoteCurrencyCode string `json:"quoteCurrencyCode" binding:"required" comment:"报价货币代码"`
+}
+
+// OrdConfigCurrencyRatesBatchQueryResp 批量查询汇率响应
+type OrdConfigCurrencyRatesBatchQueryResp struct {
+	Rates []RateInfo `json:"rates" comment:"汇率信息列表"`
+}
+
+// RateInfo 汇率信息
+type RateInfo struct {
+	BaseCurrencyCode  string `json:"baseCurrencyCode" comment:"基准货币代码"`
+	QuoteCurrencyCode string `json:"quoteCurrencyCode" comment:"报价货币代码"`
+	Rate              string `json:"rate" comment:"汇率"`
+	RateType          string `json:"rateType" comment:"汇率类型"`
+	Source            string `json:"source" comment:"汇率来源"`
+	Status            string `json:"status" comment:"状态"`
+}

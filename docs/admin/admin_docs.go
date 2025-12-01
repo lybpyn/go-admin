@@ -8824,6 +8824,54 @@ const docTemplateadmin = `{
                 }
             }
         },
+        "/api/v1/ord-config-currency-rates/batch-query": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "根据多个货币对批量查询汇率信息，最多支持50个货币对",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "货币汇率表-支持多币种对和地区化配置"
+                ],
+                "summary": "批量查询汇率",
+                "parameters": [
+                    {
+                        "description": "批量查询请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrdConfigCurrencyRatesBatchQueryReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": {...}}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.OrdConfigCurrencyRatesBatchQueryResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/ord-config-currency-rates/{id}": {
             "get": {
                 "security": [
@@ -8902,6 +8950,223 @@ const docTemplateadmin = `{
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
                         "schema": {
                             "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ord-config-giftcard-region": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取礼品卡区域选择列表列表",
+                "tags": [
+                    "礼品卡区域选择列表"
+                ],
+                "summary": "获取礼品卡区域选择列表列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "区域名称",
+                        "name": "regionName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageIndex",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.Page"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/models.OrdConfigGiftcardRegion"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建礼品卡区域选择列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "礼品卡区域选择列表"
+                ],
+                "summary": "创建礼品卡区域选择列表",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrdConfigGiftcardRegionInsertReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"添加成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除礼品卡区域选择列表",
+                "tags": [
+                    "礼品卡区域选择列表"
+                ],
+                "summary": "删除礼品卡区域选择列表",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrdConfigGiftcardRegionDeleteReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ord-config-giftcard-region/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取礼品卡区域选择列表",
+                "tags": [
+                    "礼品卡区域选择列表"
+                ],
+                "summary": "获取礼品卡区域选择列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.OrdConfigGiftcardRegion"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "修改礼品卡区域选择列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "礼品卡区域选择列表"
+                ],
+                "summary": "修改礼品卡区域选择列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrdConfigGiftcardRegionUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"修改成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -9844,6 +10109,78 @@ const docTemplateadmin = `{
                 }
             }
         },
+        "/api/v1/ord-giftcard-discounts/batch-insert": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "批量新增礼品卡折扣率",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "礼品卡不同类型折扣"
+                ],
+                "summary": "批量新增礼品卡折扣率",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrdGiftcardDiscountsBatchInsertReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"批量新增成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ord-giftcard-discounts/batch-update": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "批量修改礼品卡折扣率",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "礼品卡不同类型折扣"
+                ],
+                "summary": "批量修改礼品卡折扣率",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrdGiftcardDiscountsBatchUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"批量修改成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/ord-giftcard-discounts/{id}": {
             "get": {
                 "security": [
@@ -10426,6 +10763,42 @@ const docTemplateadmin = `{
                 "responses": {
                     "200": {
                         "description": "{\"code\": 200, \"message\": \"修改成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ord-giftcard/batch-set": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "批量设置礼品卡明细，有ID则更新，无ID则新增",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "礼品卡明细"
+                ],
+                "summary": "批量设置礼品卡明细",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.OrdGiftcardBatchSetReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"批量设置成功\"}",
                         "schema": {
                             "$ref": "#/definitions/models.Response"
                         }
@@ -12878,6 +13251,21 @@ const docTemplateadmin = `{
         }
     },
     "definitions": {
+        "dto.CurrencyPair": {
+            "type": "object",
+            "required": [
+                "baseCurrencyCode",
+                "quoteCurrencyCode"
+            ],
+            "properties": {
+                "baseCurrencyCode": {
+                    "type": "string"
+                },
+                "quoteCurrencyCode": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.GetSetSysConfigReq": {
             "type": "object",
             "properties": {
@@ -15251,7 +15639,7 @@ const docTemplateadmin = `{
                 "passwordHash": {
                     "type": "string"
                 },
-                "regionId": {
+                "regionName": {
                     "type": "string"
                 },
                 "status": {
@@ -15310,7 +15698,7 @@ const docTemplateadmin = `{
                 "passwordHash": {
                     "type": "string"
                 },
-                "regionId": {
+                "regionName": {
                     "type": "string"
                 },
                 "status": {
@@ -15844,6 +16232,33 @@ const docTemplateadmin = `{
                 }
             }
         },
+        "dto.OrdConfigCurrencyRatesBatchQueryReq": {
+            "type": "object",
+            "required": [
+                "currencyPairs"
+            ],
+            "properties": {
+                "currencyPairs": {
+                    "type": "array",
+                    "maxItems": 50,
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/dto.CurrencyPair"
+                    }
+                }
+            }
+        },
+        "dto.OrdConfigCurrencyRatesBatchQueryResp": {
+            "type": "object",
+            "properties": {
+                "rates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.RateInfo"
+                    }
+                }
+            }
+        },
         "dto.OrdConfigCurrencyRatesDeleteReq": {
             "type": "object",
             "properties": {
@@ -15910,6 +16325,61 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "status": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.OrdConfigGiftcardRegionDeleteReq": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "dto.OrdConfigGiftcardRegionInsertReq": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "currencySymbol": {
+                    "type": "string"
+                },
+                "rateType": {
+                    "type": "string",
+                    "default": "standard"
+                },
+                "regionName": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.OrdConfigGiftcardRegionUpdateReq": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "currencySymbol": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "rateType": {
+                    "type": "string"
+                },
+                "regionName": {
                     "type": "string"
                 },
                 "updateBy": {
@@ -16075,6 +16545,63 @@ const docTemplateadmin = `{
                 }
             }
         },
+        "dto.OrdGiftcardBatchSetItem": {
+            "type": "object",
+            "required": [
+                "cardType",
+                "discountRate",
+                "name",
+                "regionId",
+                "valuesConfig"
+            ],
+            "properties": {
+                "cardType": {
+                    "type": "string"
+                },
+                "discountRate": {
+                    "type": "string"
+                },
+                "extra": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "regionId": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "valuesConfig": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.OrdGiftcardBatchSetReq": {
+            "type": "object",
+            "required": [
+                "items"
+            ],
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "items": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/dto.OrdGiftcardBatchSetItem"
+                    }
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.OrdGiftcardCategoryDeleteReq": {
             "type": "object",
             "properties": {
@@ -16147,6 +16674,82 @@ const docTemplateadmin = `{
                 }
             }
         },
+        "dto.OrdGiftcardDiscountsBatchInsertItem": {
+            "type": "object",
+            "required": [
+                "cardType",
+                "discountRate",
+                "giftcardId"
+            ],
+            "properties": {
+                "cardType": {
+                    "type": "string"
+                },
+                "discountRate": {
+                    "type": "string"
+                },
+                "giftcardId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.OrdGiftcardDiscountsBatchInsertReq": {
+            "type": "object",
+            "required": [
+                "items"
+            ],
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "items": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/dto.OrdGiftcardDiscountsBatchInsertItem"
+                    }
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.OrdGiftcardDiscountsBatchUpdateItem": {
+            "type": "object",
+            "required": [
+                "discountRate",
+                "id"
+            ],
+            "properties": {
+                "discountRate": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.OrdGiftcardDiscountsBatchUpdateReq": {
+            "type": "object",
+            "required": [
+                "items"
+            ],
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "items": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/dto.OrdGiftcardDiscountsBatchUpdateItem"
+                    }
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.OrdGiftcardDiscountsDeleteReq": {
             "type": "object",
             "properties": {
@@ -16204,8 +16807,14 @@ const docTemplateadmin = `{
         "dto.OrdGiftcardInsertReq": {
             "type": "object",
             "properties": {
+                "cardType": {
+                    "type": "string"
+                },
                 "createBy": {
                     "type": "integer"
+                },
+                "discountRate": {
+                    "type": "string"
                 },
                 "extra": {
                     "type": "string"
@@ -16303,8 +16912,14 @@ const docTemplateadmin = `{
         "dto.OrdGiftcardUpdateReq": {
             "type": "object",
             "properties": {
+                "cardType": {
+                    "type": "string"
+                },
                 "createBy": {
                     "type": "integer"
+                },
+                "discountRate": {
+                    "type": "string"
                 },
                 "extra": {
                     "type": "string"
@@ -16361,7 +16976,7 @@ const docTemplateadmin = `{
                 "failureImageUrl": {
                     "type": "string"
                 },
-                "giftCardDiscountId": {
+                "giftCardId": {
                     "type": "integer"
                 },
                 "platformSettlementAmount": {
@@ -16394,7 +17009,7 @@ const docTemplateadmin = `{
                 "discountRate": {
                     "type": "string"
                 },
-                "giftCardDiscountId": {
+                "giftCardId": {
                     "type": "integer"
                 },
                 "orderId": {
@@ -16762,6 +17377,29 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "oldPassword": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.RateInfo": {
+            "type": "object",
+            "properties": {
+                "baseCurrencyCode": {
+                    "type": "string"
+                },
+                "quoteCurrencyCode": {
+                    "type": "string"
+                },
+                "rate": {
+                    "type": "string"
+                },
+                "rateType": {
+                    "type": "string"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }
@@ -19193,7 +19831,7 @@ const docTemplateadmin = `{
                 "passwordHash": {
                     "type": "string"
                 },
-                "regionId": {
+                "regionName": {
                     "type": "string"
                 },
                 "status": {
@@ -19519,6 +20157,35 @@ const docTemplateadmin = `{
                 }
             }
         },
+        "models.OrdConfigGiftcardRegion": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "currencySymbol": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "rateType": {
+                    "type": "string"
+                },
+                "regionName": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "models.OrdCurrencyRates": {
             "type": "object",
             "properties": {
@@ -19604,10 +20271,29 @@ const docTemplateadmin = `{
         "models.OrdGiftcard": {
             "type": "object",
             "properties": {
+                "cardType": {
+                    "type": "string"
+                },
+                "categoryId": {
+                    "description": "关联查询字段，不存储在数据库中，只读",
+                    "type": "string"
+                },
+                "categoryLogo": {
+                    "type": "string"
+                },
+                "categoryName": {
+                    "type": "string"
+                },
                 "createBy": {
                     "type": "integer"
                 },
                 "createdAt": {
+                    "type": "string"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "discountRate": {
                     "type": "string"
                 },
                 "extra": {
@@ -19617,6 +20303,9 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "regionCode": {
                     "type": "string"
                 },
                 "regionId": {

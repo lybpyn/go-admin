@@ -197,40 +197,15 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 		}
 	}
 
-	// 4. 批量查询礼品卡折扣配置
-	discountIdSet := make(map[int]bool)
-	for _, item := range c.WriteoffList {
-		if item.GiftCardDiscountId > 0 {
-			discountIdSet[item.GiftCardDiscountId] = true
-		}
-	}
-
-	// 批量查询折扣配置
-	discountCache := make(map[int]*models.OrdGiftcardDiscounts)
+	// 4. 批量查询礼品卡配置
 	giftcardIdSet := make(map[int]bool)
-	if len(discountIdSet) > 0 {
-		discountIds := make([]int, 0, len(discountIdSet))
-		for id := range discountIdSet {
-			discountIds = append(discountIds, id)
-		}
-
-		var discountConfigs []models.OrdGiftcardDiscounts
-		err = e.Orm.Where("id IN ?", discountIds).Find(&discountConfigs).Error
-		if err != nil {
-			e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert get discount configs error:%s", err)
-			return errors.New("查询折扣配置失败")
-		}
-
-		for i := range discountConfigs {
-			discountCache[discountConfigs[i].Id] = &discountConfigs[i]
-			// 收集礼品卡ID用于查询面额配置
-			if discountConfigs[i].GiftcardId > 0 {
-				giftcardIdSet[discountConfigs[i].GiftcardId] = true
-			}
+	for _, item := range c.WriteoffList {
+		if item.GiftCardId > 0 {
+			giftcardIdSet[item.GiftCardId] = true
 		}
 	}
 
-	// 批量查询礼品卡配置（获取面额规则）
+	// 批量查询礼品卡配置（获取面额规则和折扣率）
 	giftcardCache := make(map[int]*models.OrdGiftcard)
 	regionIdSet := make(map[string]bool)
 	if len(giftcardIdSet) > 0 {
@@ -296,24 +271,22 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 	var totalAmount float64
 
 	for _, item := range c.WriteoffList {
-		// 使用int类型的GiftCardDiscountId
-		giftCardDiscountId := item.GiftCardDiscountId
+		// 使用int类型的GiftCardId
+		giftcardId := item.GiftCardId
 
 		// 从数据库配置中获取折扣率（平台售卡汇率）
 		var platformSaleRate string
 		var discountRateFloat float64
-		var giftcardId int
-		if giftCardDiscountId > 0 {
-			if discountConfig, exists := discountCache[giftCardDiscountId]; exists {
-				platformSaleRate = discountConfig.DiscountRate
+		if giftcardId > 0 {
+			if giftcard, exists := giftcardCache[giftcardId]; exists {
+				platformSaleRate = giftcard.DiscountRate
 				discountRateFloat, _ = strconv.ParseFloat(platformSaleRate, 64)
-				giftcardId = discountConfig.GiftcardId
 			} else {
-				e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert discount config not found: discountId=%d", giftCardDiscountId)
-				return fmt.Errorf("折扣配置不存在：ID=%d", giftCardDiscountId)
+				e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert giftcard config not found: giftcardId=%d", giftcardId)
+				return fmt.Errorf("礼品卡配置不存在：ID=%d", giftcardId)
 			}
 		} else {
-			// 如果没有提供折扣配置ID，使用默认值
+			// 如果没有提供礼品卡ID，使用默认值
 			platformSaleRate = ""
 			discountRateFloat = 0
 		}
@@ -400,8 +373,8 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 		record := models.OrdGiftcardWriteoffs{
 			UserId:                     userId,
 			OrderId:                    c.OrderId,
-			GiftCardId:                 giftcardId, // 从折扣配置中获取
-			GiftCardDiscountId:         giftCardDiscountId,
+			GiftCardId:                 giftcardId,
+			GiftCardDiscountId:         0, // 不再使用折扣表，设置为0
 			Status:                     item.Status,
 			Remark:                     item.Remark,
 			AdminRecognizedCode:        item.AdminRecognizedCode,
@@ -1169,44 +1142,32 @@ func (e *OrdGiftcardWriteoffs) CalculateUserLocalCurrency(c *dto.OrdGiftcardWrit
 		return nil, errors.New("用户未设置货币代码")
 	}
 
-	// 3. 获取礼品卡区域货币（必须提供折扣ID）
+	// 3. 获取礼品卡区域货币（必须提供礼品卡ID）
 	var sourceCurrencyCode string
 	var giftcard models.OrdGiftcard
 	var hasGiftcardConfig bool
 	var usedDiscountRate string // 记录使用的折扣率
 
-	if c.GiftCardDiscountId <= 0 {
-		return nil, errors.New("必须提供礼品卡折扣ID")
+	if c.GiftCardId <= 0 {
+		return nil, errors.New("必须提供礼品卡ID")
 	}
 
-	// 查询折扣配置
-	var discountConfig models.OrdGiftcardDiscounts
-	err = e.Orm.Where("id = ?", c.GiftCardDiscountId).First(&discountConfig).Error
+	// 查询礼品卡配置
+	err = e.Orm.Where("id = ?", c.GiftCardId).First(&giftcard).Error
 	if err != nil {
-		e.Log.Errorf("OrdGiftcardWriteoffsService CalculateUserLocalCurrency get discount config error:%s", err)
-		return nil, errors.New("查询折扣配置失败")
+		e.Log.Errorf("OrdGiftcardWriteoffsService CalculateUserLocalCurrency get giftcard error:%s", err)
+		return nil, errors.New("查询礼品卡配置失败")
 	}
+	hasGiftcardConfig = true
 
 	// 确定使用哪个折扣率：优先使用传入的参数，否则使用配置的折扣率
 	if c.DiscountRate != "" {
 		usedDiscountRate = c.DiscountRate
 		e.Log.Infof("Using discount rate from request parameter: %s", usedDiscountRate)
 	} else {
-		usedDiscountRate = discountConfig.DiscountRate
+		usedDiscountRate = giftcard.DiscountRate
 		e.Log.Infof("Using discount rate from config: %s", usedDiscountRate)
 	}
-
-	// 查询礼品卡配置
-	if discountConfig.GiftcardId <= 0 {
-		return nil, errors.New("折扣配置未关联礼品卡")
-	}
-
-	err = e.Orm.Where("id = ?", discountConfig.GiftcardId).First(&giftcard).Error
-	if err != nil {
-		e.Log.Errorf("OrdGiftcardWriteoffsService CalculateUserLocalCurrency get giftcard error:%s", err)
-		return nil, errors.New("查询礼品卡配置失败")
-	}
-	hasGiftcardConfig = true
 
 	// 查询礼品卡区域获取货币代码
 	if giftcard.RegionId == "" || giftcard.RegionId == "0" {

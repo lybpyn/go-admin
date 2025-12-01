@@ -9,7 +9,7 @@ import (
 
 type OrdGiftcardDiscountsGetPageReq struct {
 	dto.Pagination     `search:"-"`
-    GiftcardId int `form:"giftcard_id" search:"type:exact;column:giftcard_id;table:ord_giftcard_discounts" comment:"礼品卡ID"`
+    GiftcardId int `form:"giftcardId" search:"type:exact;column:giftcard_id;table:ord_giftcard_discounts" comment:"礼品卡ID"`
   
   //  OrdGiftcardDiscountsOrder
 }
@@ -90,4 +90,27 @@ type OrdGiftcardDiscountsDeleteReq struct {
 
 func (s *OrdGiftcardDiscountsDeleteReq) GetId() interface{} {
 	return s.Ids
+}
+
+// OrdGiftcardDiscountsBatchUpdateReq 批量修改折扣率请求参数
+type OrdGiftcardDiscountsBatchUpdateReq struct {
+	Items []OrdGiftcardDiscountsBatchUpdateItem `json:"items" binding:"required,min=1"`
+	common.ControlBy
+}
+
+type OrdGiftcardDiscountsBatchUpdateItem struct {
+	Id           int    `json:"id" binding:"required"`
+	DiscountRate string `json:"discountRate" binding:"required"`
+}
+
+// OrdGiftcardDiscountsBatchInsertReq 批量新增折扣率请求参数
+type OrdGiftcardDiscountsBatchInsertReq struct {
+	Items []OrdGiftcardDiscountsBatchInsertItem `json:"items" binding:"required,min=1"`
+	common.ControlBy
+}
+
+type OrdGiftcardDiscountsBatchInsertItem struct {
+	GiftcardId   int    `json:"giftcardId" binding:"required"`
+	CardType     string `json:"cardType" binding:"required"`
+	DiscountRate string `json:"discountRate" binding:"required"`
 }

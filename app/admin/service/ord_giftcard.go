@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 
     "github.com/go-admin-team/go-admin-core/sdk/service"
 	"gorm.io/gorm"
@@ -22,6 +23,9 @@ func (e *OrdGiftcard) GetPage(c *dto.OrdGiftcardGetPageReq, p *actions.DataPermi
 	var data models.OrdGiftcard
 
 	err = e.Orm.Model(&data).
+		Select("ord_giftcard.*, ord_giftcard_region.category_id, ord_giftcard_category.name as category_name, ord_giftcard_category.logo as category_logo, ord_giftcard_region.region_code, ord_giftcard_region.currency_code").
+		Joins("LEFT JOIN ord_giftcard_region ON ord_giftcard.region_id = ord_giftcard_region.id").
+		Joins("LEFT JOIN ord_giftcard_category ON ord_giftcard_region.category_id = ord_giftcard_category.id").
 		Scopes(
 			cDto.MakeCondition(c.GetNeedSearch()),
 			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
@@ -41,6 +45,9 @@ func (e *OrdGiftcard) Get(d *dto.OrdGiftcardGetReq, p *actions.DataPermission, m
 	var data models.OrdGiftcard
 
 	err := e.Orm.Model(&data).
+		Select("ord_giftcard.*, ord_giftcard_region.category_id, ord_giftcard_category.name as category_name, ord_giftcard_category.logo as category_logo, ord_giftcard_region.region_code, ord_giftcard_region.currency_code").
+		Joins("LEFT JOIN ord_giftcard_region ON ord_giftcard.region_id = ord_giftcard_region.id").
+		Joins("LEFT JOIN ord_giftcard_category ON ord_giftcard_region.category_id = ord_giftcard_category.id").
 		Scopes(
 			actions.Permission(data.TableName(), p),
 		).
@@ -107,3 +114,74 @@ func (e *OrdGiftcard) Remove(d *dto.OrdGiftcardDeleteReq, p *actions.DataPermiss
     }
 	return nil
 }
+
+// BatchSet 批量设置礼品卡（根据ID判断新增或更新）
+func (e *OrdGiftcard) BatchSet(c *dto.OrdGiftcardBatchSetReq, p *actions.DataPermission) error {
+	if len(c.Items) == 0 {
+		return errors.New("礼品卡列表不能为空")
+	}
+
+	// 使用事务确保数据一致性
+	return e.Orm.Transaction(func(tx *gorm.DB) error {
+		for _, item := range c.Items {
+			if item.Id > 0 {
+				// 有ID，执行更新操作
+				var existingData models.OrdGiftcard
+
+				// 先查询是否存在，并检查权限
+				err := tx.Scopes(
+					actions.Permission(existingData.TableName(), p),
+				).First(&existingData, item.Id).Error
+
+				if err != nil {
+					if errors.Is(err, gorm.ErrRecordNotFound) {
+						e.Log.Errorf("OrdGiftcard BatchSet: record not found or no permission, id=%d", item.Id)
+						return fmt.Errorf("礼品卡ID=%d不存在或无权更新", item.Id)
+					}
+					e.Log.Errorf("OrdGiftcard BatchSet query error:%s", err)
+					return err
+				}
+
+				// 更新字段
+				existingData.RegionId = item.RegionId
+				existingData.Name = item.Name
+				existingData.ValuesConfig = item.ValuesConfig
+				existingData.CardType = item.CardType
+				existingData.DiscountRate = item.DiscountRate
+				existingData.Status = item.Status
+				existingData.Extra = item.Extra
+				existingData.UpdateBy = c.UpdateBy
+
+				// 保存更新
+				if err := tx.Save(&existingData).Error; err != nil {
+					e.Log.Errorf("OrdGiftcard BatchSet update error:%s, id=%d", err, item.Id)
+					return fmt.Errorf("更新礼品卡ID=%d失败: %s", item.Id, err.Error())
+				}
+
+				e.Log.Infof("Updated giftcard id=%d", item.Id)
+			} else {
+				// 无ID，执行新增操作
+				newData := models.OrdGiftcard{
+					RegionId:     item.RegionId,
+					Name:         item.Name,
+					ValuesConfig: item.ValuesConfig,
+					CardType:     item.CardType,
+					DiscountRate: item.DiscountRate,
+					Status:       item.Status,
+					Extra:        item.Extra,
+				}
+				newData.CreateBy = c.CreateBy
+
+				if err := tx.Create(&newData).Error; err != nil {
+					e.Log.Errorf("OrdGiftcard BatchSet create error:%s", err)
+					return fmt.Errorf("创建礼品卡失败: %s", err.Error())
+				}
+
+				e.Log.Infof("Created new giftcard id=%d", newData.Id)
+			}
+		}
+
+		return nil
+	})
+}
+

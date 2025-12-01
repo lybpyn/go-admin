@@ -17,7 +17,7 @@ type HsUsersGetPageReq struct {
     FrozenBalance string `form:"frozenBalance"  search:"type:exact;column:frozen_balance;table:hs_users" comment:"冻结余额"`
     LevelId string `form:"levelId"  search:"type:exact;column:level_id;table:hs_users" comment:"用户等级ID"`
     Experience string `form:"experience"  search:"type:exact;column:experience;table:hs_users" comment:"当前经验"`
-    RegionId string `form:"regionId"  search:"type:exact;column:region_id;table:hs_users" comment:"区域id"`
+    RegionName string `form:"regionName"  search:"type:exact;column:region_name;table:hs_users" comment:"区域名称"`
     TotalExperience string `form:"totalExperience"  search:"type:exact;column:total_experience;table:hs_users" comment:"累计经验"`
     InviteCode string `form:"inviteCode"  search:"type:exact;column:invite_code;table:hs_users" comment:""`
     Status string `form:"status"  search:"type:exact;column:status;table:hs_users" comment:"状态：1正常，0封禁"`
@@ -37,7 +37,7 @@ type HsUsersOrder struct {
     FrozenBalance string `form:"frozenBalanceOrder"  search:"type:order;column:frozen_balance;table:hs_users"`
     LevelId string `form:"levelIdOrder"  search:"type:order;column:level_id;table:hs_users"`
     Experience string `form:"experienceOrder"  search:"type:order;column:experience;table:hs_users"`
-    RegionId string `form:"regionIdOrder"  search:"type:order;column:region_id;table:hs_users"`
+    RegionName string `form:"regionNameOrder"  search:"type:order;column:region_name;table:hs_users"`
     TotalExperience string `form:"totalExperienceOrder"  search:"type:order;column:total_experience;table:hs_users"`
     InviteCode string `form:"inviteCodeOrder"  search:"type:order;column:invite_code;table:hs_users"`
     Status string `form:"statusOrder"  search:"type:order;column:status;table:hs_users"`
@@ -56,7 +56,7 @@ func (m *HsUsersGetPageReq) GetNeedSearch() interface{} {
 }
 
 type HsUsersInsertReq struct {
-    Id int `json:"-" comment:""` // 
+    Id int `json:"-" comment:""` //
     Username string `json:"username" comment:"用户名（可选展示用）"`
     PasswordHash string `json:"passwordHash" comment:""`
     Firstname string `json:"firstname" comment:""`
@@ -66,7 +66,7 @@ type HsUsersInsertReq struct {
     FrozenBalance string `json:"frozenBalance" comment:"冻结余额"`
     LevelId string `json:"levelId" comment:"用户等级ID"`
     Experience string `json:"experience" comment:"当前经验"`
-    RegionId string `json:"regionId" comment:"区域id"`
+    RegionName string `json:"regionName" comment:"区域名称"`
     TotalExperience string `json:"totalExperience" comment:"累计经验"`
     InviteCode string `json:"inviteCode" comment:""`
     Status string `json:"status" comment:"状态：1正常，0封禁"`
@@ -88,7 +88,7 @@ func (s *HsUsersInsertReq) Generate(model *models.HsUsers)  {
     model.FrozenBalance = s.FrozenBalance
     model.LevelId = s.LevelId
     model.Experience = s.Experience
-    model.RegionId = s.RegionId
+    model.RegionName = s.RegionName
     model.TotalExperience = s.TotalExperience
     model.InviteCode = s.InviteCode
     model.Status = s.Status
@@ -102,7 +102,7 @@ func (s *HsUsersInsertReq) GetId() interface{} {
 }
 
 type HsUsersUpdateReq struct {
-    Id int `uri:"id" comment:""` // 
+    Id int `uri:"id" comment:""` //
     Username string `json:"username" comment:"用户名（可选展示用）"`
     PasswordHash string `json:"passwordHash" comment:""`
     Firstname string `json:"firstname" comment:""`
@@ -112,7 +112,7 @@ type HsUsersUpdateReq struct {
     FrozenBalance string `json:"frozenBalance" comment:"冻结余额"`
     LevelId string `json:"levelId" comment:"用户等级ID"`
     Experience string `json:"experience" comment:"当前经验"`
-    RegionId string `json:"regionId" comment:"区域id"`
+    RegionName string `json:"regionName" comment:"区域名称"`
     TotalExperience string `json:"totalExperience" comment:"累计经验"`
     InviteCode string `json:"inviteCode" comment:""`
     Status string `json:"status" comment:"状态：1正常，0封禁"`
@@ -134,7 +134,7 @@ func (s *HsUsersUpdateReq) Generate(model *models.HsUsers)  {
     model.FrozenBalance = s.FrozenBalance
     model.LevelId = s.LevelId
     model.Experience = s.Experience
-    model.RegionId = s.RegionId
+    model.RegionName = s.RegionName
     model.TotalExperience = s.TotalExperience
     model.InviteCode = s.InviteCode
     model.Status = s.Status

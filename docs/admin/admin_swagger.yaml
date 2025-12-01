@@ -1,5 +1,15 @@
 basePath: /
 definitions:
+  dto.CurrencyPair:
+    properties:
+      baseCurrencyCode:
+        type: string
+      quoteCurrencyCode:
+        type: string
+    required:
+    - baseCurrencyCode
+    - quoteCurrencyCode
+    type: object
   dto.GetSetSysConfigReq:
     properties:
       configKey:
@@ -1560,7 +1570,7 @@ definitions:
         type: string
       passwordHash:
         type: string
-      regionId:
+      regionName:
         type: string
       status:
         type: string
@@ -1599,7 +1609,7 @@ definitions:
         type: string
       passwordHash:
         type: string
-      regionId:
+      regionName:
         type: string
       status:
         type: string
@@ -1951,6 +1961,24 @@ definitions:
       updateBy:
         type: integer
     type: object
+  dto.OrdConfigCurrencyRatesBatchQueryReq:
+    properties:
+      currencyPairs:
+        items:
+          $ref: '#/definitions/dto.CurrencyPair'
+        maxItems: 50
+        minItems: 1
+        type: array
+    required:
+    - currencyPairs
+    type: object
+  dto.OrdConfigCurrencyRatesBatchQueryResp:
+    properties:
+      rates:
+        items:
+          $ref: '#/definitions/dto.RateInfo'
+        type: array
+    type: object
   dto.OrdConfigCurrencyRatesDeleteReq:
     properties:
       ids:
@@ -1995,6 +2023,42 @@ definitions:
       source:
         type: string
       status:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.OrdConfigGiftcardRegionDeleteReq:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
+  dto.OrdConfigGiftcardRegionInsertReq:
+    properties:
+      createBy:
+        type: integer
+      currencySymbol:
+        type: string
+      rateType:
+        default: standard
+        type: string
+      regionName:
+        type: string
+      updateBy:
+        type: integer
+    type: object
+  dto.OrdConfigGiftcardRegionUpdateReq:
+    properties:
+      createBy:
+        type: integer
+      currencySymbol:
+        type: string
+      id:
+        type: integer
+      rateType:
+        type: string
+      regionName:
         type: string
       updateBy:
         type: integer
@@ -2103,6 +2167,45 @@ definitions:
       updateBy:
         type: integer
     type: object
+  dto.OrdGiftcardBatchSetItem:
+    properties:
+      cardType:
+        type: string
+      discountRate:
+        type: string
+      extra:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      regionId:
+        type: string
+      status:
+        type: string
+      valuesConfig:
+        type: string
+    required:
+    - cardType
+    - discountRate
+    - name
+    - regionId
+    - valuesConfig
+    type: object
+  dto.OrdGiftcardBatchSetReq:
+    properties:
+      createBy:
+        type: integer
+      items:
+        items:
+          $ref: '#/definitions/dto.OrdGiftcardBatchSetItem'
+        minItems: 1
+        type: array
+      updateBy:
+        type: integer
+    required:
+    - items
+    type: object
   dto.OrdGiftcardCategoryDeleteReq:
     properties:
       ids:
@@ -2150,6 +2253,57 @@ definitions:
           type: integer
         type: array
     type: object
+  dto.OrdGiftcardDiscountsBatchInsertItem:
+    properties:
+      cardType:
+        type: string
+      discountRate:
+        type: string
+      giftcardId:
+        type: integer
+    required:
+    - cardType
+    - discountRate
+    - giftcardId
+    type: object
+  dto.OrdGiftcardDiscountsBatchInsertReq:
+    properties:
+      createBy:
+        type: integer
+      items:
+        items:
+          $ref: '#/definitions/dto.OrdGiftcardDiscountsBatchInsertItem'
+        minItems: 1
+        type: array
+      updateBy:
+        type: integer
+    required:
+    - items
+    type: object
+  dto.OrdGiftcardDiscountsBatchUpdateItem:
+    properties:
+      discountRate:
+        type: string
+      id:
+        type: integer
+    required:
+    - discountRate
+    - id
+    type: object
+  dto.OrdGiftcardDiscountsBatchUpdateReq:
+    properties:
+      createBy:
+        type: integer
+      items:
+        items:
+          $ref: '#/definitions/dto.OrdGiftcardDiscountsBatchUpdateItem'
+        minItems: 1
+        type: array
+      updateBy:
+        type: integer
+    required:
+    - items
+    type: object
   dto.OrdGiftcardDiscountsDeleteReq:
     properties:
       ids:
@@ -2187,8 +2341,12 @@ definitions:
     type: object
   dto.OrdGiftcardInsertReq:
     properties:
+      cardType:
+        type: string
       createBy:
         type: integer
+      discountRate:
+        type: string
       extra:
         type: string
       name:
@@ -2252,8 +2410,12 @@ definitions:
     type: object
   dto.OrdGiftcardUpdateReq:
     properties:
+      cardType:
+        type: string
       createBy:
         type: integer
+      discountRate:
+        type: string
       extra:
         type: string
       id:
@@ -2289,7 +2451,7 @@ definitions:
         type: string
       failureImageUrl:
         type: string
-      giftCardDiscountId:
+      giftCardId:
         type: integer
       platformSettlementAmount:
         type: string
@@ -2310,7 +2472,7 @@ definitions:
     properties:
       discountRate:
         type: string
-      giftCardDiscountId:
+      giftCardId:
         type: integer
       orderId:
         type: integer
@@ -2555,6 +2717,21 @@ definitions:
       newPassword:
         type: string
       oldPassword:
+        type: string
+    type: object
+  dto.RateInfo:
+    properties:
+      baseCurrencyCode:
+        type: string
+      quoteCurrencyCode:
+        type: string
+      rate:
+        type: string
+      rateType:
+        type: string
+      source:
+        type: string
+      status:
         type: string
     type: object
   dto.ResetSysUserPwdReq:
@@ -4183,7 +4360,7 @@ definitions:
         type: string
       passwordHash:
         type: string
-      regionId:
+      regionName:
         type: string
       status:
         type: string
@@ -4398,6 +4575,25 @@ definitions:
       updatedAt:
         type: string
     type: object
+  models.OrdConfigGiftcardRegion:
+    properties:
+      createBy:
+        type: integer
+      createdAt:
+        type: string
+      currencySymbol:
+        type: string
+      id:
+        type: integer
+      rateType:
+        type: string
+      regionName:
+        type: string
+      updateBy:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
   models.OrdCurrencyRates:
     properties:
       createBy:
@@ -4454,15 +4650,30 @@ definitions:
     type: object
   models.OrdGiftcard:
     properties:
+      cardType:
+        type: string
+      categoryId:
+        description: 关联查询字段，不存储在数据库中，只读
+        type: string
+      categoryLogo:
+        type: string
+      categoryName:
+        type: string
       createBy:
         type: integer
       createdAt:
+        type: string
+      currencyCode:
+        type: string
+      discountRate:
         type: string
       extra:
         type: string
       id:
         type: integer
       name:
+        type: string
+      regionCode:
         type: string
       regionId:
         type: string
@@ -10194,6 +10405,160 @@ paths:
       summary: 修改货币汇率表-支持多币种对和地区化配置
       tags:
       - 货币汇率表-支持多币种对和地区化配置
+  /api/v1/ord-config-currency-rates/batch-query:
+    post:
+      consumes:
+      - application/json
+      description: 根据多个货币对批量查询汇率信息，最多支持50个货币对
+      parameters:
+      - description: 批量查询请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdConfigCurrencyRatesBatchQueryReq'
+      responses:
+        "200":
+          description: '{"code": 200, "data": {...}}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.OrdConfigCurrencyRatesBatchQueryResp'
+              type: object
+      security:
+      - Bearer: []
+      summary: 批量查询汇率
+      tags:
+      - 货币汇率表-支持多币种对和地区化配置
+  /api/v1/ord-config-giftcard-region:
+    delete:
+      description: 删除礼品卡区域选择列表
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdConfigGiftcardRegionDeleteReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "删除成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除礼品卡区域选择列表
+      tags:
+      - 礼品卡区域选择列表
+    get:
+      description: 获取礼品卡区域选择列表列表
+      parameters:
+      - description: 区域名称
+        in: query
+        name: regionName
+        type: string
+      - description: 页条数
+        in: query
+        name: pageSize
+        type: integer
+      - description: 页码
+        in: query
+        name: pageIndex
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/response.Page'
+                  - properties:
+                      list:
+                        items:
+                          $ref: '#/definitions/models.OrdConfigGiftcardRegion'
+                        type: array
+                    type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取礼品卡区域选择列表列表
+      tags:
+      - 礼品卡区域选择列表
+    post:
+      consumes:
+      - application/json
+      description: 创建礼品卡区域选择列表
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdConfigGiftcardRegionInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "添加成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建礼品卡区域选择列表
+      tags:
+      - 礼品卡区域选择列表
+  /api/v1/ord-config-giftcard-region/{id}:
+    get:
+      description: 获取礼品卡区域选择列表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: integer
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.OrdConfigGiftcardRegion'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取礼品卡区域选择列表
+      tags:
+      - 礼品卡区域选择列表
+    put:
+      consumes:
+      - application/json
+      description: 修改礼品卡区域选择列表
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdConfigGiftcardRegionUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "修改成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 修改礼品卡区域选择列表
+      tags:
+      - 礼品卡区域选择列表
   /api/v1/ord-currency-rates:
     delete:
       description: 删除货币对汇率表
@@ -10792,6 +11157,50 @@ paths:
       summary: 修改礼品卡不同类型折扣
       tags:
       - 礼品卡不同类型折扣
+  /api/v1/ord-giftcard-discounts/batch-insert:
+    post:
+      consumes:
+      - application/json
+      description: 批量新增礼品卡折扣率
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardDiscountsBatchInsertReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "批量新增成功"}'
+          schema:
+            $ref: '#/definitions/models.Response'
+      security:
+      - Bearer: []
+      summary: 批量新增礼品卡折扣率
+      tags:
+      - 礼品卡不同类型折扣
+  /api/v1/ord-giftcard-discounts/batch-update:
+    put:
+      consumes:
+      - application/json
+      description: 批量修改礼品卡折扣率
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardDiscountsBatchUpdateReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "批量修改成功"}'
+          schema:
+            $ref: '#/definitions/models.Response'
+      security:
+      - Bearer: []
+      summary: 批量修改礼品卡折扣率
+      tags:
+      - 礼品卡不同类型折扣
   /api/v1/ord-giftcard-region:
     delete:
       description: 删除礼品卡地区
@@ -11134,6 +11543,28 @@ paths:
       security:
       - Bearer: []
       summary: 修改礼品卡明细
+      tags:
+      - 礼品卡明细
+  /api/v1/ord-giftcard/batch-set:
+    post:
+      consumes:
+      - application/json
+      description: 批量设置礼品卡明细，有ID则更新，无ID则新增
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OrdGiftcardBatchSetReq'
+      responses:
+        "200":
+          description: '{"code": 200, "message": "批量设置成功"}'
+          schema:
+            $ref: '#/definitions/models.Response'
+      security:
+      - Bearer: []
+      summary: 批量设置礼品卡明细
       tags:
       - 礼品卡明细
   /api/v1/ord-order-giftcard-images:

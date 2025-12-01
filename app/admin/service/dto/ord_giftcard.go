@@ -14,7 +14,7 @@ type OrdGiftcardGetPageReq struct {
 
 type OrdGiftcardOrder struct {
     Id string `form:"idOrder"  search:"type:order;column:id;table:ord_giftcard"`
-    RegionId string `form:"regionIdOrder"  search:"type:order;column:region_id;table:ord_giftcard"`
+    RegionId string `form:"regionId"  search:"type:order;column:region_id;table:ord_giftcard"`
     Name string `form:"nameOrder"  search:"type:order;column:name;table:ord_giftcard"`
     ValuesConfig string `form:"valuesConfigOrder"  search:"type:order;column:values_config;table:ord_giftcard"`
     Status string `form:"statusOrder"  search:"type:order;column:status;table:ord_giftcard"`
@@ -36,6 +36,8 @@ type OrdGiftcardInsertReq struct {
     RegionId string `json:"regionId" comment:"地区ID"`
     Name string `json:"name" comment:"卡名称，例如 Steam 50 USD"`
     ValuesConfig string `json:"valuesConfig" comment:"面额配置，支持区间和固定值"`
+    CardType string `json:"cardType" comment:"卡类型: code=兑换码, physical=实体卡, horizontal=横版卡, whiteboard=白板卡"`
+    DiscountRate string `json:"discountRate" comment:"折扣汇率，例如0.95表示95折"`
     Status string `json:"status" comment:"状态: 1=启用, 0=禁用"`
     Extra string `json:"extra" comment:"扩展信息，如购买说明、限制条件"`
     common.ControlBy
@@ -48,6 +50,8 @@ func (s *OrdGiftcardInsertReq) Generate(model *models.OrdGiftcard)  {
     model.RegionId = s.RegionId
     model.Name = s.Name
     model.ValuesConfig = s.ValuesConfig
+    model.CardType = s.CardType
+    model.DiscountRate = s.DiscountRate
     model.Status = s.Status
     model.Extra = s.Extra
     model.CreateBy = s.CreateBy // 添加这而，需要记录是被谁创建的
@@ -62,6 +66,8 @@ type OrdGiftcardUpdateReq struct {
     RegionId string `json:"regionId" comment:"地区ID"`
     Name string `json:"name" comment:"卡名称，例如 Steam 50 USD"`
     ValuesConfig string `json:"valuesConfig" comment:"面额配置，支持区间和固定值"`
+    CardType string `json:"cardType" comment:"卡类型: code=兑换码, physical=实体卡, horizontal=横版卡, whiteboard=白板卡"`
+    DiscountRate string `json:"discountRate" comment:"折扣汇率，例如0.95表示95折"`
     Status string `json:"status" comment:"状态: 1=启用, 0=禁用"`
     Extra string `json:"extra" comment:"扩展信息，如购买说明、限制条件"`
     common.ControlBy
@@ -74,6 +80,8 @@ func (s *OrdGiftcardUpdateReq) Generate(model *models.OrdGiftcard)  {
     model.RegionId = s.RegionId
     model.Name = s.Name
     model.ValuesConfig = s.ValuesConfig
+    model.CardType = s.CardType
+    model.DiscountRate = s.DiscountRate
     model.Status = s.Status
     model.Extra = s.Extra
     model.UpdateBy = s.UpdateBy // 添加这而，需要记录是被谁更新的
@@ -99,3 +107,32 @@ type OrdGiftcardDeleteReq struct {
 func (s *OrdGiftcardDeleteReq) GetId() interface{} {
 	return s.Ids
 }
+
+// OrdGiftcardBatchSetReq 批量设置礼品卡请求参数
+type OrdGiftcardBatchSetReq struct {
+	Items []OrdGiftcardBatchSetItem `json:"items" binding:"required,min=1" comment:"礼品卡列表"`
+	common.ControlBy
+}
+
+// SetCreateBy 设置创建人id
+func (e *OrdGiftcardBatchSetReq) SetCreateBy(createBy int) {
+	e.CreateBy = createBy
+}
+
+// SetUpdateBy 设置修改人id
+func (e *OrdGiftcardBatchSetReq) SetUpdateBy(updateBy int) {
+	e.UpdateBy = updateBy
+}
+
+// OrdGiftcardBatchSetItem 批量设置礼品卡项
+type OrdGiftcardBatchSetItem struct {
+	Id           int    `json:"id" comment:"礼品卡ID，有ID则更新，无ID则新增"`
+	RegionId     string `json:"regionId" binding:"required" comment:"地区ID"`
+	Name         string `json:"name" binding:"required" comment:"卡名称，例如 Steam 50 USD"`
+	ValuesConfig string `json:"valuesConfig" binding:"required" comment:"面额配置，支持区间和固定值"`
+	CardType     string `json:"cardType" binding:"required" comment:"卡类型: code=兑换码, physical=实体卡, horizontal=横版卡, whiteboard=白板卡"`
+	DiscountRate string `json:"discountRate" binding:"required" comment:"折扣汇率，例如0.95表示95折"`
+	Status       string `json:"status" comment:"状态: 1=启用, 0=禁用"`
+	Extra        string `json:"extra" comment:"扩展信息，如购买说明、限制条件"`
+}
+

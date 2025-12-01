@@ -18,7 +18,7 @@ type HsUsers struct {
 	CryptoFrozenBalance string `json:"cryptoFrozenBalance" gorm:"type:decimal(20,8);comment:冻结虚拟币余额(USDT计价)"`
 	LevelId             string `json:"levelId" gorm:"type:int(11);comment:用户等级ID"`
 	Experience          string `json:"experience" gorm:"type:int(11);comment:当前经验"`
-	RegionId            string `json:"regionId" gorm:"type:bigint(20);comment:区域id"`
+	RegionName          string `json:"regionName" gorm:"type:varchar(128);comment:区域名称"`
 	TotalExperience     string `json:"totalExperience" gorm:"type:int(11);comment:累计经验"`
 	InviteCode   string `json:"inviteCode" gorm:"type:varchar(8);comment:邀请码"`
 	Status       string `json:"status" gorm:"type:tinyint(4);comment:状态：1正常，0封禁"`

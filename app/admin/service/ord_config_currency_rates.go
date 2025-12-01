@@ -107,3 +107,54 @@ func (e *OrdConfigCurrencyRates) Remove(d *dto.OrdConfigCurrencyRatesDeleteReq, 
     }
 	return nil
 }
+
+// BatchQuery 批量查询汇率
+func (e *OrdConfigCurrencyRates) BatchQuery(c *dto.OrdConfigCurrencyRatesBatchQueryReq, p *actions.DataPermission) (*dto.OrdConfigCurrencyRatesBatchQueryResp, error) {
+	if len(c.CurrencyPairs) == 0 {
+		return nil, errors.New("货币对列表不能为空")
+	}
+
+	if len(c.CurrencyPairs) > 50 {
+		return nil, errors.New("货币对列表最多支持50个")
+	}
+
+	var rates []models.OrdConfigCurrencyRates
+	var data models.OrdConfigCurrencyRates
+
+	// 构建查询条件：(base_currency_code = ? AND quote_currency_code = ?) OR (base_currency_code = ? AND quote_currency_code = ?) ...
+	query := e.Orm.Model(&data).
+		Scopes(actions.Permission(data.TableName(), p)).
+		Where("status = ?", "1") // 只查询启用状态的汇率
+
+	// 构建OR条件
+	orConditions := e.Orm.Where("1 = 0") // 初始化一个永远为false的条件
+	for _, pair := range c.CurrencyPairs {
+		orConditions = orConditions.Or("(base_currency_code = ? AND quote_currency_code = ?)",
+			pair.BaseCurrencyCode, pair.QuoteCurrencyCode)
+	}
+	query = query.Where(orConditions)
+
+	err := query.Find(&rates).Error
+	if err != nil {
+		e.Log.Errorf("OrdConfigCurrencyRatesService BatchQuery error:%s \r\n", err)
+		return nil, err
+	}
+
+	// 转换为响应格式
+	resp := &dto.OrdConfigCurrencyRatesBatchQueryResp{
+		Rates: make([]dto.RateInfo, 0, len(rates)),
+	}
+
+	for _, rate := range rates {
+		resp.Rates = append(resp.Rates, dto.RateInfo{
+			BaseCurrencyCode:  rate.BaseCurrencyCode,
+			QuoteCurrencyCode: rate.QuoteCurrencyCode,
+			Rate:              rate.Rate,
+			RateType:          rate.RateType,
+			Source:            rate.Source,
+			Status:            rate.Status,
+		})
+	}
+
+	return resp, nil
+}

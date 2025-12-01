@@ -21,6 +21,7 @@ func registerOrdConfigCurrencyRatesRouter(v1 *gin.RouterGroup, authMiddleware *j
 		r.GET("", actions.PermissionAction(), api.GetPage)
 		r.GET("/:id", actions.PermissionAction(), api.Get)
 		r.POST("", api.Insert)
+		r.POST("/batch-query", actions.PermissionAction(), api.BatchQuery)
 		r.PUT("/:id", actions.PermissionAction(), api.Update)
 		r.DELETE("", api.Delete)
 	}

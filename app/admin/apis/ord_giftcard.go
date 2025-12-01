@@ -4,6 +4,7 @@ import (
     "fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/go-admin-team/go-admin-core/sdk/api"
 	"github.com/go-admin-team/go-admin-core/sdk/pkg/jwtauth/user"
 	_ "github.com/go-admin-team/go-admin-core/sdk/pkg/response"
@@ -32,7 +33,7 @@ func (e OrdGiftcard) GetPage(c *gin.Context) {
     s := service.OrdGiftcard{}
     err := e.MakeContext(c).
         MakeOrm().
-        Bind(&req).
+        Bind(&req, binding.Query).
         MakeService(&s.Service).
         Errors
    	if err != nil {
@@ -188,4 +189,43 @@ func (e OrdGiftcard) Delete(c *gin.Context) {
         return
 	}
 	e.OK( req.GetId(), "删除成功")
+}
+
+// BatchSet 批量设置礼品卡明细（根据ID判断新增或更新）
+// @Summary 批量设置礼品卡明细
+// @Description 批量设置礼品卡明细，有ID则更新，无ID则新增
+// @Tags 礼品卡明细
+// @Accept application/json
+// @Product application/json
+// @Param data body dto.OrdGiftcardBatchSetReq true "body"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "批量设置成功"}"
+// @Router /api/v1/ord-giftcard/batch-set [post]
+// @Security Bearer
+func (e OrdGiftcard) BatchSet(c *gin.Context) {
+    req := dto.OrdGiftcardBatchSetReq{}
+    s := service.OrdGiftcard{}
+    err := e.MakeContext(c).
+        MakeOrm().
+        Bind(&req).
+        MakeService(&s.Service).
+        Errors
+    if err != nil {
+        e.Logger.Error(err)
+        e.Error(500, err, err.Error())
+        return
+    }
+
+	// 设置创建人和更新人
+	userId := user.GetUserId(c)
+	req.SetCreateBy(userId)
+	req.SetUpdateBy(userId)
+
+	p := actions.GetPermissionFromContext(c)
+
+	err = s.BatchSet(&req, p)
+	if err != nil {
+		e.Error(500, err, fmt.Sprintf("批量设置礼品卡明细失败，\r\n失败信息 %s", err.Error()))
+        return
+	}
+	e.OK(nil, "批量设置成功")
 }

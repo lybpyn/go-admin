@@ -191,3 +191,70 @@ func (e OrdGiftcardDiscounts) Delete(c *gin.Context) {
 	}
 	e.OK( req.GetId(), "删除成功")
 }
+
+// BatchUpdateDiscountRate 批量修改礼品卡折扣率
+// @Summary 批量修改礼品卡折扣率
+// @Description 批量修改礼品卡折扣率
+// @Tags 礼品卡不同类型折扣
+// @Accept application/json
+// @Product application/json
+// @Param data body dto.OrdGiftcardDiscountsBatchUpdateReq true "body"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "批量修改成功"}"
+// @Router /api/v1/ord-giftcard-discounts/batch-update [put]
+// @Security Bearer
+func (e OrdGiftcardDiscounts) BatchUpdateDiscountRate(c *gin.Context) {
+    req := dto.OrdGiftcardDiscountsBatchUpdateReq{}
+    s := service.OrdGiftcardDiscounts{}
+    err := e.MakeContext(c).
+        MakeOrm().
+        Bind(&req).
+        MakeService(&s.Service).
+        Errors
+    if err != nil {
+        e.Logger.Error(err)
+        e.Error(500, err, err.Error())
+        return
+    }
+	req.SetUpdateBy(user.GetUserId(c))
+	p := actions.GetPermissionFromContext(c)
+
+	err = s.BatchUpdateDiscountRate(&req, p)
+	if err != nil {
+		e.Error(500, err, fmt.Sprintf("批量修改礼品卡折扣率失败，\r\n失败信息 %s", err.Error()))
+        return
+	}
+	e.OK(nil, "批量修改成功")
+}
+
+// BatchInsert 批量新增礼品卡折扣率
+// @Summary 批量新增礼品卡折扣率
+// @Description 批量新增礼品卡折扣率
+// @Tags 礼品卡不同类型折扣
+// @Accept application/json
+// @Product application/json
+// @Param data body dto.OrdGiftcardDiscountsBatchInsertReq true "body"
+// @Success 200 {object} models.Response	"{"code": 200, "message": "批量新增成功"}"
+// @Router /api/v1/ord-giftcard-discounts/batch-insert [post]
+// @Security Bearer
+func (e OrdGiftcardDiscounts) BatchInsert(c *gin.Context) {
+    req := dto.OrdGiftcardDiscountsBatchInsertReq{}
+    s := service.OrdGiftcardDiscounts{}
+    err := e.MakeContext(c).
+        MakeOrm().
+        Bind(&req).
+        MakeService(&s.Service).
+        Errors
+    if err != nil {
+        e.Logger.Error(err)
+        e.Error(500, err, err.Error())
+        return
+    }
+	req.SetCreateBy(user.GetUserId(c))
+
+	err = s.BatchInsert(&req)
+	if err != nil {
+		e.Error(500, err, fmt.Sprintf("批量新增礼品卡折扣率失败，\r\n失败信息 %s", err.Error()))
+        return
+	}
+	e.OK(nil, "批量新增成功")
+}

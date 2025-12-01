@@ -12,10 +12,19 @@ type OrdGiftcard struct {
     RegionId string `json:"regionId" gorm:"type:bigint(20);comment:地区ID"`
     Name string `json:"name" gorm:"type:varchar(128);comment:卡名称，例如 Steam 50 USD"`
     ValuesConfig string `json:"valuesConfig" gorm:"type:json;comment:面额配置，支持区间和固定值"`
+    CardType string `json:"cardType" gorm:"type:enum('code','physical','horizontal','whiteboard');comment:卡类型"`
+    DiscountRate string `json:"discountRate" gorm:"type:decimal(5,2);comment:折扣汇率，例如0.95表示95折"`
     Status string `json:"status" gorm:"type:tinyint(4);comment:状态: 1=启用, 0=禁用"`
     Extra string `json:"extra" gorm:"type:json;comment:扩展信息，如购买说明、限制条件"`
     models.ModelTime
     models.ControlBy
+
+    // 关联查询字段，不存储在数据库中，只读
+    CategoryId   string `json:"categoryId" gorm:"column:category_id;<-:false"`
+    CategoryName string `json:"categoryName" gorm:"column:category_name;<-:false"`
+    CategoryLogo string `json:"categoryLogo" gorm:"column:category_logo;<-:false"`
+    RegionCode   string `json:"regionCode" gorm:"column:region_code;<-:false"`
+    CurrencyCode string `json:"currencyCode" gorm:"column:currency_code;<-:false"`
 }
 
 func (OrdGiftcard) TableName() string {

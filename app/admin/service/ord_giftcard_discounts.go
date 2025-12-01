@@ -107,3 +107,101 @@ func (e *OrdGiftcardDiscounts) Remove(d *dto.OrdGiftcardDiscountsDeleteReq, p *a
     }
 	return nil
 }
+
+// BatchUpdateDiscountRate 批量修改折扣率
+func (e *OrdGiftcardDiscounts) BatchUpdateDiscountRate(c *dto.OrdGiftcardDiscountsBatchUpdateReq, p *actions.DataPermission) error {
+	var data models.OrdGiftcardDiscounts
+
+	// 使用事务处理批量更新
+	tx := e.Orm.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err := tx.Error; err != nil {
+		e.Log.Errorf("OrdGiftcardDiscountsService BatchUpdateDiscountRate transaction error:%s \r\n", err)
+		return err
+	}
+
+	// 遍历每个更新项
+	for _, item := range c.Items {
+		// 先查询记录是否存在且有权限
+		var record models.OrdGiftcardDiscounts
+		err := tx.Model(&data).
+			Scopes(
+				actions.Permission(data.TableName(), p),
+			).
+			First(&record, item.Id).Error
+
+		if err != nil {
+			tx.Rollback()
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				e.Log.Errorf("OrdGiftcardDiscountsService BatchUpdateDiscountRate record not found or no permission, id:%d \r\n", item.Id)
+				return errors.New("记录不存在或无权更新")
+			}
+			e.Log.Errorf("OrdGiftcardDiscountsService BatchUpdateDiscountRate query error:%s \r\n", err)
+			return err
+		}
+
+		// 更新折扣率
+		record.DiscountRate = item.DiscountRate
+		record.UpdateBy = c.UpdateBy
+
+		err = tx.Save(&record).Error
+		if err != nil {
+			tx.Rollback()
+			e.Log.Errorf("OrdGiftcardDiscountsService BatchUpdateDiscountRate save error:%s \r\n", err)
+			return err
+		}
+	}
+
+	// 提交事务
+	if err := tx.Commit().Error; err != nil {
+		e.Log.Errorf("OrdGiftcardDiscountsService BatchUpdateDiscountRate commit error:%s \r\n", err)
+		return err
+	}
+
+	return nil
+}
+
+// BatchInsert 批量新增折扣率
+func (e *OrdGiftcardDiscounts) BatchInsert(c *dto.OrdGiftcardDiscountsBatchInsertReq) error {
+	// 使用事务处理批量插入
+	tx := e.Orm.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err := tx.Error; err != nil {
+		e.Log.Errorf("OrdGiftcardDiscountsService BatchInsert transaction error:%s \r\n", err)
+		return err
+	}
+
+	// 遍历每个插入项
+	for _, item := range c.Items {
+		var record models.OrdGiftcardDiscounts
+		record.GiftcardId = item.GiftcardId
+		record.CardType = item.CardType
+		record.DiscountRate = item.DiscountRate
+		record.CreateBy = c.CreateBy
+
+		err := tx.Create(&record).Error
+		if err != nil {
+			tx.Rollback()
+			e.Log.Errorf("OrdGiftcardDiscountsService BatchInsert create error:%s \r\n", err)
+			return err
+		}
+	}
+
+	// 提交事务
+	if err := tx.Commit().Error; err != nil {
+		e.Log.Errorf("OrdGiftcardDiscountsService BatchInsert commit error:%s \r\n", err)
+		return err
+	}
+
+	return nil
+}

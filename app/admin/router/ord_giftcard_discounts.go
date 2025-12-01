@@ -21,7 +21,9 @@ func registerOrdGiftcardDiscountsRouter(v1 *gin.RouterGroup, authMiddleware *jwt
 		r.GET("", actions.PermissionAction(), api.GetPage)
 		r.GET("/:id", actions.PermissionAction(), api.Get)
 		r.POST("", api.Insert)
+		r.POST("/batch-insert", api.BatchInsert)
 		r.PUT("/:id", actions.PermissionAction(), api.Update)
+		r.PUT("/batch-update", actions.PermissionAction(), api.BatchUpdateDiscountRate)
 		r.DELETE("", api.Delete)
 	}
 }

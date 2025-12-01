@@ -198,3 +198,38 @@ func (e OrdConfigCurrencyRates) Delete(c *gin.Context) {
 	}
 	e.OK( req.GetId(), "删除成功")
 }
+
+// BatchQuery 批量查询汇率
+// @Summary 批量查询汇率
+// @Description 根据多个货币对批量查询汇率信息，最多支持50个货币对
+// @Tags 货币汇率表-支持多币种对和地区化配置
+// @Accept application/json
+// @Product application/json
+// @Param data body dto.OrdConfigCurrencyRatesBatchQueryReq true "批量查询请求参数"
+// @Success 200 {object} models.Response{data=dto.OrdConfigCurrencyRatesBatchQueryResp} "{"code": 200, "data": {...}}"
+// @Router /api/v1/ord-config-currency-rates/batch-query [post]
+// @Security Bearer
+func (e OrdConfigCurrencyRates) BatchQuery(c *gin.Context) {
+    req := dto.OrdConfigCurrencyRatesBatchQueryReq{}
+    s := service.OrdConfigCurrencyRates{}
+    err := e.MakeContext(c).
+        MakeOrm().
+        Bind(&req).
+        MakeService(&s.Service).
+        Errors
+    if err != nil {
+        e.Logger.Error(err)
+        e.Error(500, err, err.Error())
+        return
+    }
+
+	p := actions.GetPermissionFromContext(c)
+
+	resp, err := s.BatchQuery(&req, p)
+	if err != nil {
+		e.Error(500, err, fmt.Sprintf("批量查询汇率失败，\r\n失败信息 %s", err.Error()))
+        return
+	}
+
+	e.OK(resp, "查询成功")
+}
