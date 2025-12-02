@@ -97,7 +97,7 @@ func (e *HsConfigRegions) Remove(d *dto.HsConfigRegionsDeleteReq, p *actions.Dat
 	db := e.Orm.Model(&data).
 		Scopes(
 			actions.Permission(data.TableName(), p),
-		).Delete(&data, d.GetId())
+		).Unscoped().Delete(&data, d.GetId())
 	if err := db.Error; err != nil {
         e.Log.Errorf("Service RemoveHsConfigRegions error:%s \r\n", err)
         return err

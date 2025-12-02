@@ -13709,6 +13709,9 @@
                 "currencyCode": {
                     "type": "string"
                 },
+                "currencySymbol": {
+                    "type": "string"
+                },
                 "isActive": {
                     "type": "string"
                 },
@@ -13730,6 +13733,9 @@
                     "type": "integer"
                 },
                 "currencyCode": {
+                    "type": "string"
+                },
+                "currencySymbol": {
                     "type": "string"
                 },
                 "id": {
@@ -16282,9 +16288,6 @@
                 "rate": {
                     "type": "string"
                 },
-                "rateType": {
-                    "type": "string"
-                },
                 "source": {
                     "type": "string"
                 },
@@ -16315,9 +16318,6 @@
                 "rate": {
                     "type": "string"
                 },
-                "rateType": {
-                    "type": "string"
-                },
                 "source": {
                     "type": "string"
                 },
@@ -16346,13 +16346,6 @@
                 "createBy": {
                     "type": "integer"
                 },
-                "currencySymbol": {
-                    "type": "string"
-                },
-                "rateType": {
-                    "type": "string",
-                    "default": "standard"
-                },
                 "regionName": {
                     "type": "string"
                 },
@@ -16367,14 +16360,8 @@
                 "createBy": {
                     "type": "integer"
                 },
-                "currencySymbol": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
-                },
-                "rateType": {
-                    "type": "string"
                 },
                 "regionName": {
                     "type": "string"
@@ -16856,6 +16843,9 @@
                 "currencyCode": {
                     "type": "string"
                 },
+                "currencySymbol": {
+                    "type": "string"
+                },
                 "discountRate": {
                     "type": "string"
                 },
@@ -16883,6 +16873,9 @@
                     "type": "integer"
                 },
                 "currencyCode": {
+                    "type": "string"
+                },
+                "currencySymbol": {
                     "type": "string"
                 },
                 "discountRate": {
@@ -17388,9 +17381,6 @@
                     "type": "string"
                 },
                 "rate": {
-                    "type": "string"
-                },
-                "rateType": {
                     "type": "string"
                 },
                 "source": {
@@ -18879,6 +18869,9 @@
                 "currencyCode": {
                     "type": "string"
                 },
+                "currencySymbol": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -20137,9 +20130,6 @@
                 "rate": {
                     "type": "string"
                 },
-                "rateType": {
-                    "type": "string"
-                },
                 "source": {
                     "type": "string"
                 },
@@ -20163,14 +20153,8 @@
                 "createdAt": {
                     "type": "string"
                 },
-                "currencySymbol": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
-                },
-                "rateType": {
-                    "type": "string"
                 },
                 "regionName": {
                     "type": "string"
@@ -20396,6 +20380,9 @@
                     "type": "string"
                 },
                 "currencyCode": {
+                    "type": "string"
+                },
+                "currencySymbol": {
                     "type": "string"
                 },
                 "discountRate": {

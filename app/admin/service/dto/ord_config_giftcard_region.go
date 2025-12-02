@@ -29,10 +29,8 @@ func (m *OrdConfigGiftcardRegionGetPageReq) GetNeedSearch() interface{} {
 }
 
 type OrdConfigGiftcardRegionInsertReq struct {
-    Id int `json:"-" comment:""` //
-    RegionName     string `json:"regionName" comment:"区域名称"`
-    RateType       string `json:"rateType" comment:"汇率类型" default:"standard"`
-    CurrencySymbol string `json:"currencySymbol" comment:"货币符号"`
+    Id int `json:"-" comment:""` // 
+    RegionName string `json:"regionName" comment:"区域名称"`
     common.ControlBy
 }
 
@@ -41,13 +39,6 @@ func (s *OrdConfigGiftcardRegionInsertReq) Generate(model *models.OrdConfigGiftc
         model.Model = common.Model{ Id: s.Id }
     }
     model.RegionName = s.RegionName
-    // 设置 RateType 默认值
-    if s.RateType == "" {
-        model.RateType = "standard"
-    } else {
-        model.RateType = s.RateType
-    }
-    model.CurrencySymbol = s.CurrencySymbol
     model.CreateBy = s.CreateBy // 添加这而，需要记录是被谁创建的
 }
 
@@ -56,10 +47,8 @@ func (s *OrdConfigGiftcardRegionInsertReq) GetId() interface{} {
 }
 
 type OrdConfigGiftcardRegionUpdateReq struct {
-    Id int `uri:"id" comment:""` //
-    RegionName     string `json:"regionName" comment:"区域名称"`
-    RateType       string `json:"rateType" comment:"汇率类型"`
-    CurrencySymbol string `json:"currencySymbol" comment:"货币符号"`
+    Id int `uri:"id" comment:""` // 
+    RegionName string `json:"regionName" comment:"区域名称"`
     common.ControlBy
 }
 
@@ -68,12 +57,6 @@ func (s *OrdConfigGiftcardRegionUpdateReq) Generate(model *models.OrdConfigGiftc
         model.Model = common.Model{ Id: s.Id }
     }
     model.RegionName = s.RegionName
-    if s.RateType != "" {
-        model.RateType = s.RateType
-    }
-    if s.CurrencySymbol != "" {
-        model.CurrencySymbol = s.CurrencySymbol
-    }
     model.UpdateBy = s.UpdateBy // 添加这而，需要记录是被谁更新的
 }
 

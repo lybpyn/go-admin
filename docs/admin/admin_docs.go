@@ -13712,6 +13712,9 @@ const docTemplateadmin = `{
                 "currencyCode": {
                     "type": "string"
                 },
+                "currencySymbol": {
+                    "type": "string"
+                },
                 "isActive": {
                     "type": "string"
                 },
@@ -13733,6 +13736,9 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "currencyCode": {
+                    "type": "string"
+                },
+                "currencySymbol": {
                     "type": "string"
                 },
                 "id": {
@@ -16285,9 +16291,6 @@ const docTemplateadmin = `{
                 "rate": {
                     "type": "string"
                 },
-                "rateType": {
-                    "type": "string"
-                },
                 "source": {
                     "type": "string"
                 },
@@ -16318,9 +16321,6 @@ const docTemplateadmin = `{
                 "rate": {
                     "type": "string"
                 },
-                "rateType": {
-                    "type": "string"
-                },
                 "source": {
                     "type": "string"
                 },
@@ -16349,13 +16349,6 @@ const docTemplateadmin = `{
                 "createBy": {
                     "type": "integer"
                 },
-                "currencySymbol": {
-                    "type": "string"
-                },
-                "rateType": {
-                    "type": "string",
-                    "default": "standard"
-                },
                 "regionName": {
                     "type": "string"
                 },
@@ -16370,14 +16363,8 @@ const docTemplateadmin = `{
                 "createBy": {
                     "type": "integer"
                 },
-                "currencySymbol": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
-                },
-                "rateType": {
-                    "type": "string"
                 },
                 "regionName": {
                     "type": "string"
@@ -16859,6 +16846,9 @@ const docTemplateadmin = `{
                 "currencyCode": {
                     "type": "string"
                 },
+                "currencySymbol": {
+                    "type": "string"
+                },
                 "discountRate": {
                     "type": "string"
                 },
@@ -16886,6 +16876,9 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "currencyCode": {
+                    "type": "string"
+                },
+                "currencySymbol": {
                     "type": "string"
                 },
                 "discountRate": {
@@ -17391,9 +17384,6 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "rate": {
-                    "type": "string"
-                },
-                "rateType": {
                     "type": "string"
                 },
                 "source": {
@@ -18882,6 +18872,9 @@ const docTemplateadmin = `{
                 "currencyCode": {
                     "type": "string"
                 },
+                "currencySymbol": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -20140,9 +20133,6 @@ const docTemplateadmin = `{
                 "rate": {
                     "type": "string"
                 },
-                "rateType": {
-                    "type": "string"
-                },
                 "source": {
                     "type": "string"
                 },
@@ -20166,14 +20156,8 @@ const docTemplateadmin = `{
                 "createdAt": {
                     "type": "string"
                 },
-                "currencySymbol": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
-                },
-                "rateType": {
-                    "type": "string"
                 },
                 "regionName": {
                     "type": "string"
@@ -20399,6 +20383,9 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "currencyCode": {
+                    "type": "string"
+                },
+                "currencySymbol": {
                     "type": "string"
                 },
                 "discountRate": {

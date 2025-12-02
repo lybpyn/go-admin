@@ -11,7 +11,6 @@ type OrdConfigCurrencyRatesGetPageReq struct {
     BaseCurrencyCode string `form:"baseCurrencyCode"  search:"type:exact;column:base_currency_code;table:ord_config_currency_rates" comment:"基准货币代码 (ISO 4217)"`
     QuoteCurrencyCode string `form:"quoteCurrencyCode"  search:"type:exact;column:quote_currency_code;table:ord_config_currency_rates" comment:"报价货币代码 (ISO 4217)"`
     Rate string `form:"rate"  search:"type:exact;column:rate;table:ord_config_currency_rates" comment:"汇率: 1 base_currency = rate quote_currency"`
-    RateType string `form:"rateType"  search:"type:exact;column:rate_type;table:ord_config_currency_rates" comment:"汇率类型: standard=标准, buying=买入, selling=卖出"`
     Source string `form:"source"  search:"type:exact;column:source;table:ord_config_currency_rates" comment:"汇率来源,如 manual, api, coingecko"`
     Status string `form:"status"  search:"type:exact;column:status;table:ord_config_currency_rates" comment:"状态: 1=启用, 0=禁用"`
     OrdConfigCurrencyRatesOrder
@@ -22,7 +21,6 @@ type OrdConfigCurrencyRatesOrder struct {
     BaseCurrencyCode string `form:"baseCurrencyCodeOrder"  search:"type:order;column:base_currency_code;table:ord_config_currency_rates"`
     QuoteCurrencyCode string `form:"quoteCurrencyCodeOrder"  search:"type:order;column:quote_currency_code;table:ord_config_currency_rates"`
     Rate string `form:"rateOrder"  search:"type:order;column:rate;table:ord_config_currency_rates"`
-    RateType string `form:"rateTypeOrder"  search:"type:order;column:rate_type;table:ord_config_currency_rates"`
     Source string `form:"sourceOrder"  search:"type:order;column:source;table:ord_config_currency_rates"`
     Status string `form:"statusOrder"  search:"type:order;column:status;table:ord_config_currency_rates"`
     CreateBy string `form:"createByOrder"  search:"type:order;column:create_by;table:ord_config_currency_rates"`
@@ -42,7 +40,6 @@ type OrdConfigCurrencyRatesInsertReq struct {
     BaseCurrencyCode string `json:"baseCurrencyCode" comment:"基准货币代码 (ISO 4217)"`
     QuoteCurrencyCode string `json:"quoteCurrencyCode" comment:"报价货币代码 (ISO 4217)"`
     Rate string `json:"rate" comment:"汇率: 1 base_currency = rate quote_currency"`
-    RateType string `json:"rateType" comment:"汇率类型: standard=标准, buying=买入, selling=卖出"`
     Source string `json:"source" comment:"汇率来源,如 manual, api, coingecko"`
     Status string `json:"status" comment:"状态: 1=启用, 0=禁用"`
     common.ControlBy
@@ -55,7 +52,6 @@ func (s *OrdConfigCurrencyRatesInsertReq) Generate(model *models.OrdConfigCurren
     model.BaseCurrencyCode = s.BaseCurrencyCode
     model.QuoteCurrencyCode = s.QuoteCurrencyCode
     model.Rate = s.Rate
-    model.RateType = s.RateType
     model.Source = s.Source
     model.Status = s.Status
     model.CreateBy = s.CreateBy // 添加这而，需要记录是被谁创建的
@@ -70,7 +66,6 @@ type OrdConfigCurrencyRatesUpdateReq struct {
     BaseCurrencyCode string `json:"baseCurrencyCode" comment:"基准货币代码 (ISO 4217)"`
     QuoteCurrencyCode string `json:"quoteCurrencyCode" comment:"报价货币代码 (ISO 4217)"`
     Rate string `json:"rate" comment:"汇率: 1 base_currency = rate quote_currency"`
-    RateType string `json:"rateType" comment:"汇率类型: standard=标准, buying=买入, selling=卖出"`
     Source string `json:"source" comment:"汇率来源,如 manual, api, coingecko"`
     Status string `json:"status" comment:"状态: 1=启用, 0=禁用"`
     common.ControlBy
@@ -83,7 +78,6 @@ func (s *OrdConfigCurrencyRatesUpdateReq) Generate(model *models.OrdConfigCurren
     model.BaseCurrencyCode = s.BaseCurrencyCode
     model.QuoteCurrencyCode = s.QuoteCurrencyCode
     model.Rate = s.Rate
-    model.RateType = s.RateType
     model.Source = s.Source
     model.Status = s.Status
     model.UpdateBy = s.UpdateBy // 添加这而，需要记录是被谁更新的
@@ -131,7 +125,6 @@ type RateInfo struct {
 	BaseCurrencyCode  string `json:"baseCurrencyCode" comment:"基准货币代码"`
 	QuoteCurrencyCode string `json:"quoteCurrencyCode" comment:"报价货币代码"`
 	Rate              string `json:"rate" comment:"汇率"`
-	RateType          string `json:"rateType" comment:"汇率类型"`
 	Source            string `json:"source" comment:"汇率来源"`
 	Status            string `json:"status" comment:"状态"`
 }

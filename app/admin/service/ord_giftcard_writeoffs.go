@@ -120,7 +120,7 @@ func (e *OrdGiftcardWriteoffs) Remove(d *dto.OrdGiftcardWriteoffsDeleteReq, p *a
 	db := e.Orm.Model(&data).
 		Scopes(
 			actions.Permission(data.TableName(), p),
-		).Delete(&data, d.GetId())
+		).Unscoped().Delete(&data, d.GetId())
 	if err := db.Error; err != nil {
 		e.Log.Errorf("Service RemoveOrdGiftcardWriteoffs error:%s \r\n", err)
 		return err

@@ -150,7 +150,6 @@ func (e *OrdConfigCurrencyRates) BatchQuery(c *dto.OrdConfigCurrencyRatesBatchQu
 			BaseCurrencyCode:  rate.BaseCurrencyCode,
 			QuoteCurrencyCode: rate.QuoteCurrencyCode,
 			Rate:              rate.Rate,
-			RateType:          rate.RateType,
 			Source:            rate.Source,
 			Status:            rate.Status,
 		})

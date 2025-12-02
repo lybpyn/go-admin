@@ -9,9 +9,10 @@ import (
 type HsConfigRegions struct {
     models.Model
     
-    Name string `json:"name" gorm:"type:varchar(100);comment:地区名称"` 
-    CurrencyCode string `json:"currencyCode" gorm:"type:varchar(20);comment:地区货币"` 
-    Code string `json:"code" gorm:"type:varchar(20);comment:地区代码，如 CN、US、JP 等"` 
+    Name string `json:"name" gorm:"type:varchar(100);comment:地区名称"`
+    CurrencyCode string `json:"currencyCode" gorm:"type:varchar(20);comment:地区货币"`
+    CurrencySymbol string `json:"currencySymbol" gorm:"type:varchar(10);comment:货币符号，如 $、¥、₦ 等"`
+    Code string `json:"code" gorm:"type:varchar(20);comment:地区代码，如 CN、US、JP 等"`
     IsActive string `json:"isActive" gorm:"type:tinyint(4);comment:是否启用：1=启用，0=禁用"` 
     models.ModelTime
     models.ControlBy

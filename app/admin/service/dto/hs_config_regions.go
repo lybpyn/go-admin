@@ -11,6 +11,7 @@ type HsConfigRegionsGetPageReq struct {
 	dto.Pagination     `search:"-"`
     Name string `form:"name"  search:"type:exact;column:name;table:hs_config_regions" comment:"地区名称"`
     CurrencyCode string `form:"currencyCode"  search:"type:exact;column:currency_code;table:hs_config_regions" comment:"地区货币"`
+    CurrencySymbol string `form:"currencySymbol"  search:"type:exact;column:currency_symbol;table:hs_config_regions" comment:"货币符号"`
     Code string `form:"code"  search:"type:exact;column:code;table:hs_config_regions" comment:"地区代码，如 CN、US、JP 等"`
     IsActive string `form:"isActive"  search:"type:exact;column:is_active;table:hs_config_regions" comment:"是否启用：1=启用，0=禁用"`
     HsConfigRegionsOrder
@@ -20,6 +21,7 @@ type HsConfigRegionsOrder struct {
     Id string `form:"idOrder"  search:"type:order;column:id;table:hs_config_regions"`
     Name string `form:"nameOrder"  search:"type:order;column:name;table:hs_config_regions"`
     CurrencyCode string `form:"currencyCodeOrder"  search:"type:order;column:currency_code;table:hs_config_regions"`
+    CurrencySymbol string `form:"currencySymbolOrder"  search:"type:order;column:currency_symbol;table:hs_config_regions"`
     Code string `form:"codeOrder"  search:"type:order;column:code;table:hs_config_regions"`
     IsActive string `form:"isActiveOrder"  search:"type:order;column:is_active;table:hs_config_regions"`
     CreateBy string `form:"createByOrder"  search:"type:order;column:create_by;table:hs_config_regions"`
@@ -38,6 +40,7 @@ type HsConfigRegionsInsertReq struct {
     Id int `json:"-" comment:"地区ID"` // 地区ID
     Name string `json:"name" comment:"地区名称"`
     CurrencyCode string `json:"currencyCode" comment:"地区货币"`
+    CurrencySymbol string `json:"currencySymbol" comment:"货币符号，如 $、¥、₦ 等"`
     Code string `json:"code" comment:"地区代码，如 CN、US、JP 等"`
     IsActive string `json:"isActive" comment:"是否启用：1=启用，0=禁用"`
     common.ControlBy
@@ -49,6 +52,7 @@ func (s *HsConfigRegionsInsertReq) Generate(model *models.HsConfigRegions)  {
     }
     model.Name = s.Name
     model.CurrencyCode = s.CurrencyCode
+    model.CurrencySymbol = s.CurrencySymbol
     model.Code = s.Code
     model.IsActive = s.IsActive
     model.CreateBy = s.CreateBy // 添加这而，需要记录是被谁创建的
@@ -62,6 +66,7 @@ type HsConfigRegionsUpdateReq struct {
     Id int `uri:"id" comment:"地区ID"` // 地区ID
     Name string `json:"name" comment:"地区名称"`
     CurrencyCode string `json:"currencyCode" comment:"地区货币"`
+    CurrencySymbol string `json:"currencySymbol" comment:"货币符号，如 $、¥、₦ 等"`
     Code string `json:"code" comment:"地区代码，如 CN、US、JP 等"`
     IsActive string `json:"isActive" comment:"是否启用：1=启用，0=禁用"`
     common.ControlBy
@@ -73,6 +78,7 @@ func (s *HsConfigRegionsUpdateReq) Generate(model *models.HsConfigRegions)  {
     }
     model.Name = s.Name
     model.CurrencyCode = s.CurrencyCode
+    model.CurrencySymbol = s.CurrencySymbol
     model.Code = s.Code
     model.IsActive = s.IsActive
     model.UpdateBy = s.UpdateBy // 添加这而，需要记录是被谁更新的

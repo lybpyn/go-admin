@@ -10,7 +10,6 @@ type OrdConfigCurrencyRates struct {
     BaseCurrencyCode string `json:"baseCurrencyCode" gorm:"type:varchar(10);comment:基准货币代码 (ISO 4217)"`
     QuoteCurrencyCode string `json:"quoteCurrencyCode" gorm:"type:varchar(10);comment:报价货币代码 (ISO 4217)"`
     Rate string `json:"rate" gorm:"type:decimal(20,8);comment:汇率: 1 base_currency = rate quote_currency"`
-    RateType string `json:"rateType" gorm:"type:varchar(20);comment:汇率类型: standard=标准, buying=买入, selling=卖出"`
     Source string `json:"source" gorm:"type:varchar(50);comment:汇率来源,如 manual, api, coingecko"`
     Status string `json:"status" gorm:"type:tinyint(1);comment:状态: 1=启用, 0=禁用"`
     models.ModelTime

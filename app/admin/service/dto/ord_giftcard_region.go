@@ -39,12 +39,13 @@ func (m *OrdGiftcardRegionGetPageReq) GetNeedSearch() interface{} {
 
 type OrdGiftcardRegionInsertReq struct {
     Id int `json:"-" comment:"地区ID"` // 地区ID
-    CategoryId string `json:"categoryId" comment:"所属分类ID，外键 -> hs_giftcard_category.id"`
-    RegionCode string `json:"regionCode" comment:"地区代码，如 US、UK、CN"`
-    CurrencyCode string `json:"currencyCode" comment:"货币代码，如 USD, GBP, CNY"`
-    DiscountRate string `json:"discountRate" comment:"折扣率"`
-    IsMain string `json:"isMain" comment:"是否默认区域"`
-    Status string `json:"status" comment:"状态: 1=启用, 0=禁用"`
+    CategoryId     string `json:"categoryId" comment:"所属分类ID，外键 -> hs_giftcard_category.id"`
+    RegionCode     string `json:"regionCode" comment:"地区代码，如 US、UK、CN"`
+    CurrencyCode   string `json:"currencyCode" comment:"货币代码，如 USD, GBP, CNY"`
+    CurrencySymbol string `json:"currencySymbol" comment:"货币符号"`
+    DiscountRate   string `json:"discountRate" comment:"折扣率"`
+    IsMain         string `json:"isMain" comment:"是否默认区域"`
+    Status         string `json:"status" comment:"状态: 1=启用, 0=禁用"`
     common.ControlBy
 }
 
@@ -55,6 +56,7 @@ func (s *OrdGiftcardRegionInsertReq) Generate(model *models.OrdGiftcardRegion)  
     model.CategoryId = s.CategoryId
     model.RegionCode = s.RegionCode
     model.CurrencyCode = s.CurrencyCode
+    model.CurrencySymbol = s.CurrencySymbol
     model.DiscountRate = s.DiscountRate
     model.IsMain = s.IsMain
     model.Status = s.Status
@@ -67,12 +69,13 @@ func (s *OrdGiftcardRegionInsertReq) GetId() interface{} {
 
 type OrdGiftcardRegionUpdateReq struct {
     Id int `uri:"id" comment:"地区ID"` // 地区ID
-    CategoryId string `json:"categoryId" comment:"所属分类ID，外键 -> hs_giftcard_category.id"`
-    RegionCode string `json:"regionCode" comment:"地区代码，如 US、UK、CN"`
-    CurrencyCode string `json:"currencyCode" comment:"货币代码，如 USD, GBP, CNY"`
-    DiscountRate string `json:"discountRate" comment:"折扣率"`
-    IsMain string `json:"isMain" comment:"是否默认区域"`
-    Status string `json:"status" comment:"状态: 1=启用, 0=禁用"`
+    CategoryId     string `json:"categoryId" comment:"所属分类ID，外键 -> hs_giftcard_category.id"`
+    RegionCode     string `json:"regionCode" comment:"地区代码，如 US、UK、CN"`
+    CurrencyCode   string `json:"currencyCode" comment:"货币代码，如 USD, GBP, CNY"`
+    CurrencySymbol string `json:"currencySymbol" comment:"货币符号"`
+    DiscountRate   string `json:"discountRate" comment:"折扣率"`
+    IsMain         string `json:"isMain" comment:"是否默认区域"`
+    Status         string `json:"status" comment:"状态: 1=启用, 0=禁用"`
     common.ControlBy
 }
 
@@ -83,6 +86,9 @@ func (s *OrdGiftcardRegionUpdateReq) Generate(model *models.OrdGiftcardRegion)  
     model.CategoryId = s.CategoryId
     model.RegionCode = s.RegionCode
     model.CurrencyCode = s.CurrencyCode
+    if s.CurrencySymbol != "" {
+        model.CurrencySymbol = s.CurrencySymbol
+    }
     model.DiscountRate = s.DiscountRate
     model.IsMain = s.IsMain
     model.Status = s.Status

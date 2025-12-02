@@ -302,6 +302,8 @@ definitions:
         type: integer
       currencyCode:
         type: string
+      currencySymbol:
+        type: string
       isActive:
         type: string
       name:
@@ -316,6 +318,8 @@ definitions:
       createBy:
         type: integer
       currencyCode:
+        type: string
+      currencySymbol:
         type: string
       id:
         description: 地区ID
@@ -1996,8 +2000,6 @@ definitions:
         type: string
       rate:
         type: string
-      rateType:
-        type: string
       source:
         type: string
       status:
@@ -2018,8 +2020,6 @@ definitions:
         type: string
       rate:
         type: string
-      rateType:
-        type: string
       source:
         type: string
       status:
@@ -2038,11 +2038,6 @@ definitions:
     properties:
       createBy:
         type: integer
-      currencySymbol:
-        type: string
-      rateType:
-        default: standard
-        type: string
       regionName:
         type: string
       updateBy:
@@ -2052,12 +2047,8 @@ definitions:
     properties:
       createBy:
         type: integer
-      currencySymbol:
-        type: string
       id:
         type: integer
-      rateType:
-        type: string
       regionName:
         type: string
       updateBy:
@@ -2375,6 +2366,8 @@ definitions:
         type: integer
       currencyCode:
         type: string
+      currencySymbol:
+        type: string
       discountRate:
         type: string
       isMain:
@@ -2393,6 +2386,8 @@ definitions:
       createBy:
         type: integer
       currencyCode:
+        type: string
+      currencySymbol:
         type: string
       discountRate:
         type: string
@@ -2726,8 +2721,6 @@ definitions:
       quoteCurrencyCode:
         type: string
       rate:
-        type: string
-      rateType:
         type: string
       source:
         type: string
@@ -3734,6 +3727,8 @@ definitions:
         type: string
       currencyCode:
         type: string
+      currencySymbol:
+        type: string
       id:
         type: integer
       isActive:
@@ -4564,8 +4559,6 @@ definitions:
         type: string
       rate:
         type: string
-      rateType:
-        type: string
       source:
         type: string
       status:
@@ -4581,12 +4574,8 @@ definitions:
         type: integer
       createdAt:
         type: string
-      currencySymbol:
-        type: string
       id:
         type: integer
-      rateType:
-        type: string
       regionName:
         type: string
       updateBy:
@@ -4735,6 +4724,8 @@ definitions:
       createdAt:
         type: string
       currencyCode:
+        type: string
+      currencySymbol:
         type: string
       discountRate:
         type: string
