@@ -4,6 +4,7 @@ import (
     "fmt"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/go-admin-team/go-admin-core/sdk/api"
 	"github.com/go-admin-team/go-admin-core/sdk/pkg/jwtauth/user"
 	_ "github.com/go-admin-team/go-admin-core/sdk/pkg/response"
@@ -38,7 +39,7 @@ func (e OrdUserOrders) GetPage(c *gin.Context) {
     s := service.OrdUserOrders{}
     err := e.MakeContext(c).
         MakeOrm().
-        Bind(&req).
+        Bind(&req, binding.Form, binding.Query).
         MakeService(&s.Service).
         Errors
    	if err != nil {

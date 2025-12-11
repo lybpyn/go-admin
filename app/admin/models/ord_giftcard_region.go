@@ -10,7 +10,7 @@ type OrdGiftcardRegion struct {
     models.Model
 
     CategoryId     string `json:"categoryId" gorm:"type:bigint(20);comment:所属分类ID，外键 -> hs_giftcard_category.id"`
-    RegionCode     string `json:"regionCode" gorm:"type:varchar(10);comment:地区代码，如 US、UK、CN"`
+    RegionCode     string `json:"regionCode" gorm:"type:varchar(40);comment:地区代码，如 US、UK、CN"`
     CurrencyCode   string `json:"currencyCode" gorm:"type:varchar(10);column:currency_code;comment:货币代码，如 USD, GBP, CNY"`
     CurrencySymbol string `json:"currencySymbol" gorm:"type:varchar(10);comment:货币符号"`
     DiscountRate   string `json:"discountRate" gorm:"type:decimal(10,4);column:discount_rate;comment:折扣率"`

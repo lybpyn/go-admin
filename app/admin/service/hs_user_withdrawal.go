@@ -315,14 +315,17 @@ func (e *HsUserWithdrawal) Approve(c *dto.HsUserWithdrawalApproveReq, p *actions
 		} else {
 			// 代付成功
 			channelTxnId = resp.Data.ChannelTxnId
-			e.Log.Infof("PandaPay代付成功，通道流水号: %s, 状态: %s", channelTxnId, resp.Data.Status)
+			e.Log.Infof("PandaPay代付成功，通道流水号: %s, 状态: %d", channelTxnId, resp.Data.Status)
 
 			// 根据PandaPay返回的状态设置提现状态
+			// 0=等待, 1=成功, 2=失败, 4=处理中
 			switch resp.Data.Status {
-			case "success":
+			case 1:
 				withdrawal.Status = "success"
-			case "pending":
+			case 0, 4:
 				withdrawal.Status = "processing"
+			case 2, 3:
+				withdrawal.Status = "failed"
 			default:
 				withdrawal.Status = "processing"
 			}

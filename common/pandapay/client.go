@@ -76,7 +76,7 @@ type PayoutResponse struct {
 	Data    struct {
 		OrderId         string `json:"orderId"`
 		MerchantOrderId string `json:"merchantOrderId"`
-		Status          string `json:"status"` // success, pending, failed
+		Status          int    `json:"status"` // 0=等待, 1=成功, 2=失败等
 		ChannelTxnId    string `json:"channelTxnId,omitempty"`
 	} `json:"data"`
 }

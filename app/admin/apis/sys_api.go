@@ -35,7 +35,7 @@ func (e SysApi) GetPage(c *gin.Context) {
 	req := dto.SysApiGetPageReq{}
 	err := e.MakeContext(c).
 		MakeOrm().
-		Bind(&req, binding.Form).
+		Bind(&req, binding.Form, binding.Query).
 		MakeService(&s.Service).
 		Errors
 	if err != nil {

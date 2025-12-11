@@ -33,7 +33,7 @@ func (e OrdGiftcard) GetPage(c *gin.Context) {
     s := service.OrdGiftcard{}
     err := e.MakeContext(c).
         MakeOrm().
-        Bind(&req, binding.Query).
+        Bind(&req, binding.Form, binding.Query).
         MakeService(&s.Service).
         Errors
    	if err != nil {

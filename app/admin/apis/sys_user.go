@@ -34,7 +34,7 @@ func (e SysUser) GetPage(c *gin.Context) {
 	req := dto.SysUserGetPageReq{}
 	err := e.MakeContext(c).
 		MakeOrm().
-		Bind(&req).
+		Bind(&req, binding.Form, binding.Query).
 		MakeService(&s.Service).
 		Errors
 	if err != nil {

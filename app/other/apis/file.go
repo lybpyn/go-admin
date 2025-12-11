@@ -208,14 +208,14 @@ func (e File) singleFile(c *gin.Context, fileResponse FileResponse, urlPrefix st
 
 	// 创建目录
 	if err := utils.IsNotExistMkDir(localPath); err != nil {
-		e.Error(500, errors.New(""), "初始化文件路径失败")
+		e.Error(500, errors.New(err.Error()), "初始化文件路径失败")
 		return FileResponse{}, true
 	}
 
 	// 保存文件到本地
 	localFile := localPath + fileName
 	if err := c.SaveUploadedFile(files, localFile); err != nil {
-		e.Error(500, errors.New(""), "文件保存失败")
+		e.Error(500, errors.New(err.Error()), fmt.Sprint("文件保存失败-%s", err.Error()))
 		return FileResponse{}, true
 	}
 

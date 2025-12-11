@@ -32,7 +32,7 @@ func (e SysDept) GetPage(c *gin.Context) {
 	req := dto.SysDeptGetPageReq{}
 	err := e.MakeContext(c).
 		MakeOrm().
-		Bind(&req).
+		Bind(&req, binding.Form, binding.Query).
 		MakeService(&s.Service).
 		Errors
 	if err != nil {

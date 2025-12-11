@@ -463,6 +463,35 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 				return err
 			}
 
+			// 计算并增加经验值（按照USD面值）
+			var experienceAmount float64
+			if isCrypto {
+				// 虚拟币视同USD，直接使用totalAmount
+				experienceAmount = totalAmount
+			} else {
+				// 法币需要转换为USD来计算经验值
+				if targetCurrency == "USD" {
+					experienceAmount = totalAmount
+				} else {
+					// 将法币金额转换为USD
+					rate, err := e.getCurrencyRate(tx, targetCurrency, "USD")
+					if err != nil {
+						e.Log.Warnf("Get currency rate %s to USD error:%s, use amount directly", targetCurrency, err)
+						experienceAmount = totalAmount
+					} else {
+						rateFloat, _ := strconv.ParseFloat(rate, 64)
+						experienceAmount = totalAmount * rateFloat
+					}
+				}
+			}
+
+			// 增加用户经验值
+			err = e.addUserExperience(tx, userId, experienceAmount, "giftcard_writeoff", c.OrderId, c.CreateBy)
+			if err != nil {
+				e.Log.Errorf("OrdGiftcardWriteoffsService BatchInsert add user experience error:%s", err)
+				return err
+			}
+
 			// 处理邀请分成（分成进入冻结余额）
 			err = e.processInviteCommissions(tx, userId, c.OrderId, totalAmount, targetCurrency, isCrypto, c.CreateBy)
 			if err != nil {
@@ -1289,4 +1318,80 @@ func (e *OrdGiftcardWriteoffs) CalculateUserLocalCurrency(c *dto.OrdGiftcardWrit
 	}
 
 	return resp, nil
+}
+
+// addUserExperience 增加用户经验值
+// 参数：
+//   - userId: 用户ID
+//   - experienceAmount: 经验值增加量（按USD计价，取整）
+//   - sourceType: 经验来源类型（如：giftcard_writeoff）
+//   - orderId: 订单ID
+//   - createBy: 创建人ID
+func (e *OrdGiftcardWriteoffs) addUserExperience(tx *gorm.DB, userId int, experienceAmount float64, sourceType string, orderId int, createBy int) error {
+	// 1. 经验值取整（向下取整）
+	experienceChange := int(experienceAmount)
+	if experienceChange <= 0 {
+		e.Log.Infof("Experience amount is zero or negative, skip adding experience for user %d", userId)
+		return nil
+	}
+
+	// 2. 查询用户当前经验值
+	var user models.HsUsers
+	err := tx.Select("id, experience, total_experience, version").Where("id = ?", userId).First(&user).Error
+	if err != nil {
+		e.Log.Errorf("addUserExperience get user error:%s", err)
+		return errors.New("获取用户信息失败")
+	}
+
+	// 3. 计算新的经验值
+	experienceBefore, _ := strconv.Atoi(user.Experience)
+	totalExperienceBefore, _ := strconv.Atoi(user.TotalExperience)
+
+	experienceAfter := experienceBefore + experienceChange
+	totalExperienceAfter := totalExperienceBefore + experienceChange
+
+	// 4. 更新用户经验值（使用乐观锁）
+	result := tx.Model(&models.HsUsers{}).
+		Where("id = ? AND version = ?", userId, user.Version).
+		Updates(map[string]interface{}{
+			"experience":       strconv.Itoa(experienceAfter),
+			"total_experience": strconv.Itoa(totalExperienceAfter),
+			"version":          gorm.Expr("version + 1"),
+		})
+
+	if result.Error != nil {
+		e.Log.Errorf("addUserExperience update user experience error:%s", result.Error)
+		return errors.New("更新用户经验值失败")
+	}
+
+	if result.RowsAffected == 0 {
+		e.Log.Errorf("addUserExperience update conflict for user %d", userId)
+		return errors.New("经验值更新冲突，请重试")
+	}
+
+	// 5. 创建经验值日志
+	orderIdStr := strconv.Itoa(orderId)
+	userIdStr := strconv.Itoa(userId)
+
+	experienceLog := models.HsUserExperienceLogs{
+		UserId:           userIdStr,
+		ExperienceChange: strconv.Itoa(experienceChange),
+		ExperienceBefore: strconv.Itoa(experienceBefore),
+		ExperienceAfter:  strconv.Itoa(experienceAfter),
+		SourceType:       sourceType,
+		SourceId:         orderIdStr,
+		Description:      fmt.Sprintf("礼品卡核销获得经验值，订单号: %d", orderId),
+	}
+	experienceLog.CreateBy = createBy
+
+	err = tx.Create(&experienceLog).Error
+	if err != nil {
+		e.Log.Errorf("addUserExperience create experience log error:%s", err)
+		return errors.New("创建经验值日志失败")
+	}
+
+	e.Log.Infof("User %d gained %d experience from giftcard writeoff (order: %d), experience: %d -> %d, total: %d -> %d",
+		userId, experienceChange, orderId, experienceBefore, experienceAfter, totalExperienceBefore, totalExperienceAfter)
+
+	return nil
 }
