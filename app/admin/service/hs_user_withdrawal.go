@@ -344,23 +344,31 @@ func (e *HsUserWithdrawal) Approve(c *dto.HsUserWithdrawalApproveReq, p *actions
 	withdrawal.ProcessedAt = time.Now()
 	withdrawal.UpdateBy = c.UpdateBy
 
-	// 只有在失败状态下才设置reason字段
-	if withdrawal.Status == "failed" {
-		// 如果有备注，添加到reason字段
-		if c.Remark != "" {
-			if withdrawal.Reason != "" {
-				withdrawal.Reason = withdrawal.Reason + "; " + c.Remark
-			} else {
-				withdrawal.Reason = c.Remark
-			}
-		}
-	} else {
-		// 成功或处理中的状态，清空reason字段
-		withdrawal.Reason = ""
+	// 构建更新数据
+	updateData := map[string]interface{}{
+		"channel_txn_id": channelTxnId,
+		"processed_at":   time.Now(),
+		"update_by":      c.UpdateBy,
+		"status":         withdrawal.Status,
 	}
 
+	// 只有在失败状态下才设置reason字段
+	if withdrawal.Status == "failed" {
+		reasonValue := withdrawal.Reason
+		// 如果有备注，添加到reason字段
+		if c.Remark != "" {
+			if reasonValue != "" {
+				reasonValue = reasonValue + "; " + c.Remark
+			} else {
+				reasonValue = c.Remark
+			}
+		}
+		updateData["reason"] = reasonValue
+	}
+	// 非失败状态不更新 reason 字段，保持数据库中的原值
+
 	// 保存更新
-	db := e.Orm.Save(&withdrawal)
+	db := e.Orm.Model(&withdrawal).Where("id = ?", withdrawal.Id).Updates(updateData)
 	if err := db.Error; err != nil {
 		e.Log.Errorf("更新提现记录失败: %s", err)
 		return fmt.Errorf("更新提现记录失败: %w", err)
