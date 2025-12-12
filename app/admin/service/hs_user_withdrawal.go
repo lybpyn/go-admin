@@ -326,6 +326,7 @@ func (e *HsUserWithdrawal) Approve(c *dto.HsUserWithdrawalApproveReq, p *actions
 				withdrawal.Status = "processing"
 			case 2, 3:
 				withdrawal.Status = "failed"
+				withdrawal.Reason = fmt.Sprintf("PandaPay返回失败状态: %d", resp.Data.Status)
 			default:
 				withdrawal.Status = "processing"
 			}
@@ -343,13 +344,19 @@ func (e *HsUserWithdrawal) Approve(c *dto.HsUserWithdrawalApproveReq, p *actions
 	withdrawal.ProcessedAt = time.Now()
 	withdrawal.UpdateBy = c.UpdateBy
 
-	// 如果有备注，添加到reason字段
-	if c.Remark != "" {
-		if withdrawal.Reason != "" {
-			withdrawal.Reason = withdrawal.Reason + "; " + c.Remark
-		} else {
-			withdrawal.Reason = c.Remark
+	// 只有在失败状态下才设置reason字段
+	if withdrawal.Status == "failed" {
+		// 如果有备注，添加到reason字段
+		if c.Remark != "" {
+			if withdrawal.Reason != "" {
+				withdrawal.Reason = withdrawal.Reason + "; " + c.Remark
+			} else {
+				withdrawal.Reason = c.Remark
+			}
 		}
+	} else {
+		// 成功或处理中的状态，清空reason字段
+		withdrawal.Reason = ""
 	}
 
 	// 保存更新
