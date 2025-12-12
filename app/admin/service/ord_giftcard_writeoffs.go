@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -304,7 +305,9 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 		if item.UserLocalCurrencyAmount != "" && item.UserLocalCurrencyAmount != "0" {
 			// 使用前端传入的用户本地货币金额
 			userLocalAmount, _ = strconv.ParseFloat(item.UserLocalCurrencyAmount, 64)
-			convertedAmount = item.UserLocalCurrencyAmount
+			// 向下取整，保留整数计算
+			userLocalAmount = math.Floor(userLocalAmount)
+			convertedAmount = fmt.Sprintf("%.8f", userLocalAmount)
 
 			// 校验面额规则（如果有对应的礼品卡配置）
 			if giftcardId > 0 {
@@ -323,6 +326,8 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 			convertedAmount = "0.00000000"
 			if cardValueFloat > 0 {
 				userLocalAmount = cardValueFloat * configRateFloat
+				// 向下取整，保留整数计算
+				userLocalAmount = math.Floor(userLocalAmount)
 				convertedAmount = fmt.Sprintf("%.8f", userLocalAmount)
 			}
 		}
@@ -1267,6 +1272,8 @@ func (e *OrdGiftcardWriteoffs) CalculateUserLocalCurrency(c *dto.OrdGiftcardWrit
 	// 用户入账金额 = 卡片面值 × 折扣率 × 汇率
 	configRateFloat, _ := strconv.ParseFloat(configRate, 64)
 	userLocalAmount := cardValueFloat * discountRateFloat * configRateFloat
+	// 向下取整，保留整数计算
+	userLocalAmount = math.Floor(userLocalAmount)
 	userLocalCurrencyAmount := fmt.Sprintf("%.8f", userLocalAmount)
 
 	// 6. 如果提供了礼品卡配置，进行面额校验
