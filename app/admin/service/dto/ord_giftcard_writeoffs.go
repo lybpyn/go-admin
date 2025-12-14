@@ -18,7 +18,6 @@ type OrdGiftcardWriteoffsOrder struct {
 	UserId             string `form:"userIdOrder"  search:"type:order;column:user_id;table:ord_giftcard_writeoffs"`
 	OrderId            string `form:"orderIdOrder"  search:"type:order;column:order_id;table:ord_giftcard_writeoffs"`
 	GiftCardId         string `form:"giftCardIdOrder"  search:"type:order;column:gift_card_id;table:ord_giftcard_writeoffs"`
-	GiftCardDiscountId string `form:"giftCardDiscountIdOrder"  search:"type:order;column:gift_card_discount_id;table:ord_giftcard_writeoffs"`
 	Status             string `form:"statusOrder"  search:"type:order;column:status;table:ord_giftcard_writeoffs"`
 	Remark             string `form:"remarkOrder"  search:"type:order;column:remark;table:ord_giftcard_writeoffs"`
 	CreateBy           string `form:"createByOrder"  search:"type:order;column:create_by;table:ord_giftcard_writeoffs"`
@@ -37,7 +36,6 @@ type OrdGiftcardWriteoffsInsertReq struct {
 	UserId              string `json:"userId" comment:"用户ID，表示提交/使用礼品卡的用户"`
 	OrderId             string `json:"orderId" comment:"订单ID，关联 ord_user_orders.id，用于核销对应的订单"`
 	GiftCardId          string `json:"giftCardId" comment:"礼品卡ID，关联礼品卡主表（若有）"`
-	GiftCardDiscountId  string `json:"giftCardDiscountId" comment:"礼品卡折扣ID，关联 ord_giftcard_discounts.id"`
 	Status              int    `json:"status" comment:"核销状态：0=待核销，1=已核销，2=失败"`
 	Remark              string `json:"remark" comment:"备注信息，例如失败原因、核销说明"`
 	AdminRecognizedCode string `json:"adminRecognizedCode" comment:"管理员识别的兑换码"`
@@ -55,7 +53,6 @@ func (s *OrdGiftcardWriteoffsInsertReq) Generate(model *models.OrdGiftcardWriteo
 	model.UserId, _ = strconv.Atoi(s.UserId)
 	model.OrderId, _ = strconv.Atoi(s.OrderId)
 	model.GiftCardId, _ = strconv.Atoi(s.GiftCardId)
-	model.GiftCardDiscountId, _ = strconv.Atoi(s.GiftCardDiscountId)
 	model.Status = s.Status
 	model.Remark = s.Remark
 	model.AdminRecognizedCode = s.AdminRecognizedCode
@@ -75,7 +72,6 @@ type OrdGiftcardWriteoffsUpdateReq struct {
 	UserId              string `json:"userId" comment:"用户ID，表示提交/使用礼品卡的用户"`
 	OrderId             string `json:"orderId" comment:"订单ID，关联 ord_user_orders.id，用于核销对应的订单"`
 	GiftCardId          string `json:"giftCardId" comment:"礼品卡ID，关联礼品卡主表（若有）"`
-	GiftCardDiscountId  string `json:"giftCardDiscountId" comment:"礼品卡折扣ID，关联 ord_giftcard_discounts.id"`
 	Status              int    `json:"status" comment:"核销状态：0=待核销，1=已核销，2=失败"`
 	Remark              string `json:"remark" comment:"备注信息，例如失败原因、核销说明"`
 	AdminRecognizedCode string `json:"adminRecognizedCode" comment:"管理员识别的兑换码"`
@@ -93,7 +89,6 @@ func (s *OrdGiftcardWriteoffsUpdateReq) Generate(model *models.OrdGiftcardWriteo
 	model.UserId, _ = strconv.Atoi(s.UserId)
 	model.OrderId, _ = strconv.Atoi(s.OrderId)
 	model.GiftCardId, _ = strconv.Atoi(s.GiftCardId)
-	model.GiftCardDiscountId, _ = strconv.Atoi(s.GiftCardDiscountId)
 	model.Status = s.Status
 	model.Remark = s.Remark
 	model.AdminRecognizedCode = s.AdminRecognizedCode
