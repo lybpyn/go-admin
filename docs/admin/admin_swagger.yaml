@@ -122,8 +122,6 @@ definitions:
     properties:
       createBy:
         type: integer
-      exp:
-        type: string
       isActive:
         type: string
       levelIcon:
@@ -143,8 +141,6 @@ definitions:
     properties:
       createBy:
         type: integer
-      exp:
-        type: string
       id:
         description: 等级ID
         type: integer
@@ -1428,6 +1424,21 @@ definitions:
       withdrawNo:
         type: string
     type: object
+  dto.HsUserWithdrawalManualTransferReq:
+    properties:
+      createBy:
+        type: integer
+      id:
+        type: integer
+      remark:
+        type: string
+      success:
+        type: boolean
+      transferImage:
+        type: string
+      updateBy:
+        type: integer
+    type: object
   dto.HsUserWithdrawalRejectReq:
     properties:
       createBy:
@@ -1531,6 +1542,8 @@ definitions:
       totalWithdrawn:
         description: 累计提现金额
         type: string
+      transferImage:
+        type: string
       updateBy:
         type: integer
       updatedAt:
@@ -1542,6 +1555,31 @@ definitions:
         type: integer
       withdrawNo:
         type: string
+    type: object
+  dto.HsUsersAdjustBalanceReq:
+    properties:
+      amount:
+        type: string
+      balanceType:
+        enum:
+        - balance
+        - crypto_balance
+        - frozen_balance
+        - crypto_frozen_balance
+        type: string
+      createBy:
+        type: integer
+      remark:
+        type: string
+      updateBy:
+        type: integer
+      userId:
+        type: integer
+    required:
+    - amount
+    - balanceType
+    - remark
+    - userId
     type: object
   dto.HsUsersDeleteReq:
     properties:
@@ -2447,7 +2485,7 @@ definitions:
       failureImageUrl:
         type: string
       giftCardId:
-        type: integer
+        type: string
       platformSettlementAmount:
         type: string
       recognizedCardValue:
@@ -2457,7 +2495,7 @@ definitions:
       status:
         type: integer
       supplierId:
-        type: integer
+        type: string
       userLocalCurrencyAmount:
         type: string
     required:
@@ -2527,8 +2565,6 @@ definitions:
         type: integer
       failureImageUrl:
         type: string
-      giftCardDiscountId:
-        type: string
       giftCardId:
         type: string
       orderId:
@@ -2555,8 +2591,6 @@ definitions:
       createBy:
         type: integer
       failureImageUrl:
-        type: string
-      giftCardDiscountId:
         type: string
       giftCardId:
         type: string
@@ -2705,6 +2739,48 @@ definitions:
       updateBy:
         type: integer
       userId:
+        type: string
+    type: object
+  dto.PandaPayCallbackReq:
+    properties:
+      amount:
+        type: string
+      merchantAmount:
+        type: string
+      merchantId:
+        type: integer
+      merchantOrderId:
+        type: string
+      merchantRefundAmount:
+        type: string
+      msg:
+        type: string
+      orderId:
+        type: integer
+      payTime:
+        type: string
+      payoutBankCode:
+        type: string
+      payoutBankName:
+        type: string
+      payoutCardName:
+        type: string
+      payoutCardNumber:
+        type: string
+      session_id:
+        type: string
+      sign:
+        type: string
+      status:
+        type: integer
+      timestamp:
+        type: integer
+    type: object
+  dto.PandaPayCallbackResp:
+    properties:
+      code:
+        type: integer
+      message:
         type: string
     type: object
   dto.PassWord:
@@ -3631,8 +3707,6 @@ definitions:
         type: integer
       createdAt:
         type: string
-      exp:
-        type: string
       id:
         type: integer
       isActive:
@@ -4314,6 +4388,8 @@ definitions:
         type: string
       status:
         type: string
+      transferImage:
+        type: string
       updateBy:
         type: integer
       updatedAt:
@@ -4755,8 +4831,6 @@ definitions:
         type: string
       failureImageUrl:
         type: string
-      giftCardDiscountId:
-        type: integer
       giftCardId:
         type: integer
       giftCardName:
@@ -4766,7 +4840,7 @@ definitions:
       orderId:
         type: integer
       orderNo:
-        description: 关联字段（不存储到数据库，仅用于返回）
+        description: 冗余字段（方便查询）
         type: string
       platformSaleRate:
         type: string
@@ -4796,6 +4870,7 @@ definitions:
       userLocalCurrencyAmount:
         type: string
       userName:
+        description: 关联字段（不存储到数据库，仅用于返回）
         type: string
     type: object
   models.OrdOrderGiftcardImages:
@@ -5129,6 +5204,53 @@ paths:
       summary: 获取系统前台配置信息，主要注意这里不在验证权限
       tags:
       - 配置管理
+  /api/v1/callback/pandapay:
+    post:
+      consumes:
+      - application/json
+      description: 接收PandaPay的支付回调通知，更新提现订单状态
+      parameters:
+      - description: 回调数据
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PandaPayCallbackReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/dto.PandaPayCallbackResp'
+        "400":
+          description: 请求参数错误
+          schema:
+            $ref: '#/definitions/dto.PandaPayCallbackResp'
+        "500":
+          description: 服务器内部错误
+          schema:
+            $ref: '#/definitions/dto.PandaPayCallbackResp'
+      summary: 处理PandaPay回调通知
+      tags:
+      - 回调接口
+  /api/v1/callback/pandapay/test:
+    get:
+      consumes:
+      - application/json
+      description: 测试PandaPay回调接口是否正常工作
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: 测试回调接口
+      tags:
+      - 回调接口
   /api/v1/captcha:
     get:
       description: 获取验证码
@@ -9212,6 +9334,40 @@ paths:
       summary: 审核通过提现申请
       tags:
       - 用户余额提现申请表
+  /api/v1/hs-user-withdrawal/{id}/manual-transfer:
+    post:
+      consumes:
+      - application/json
+      description: 手动完成提现转账，记录转账截图和结果
+      parameters:
+      - description: 提现记录ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 手动转账信息
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUserWithdrawalManualTransferReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 200, "data": [...]}'
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: integer
+              type: object
+      security:
+      - Bearer: []
+      summary: 手动处理提现转账
+      tags:
+      - 提现管理
   /api/v1/hs-user-withdrawal/{id}/reject:
     post:
       consumes:
@@ -9416,6 +9572,30 @@ paths:
       security:
       - Bearer: []
       summary: 修改用户主表
+      tags:
+      - 用户主表
+  /api/v1/hs-users/adjust-balance:
+    post:
+      consumes:
+      - application/json
+      description: 调整用户余额（法币/虚拟币/冻结余额）并记录流水
+      parameters:
+      - description: 调整余额参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HsUsersAdjustBalanceReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code": 200, "message": "调整成功"}'
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 调整用户余额
       tags:
       - 用户主表
   /api/v1/login:
@@ -11346,6 +11526,14 @@ paths:
         in: query
         name: pageIndex
         type: integer
+      - description: 订单ID
+        in: query
+        name: orderId
+        type: integer
+      - description: 订单号
+        in: query
+        name: orderNo
+        type: string
       responses:
         "200":
           description: '{"code": 200, "data": [...]}'

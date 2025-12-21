@@ -204,3 +204,37 @@ func (e HsUsers) Delete(c *gin.Context) {
 	}
 	e.OK( req.GetId(), "删除成功")
 }
+
+// AdjustBalance 调整用户余额
+// @Summary 调整用户余额
+// @Description 调整用户余额（法币/虚拟币/冻结余额）并记录流水
+// @Tags 用户主表
+// @Accept json
+// @Produce json
+// @Param data body dto.HsUsersAdjustBalanceReq true "调整余额参数"
+// @Success 200 {object} response.Response "{"code": 200, "message": "调整成功"}"
+// @Router /api/v1/hs-users/adjust-balance [post]
+// @Security Bearer
+func (e HsUsers) AdjustBalance(c *gin.Context) {
+	s := service.HsUsers{}
+	req := dto.HsUsersAdjustBalanceReq{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
+
+	req.SetCreateBy(user.GetUserId(c))
+
+	err = s.AdjustBalance(&req)
+	if err != nil {
+		e.Error(500, err, fmt.Sprintf("调整用户余额失败，\r\n失败信息 %s", err.Error()))
+		return
+	}
+	e.OK(nil, "调整成功")
+}

@@ -67,7 +67,7 @@ func (e *OrdGiftcardWriteoffs) GetPage(c *dto.OrdGiftcardWriteoffsGetPageReq, p 
 	var err error
 	var data models.OrdGiftcardWriteoffs
 
-	err = e.Orm.Model(&data).
+	db := e.Orm.Model(&data).
 		Select("ord_giftcard_writeoffs.*, "+
 			"ord_user_orders.order_no as order_no, "+
 			"hs_users.username as user_name, "+
@@ -81,8 +81,14 @@ func (e *OrdGiftcardWriteoffs) GetPage(c *dto.OrdGiftcardWriteoffsGetPageReq, p 
 			cDto.MakeCondition(c.GetNeedSearch()),
 			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
 			actions.Permission(data.TableName(), p),
-		).
-		Find(list).Limit(-1).Offset(-1).
+		)
+
+	// 订单号查询
+	if c.OrderNo != "" {
+		db = db.Where("ord_user_orders.order_no = ?", c.OrderNo)
+	}
+
+	err = db.Find(list).Limit(-1).Offset(-1).
 		Count(count).Error
 	if err != nil {
 		e.Log.Errorf("OrdGiftcardWriteoffsService GetPage error:%s \r\n", err)
@@ -175,6 +181,7 @@ func (e *OrdGiftcardWriteoffs) Remove(d *dto.OrdGiftcardWriteoffsDeleteReq, p *a
 // ============ 批量核销主流程（重构后） ============
 
 // BatchInsert 批量创建核销记录（带事务处理：余额增加、流水记录、账户分成）
+// 核销状态说明：1=已核销（成功），2=驳回（订单驳回），3=失败（核销失败但不影响订单）
 func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInsertReq) error {
 	// 1. 验证核销列表
 	if len(c.WriteoffList) == 0 {
@@ -183,15 +190,20 @@ func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInser
 
 	// 2. 获取核销状态（以第一条记录为准）
 	finalStatus := c.WriteoffList[0].Status
-	if finalStatus != 1 && finalStatus != 2 {
+	if finalStatus != 1 && finalStatus != 2 && finalStatus != 3 {
 		e.Log.Errorf("BatchInsert invalid writeoff status: %d", finalStatus)
-		return errors.New("核销状态无效，只能是已核销(1)或失败(2)")
+		return errors.New("核销状态无效，只能是已核销(1)、驳回(2)或失败(3)")
 	}
 
 	// 3. 根据状态分别处理
 	if finalStatus == 2 {
-		// 驳回状态：单独处理，不需要转换decimal
+		// 驳回状态：订单驳回，不需要转换decimal
 		return e.processRejectedWriteoff(c)
+	}
+
+	if finalStatus == 3 {
+		// 失败状态：核销失败但不驳回订单，只记录核销失败
+		return e.processFailedWriteoff(c)
 	}
 
 	// 成功状态：转换decimal后处理
@@ -208,32 +220,14 @@ func (e *OrdGiftcardWriteoffs) processRejectedWriteoff(c *dto.OrdGiftcardWriteof
 		return err
 	}
 
-	// 2. 构建驳回核销记录（不需要计算金额）
-	writeoffRecords := make([]models.OrdGiftcardWriteoffs, 0, len(c.WriteoffList))
-	for _, item := range c.WriteoffList {
-		record := models.OrdGiftcardWriteoffs{
-			UserId:              order.UserId,
-			OrderId:             c.OrderId,
-			GiftCardId:          item.GiftCardId,
-			Status:              item.Status,
-			Remark:              item.Remark,
-			AdminRecognizedCode: item.AdminRecognizedCode,
-			RecognizedCardValue: item.RecognizedCardValue,
-			FailureImageUrl:     item.FailureImageUrl,
-			SupplierId:          strconv.Itoa(item.SupplierId),
-		}
-		record.CreateBy = c.CreateBy
-		writeoffRecords = append(writeoffRecords, record)
-	}
-
-	// 3. 准备订单状态更新（驳回）
+	// 2. 准备订单状态更新（驳回）
 	orderUpdates := map[string]interface{}{
 		"status":                 4, // 订单驳回
-		"processing_status":      2, // 处理取消
+		"processing_status":      3, // 处理完成
 		"processing_started_end": time.Now(),
 	}
 
-	// 4. 执行事务
+	// 3. 执行事务
 	return e.Orm.Transaction(func(tx *gorm.DB) error {
 		// 加锁查询订单
 		var orderLocked models.OrdUserOrders
@@ -250,15 +244,116 @@ func (e *OrdGiftcardWriteoffs) processRejectedWriteoff(c *dto.OrdGiftcardWriteof
 			return errors.New("订单状态已变更，无法核销")
 		}
 
-		// 插入核销记录
-		if err = tx.Create(&writeoffRecords).Error; err != nil {
-			e.Log.Errorf("processRejectedWriteoff insert records error:%s", err)
-			return err
+		// 使用原生SQL插入核销记录，只插入必要的字段
+		now := time.Now()
+		for _, item := range c.WriteoffList {
+			sql := `INSERT INTO ord_giftcard_writeoffs
+				(user_id, order_id, order_no, gift_card_id, status, remark,
+				 admin_recognized_code, failure_image_url, supplier_id,
+				 created_at, updated_at, create_by, update_by)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+
+			err = tx.Exec(sql,
+				order.UserId,             // user_id
+				c.OrderId,                // order_id
+				order.OrderNo,            // order_no
+				0,                        // gift_card_id
+				item.Status,              // status
+				item.Remark,              // remark
+				item.AdminRecognizedCode, // admin_recognized_code
+				item.FailureImageUrl,     // failure_image_url
+				0,                        // supplier_id
+				now,                      // created_at
+				now,                      // updated_at
+				c.CreateBy,               // create_by
+				0,                        // update_by
+			).Error
+
+			if err != nil {
+				e.Log.Errorf("processRejectedWriteoff insert record error:%s", err)
+				return err
+			}
 		}
 
 		// 更新订单状态
 		if err = tx.Model(&models.OrdUserOrders{}).Where("id = ?", c.OrderId).Updates(orderUpdates).Error; err != nil {
 			e.Log.Errorf("processRejectedWriteoff update order error:%s", err)
+			return err
+		}
+
+		return nil
+	})
+}
+
+// ============ 失败状态处理 ============
+
+// processFailedWriteoff 处理失败状态的核销（与驳回类似，也是终止状态，但订单状态标记为失败而非驳回）
+func (e *OrdGiftcardWriteoffs) processFailedWriteoff(c *dto.OrdGiftcardWriteoffsBatchInsertReq) error {
+	// 1. 验证订单
+	order, err := e.validateAndGetOrder(c.OrderId)
+	if err != nil {
+		return err
+	}
+
+	// 2. 准备订单状态更新（失败，订单状态=6失败，处理状态=3完成）
+	orderUpdates := map[string]interface{}{
+		"status":                 6, // 订单失败
+		"processing_status":      3, // 处理完成
+		"processing_started_end": time.Now(),
+	}
+
+	// 3. 执行事务
+	return e.Orm.Transaction(func(tx *gorm.DB) error {
+		// 加锁查询订单
+		var orderLocked models.OrdUserOrders
+		err := tx.Set("gorm:query_option", "FOR UPDATE").
+			Where("id = ?", c.OrderId).
+			First(&orderLocked).Error
+		if err != nil {
+			e.Log.Errorf("processFailedWriteoff lock order error:%s", err)
+			return errors.New("获取订单锁失败")
+		}
+
+		// 失败状态允许订单处于已接单状态
+		if orderLocked.Status != 1 {
+			e.Log.Errorf("processFailedWriteoff order status invalid: orderId=%d, status=%d", orderLocked.Id, orderLocked.Status)
+			return errors.New("订单状态无效，只有已接单的订单才能标记失败")
+		}
+
+		// 使用原生SQL插入核销记录，只插入必要的字段
+		now := time.Now()
+		for _, item := range c.WriteoffList {
+			sql := `INSERT INTO ord_giftcard_writeoffs
+				(user_id, order_id, order_no, gift_card_id, status, remark,
+				 admin_recognized_code, failure_image_url, supplier_id,
+				 created_at, updated_at, create_by, update_by)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+
+			err = tx.Exec(sql,
+				order.UserId,             // user_id
+				c.OrderId,                // order_id
+				order.OrderNo,            // order_no
+				0,                        // gift_card_id
+				item.Status,              // status (3=失败)
+				item.Remark,              // remark
+				item.AdminRecognizedCode, // admin_recognized_code
+				item.FailureImageUrl,     // failure_image_url
+				0,                        // supplier_id
+				now,                      // created_at
+				now,                      // updated_at
+				c.CreateBy,               // create_by
+				0,                        // update_by
+			).Error
+
+			if err != nil {
+				e.Log.Errorf("processFailedWriteoff insert record error:%s", err)
+				return err
+			}
+		}
+
+		// 更新订单状态为取消（失败终止）
+		if err = tx.Model(&models.OrdUserOrders{}).Where("id = ?", c.OrderId).Updates(orderUpdates).Error; err != nil {
+			e.Log.Errorf("processFailedWriteoff update order error:%s", err)
 			return err
 		}
 
@@ -280,12 +375,12 @@ type SingleWriteoffResult struct {
 
 // WriteoffItemBaseInfo 单个核销项的基础信息（事务外查询）
 type WriteoffItemBaseInfo struct {
-	Giftcard        *models.OrdGiftcard        // 礼品卡配置
-	Region          *models.OrdGiftcardRegion  // 区域配置
-	UserLevel       *models.HsConfgiUserLevels // 用户等级配置（可能为nil）
-	RebateRate      decimal.Decimal            // 用户返利比例
+	Giftcard        *models.OrdGiftcard         // 礼品卡配置
+	Region          *models.OrdGiftcardRegion   // 区域配置
+	UserLevel       *models.HsConfgiUserLevels  // 用户等级配置（可能为nil）
+	RebateRate      decimal.Decimal             // 用户返利比例
 	WriteoffRecord  models.OrdGiftcardWriteoffs // 预构建的核销记录
-	UserLocalAmount decimal.Decimal            // 用户入账金额
+	UserLocalAmount decimal.Decimal             // 用户入账金额
 }
 
 // queryWriteoffItemBaseInfo 查询单个核销项的基础信息（事务外）
@@ -461,10 +556,8 @@ func (e *OrdGiftcardWriteoffs) executeSingleWriteoffTransaction(item WriteoffIte
 				return err
 			}
 
-			// 2.4 处理邀请分成
-			amountFloat, _ := baseInfo.UserLocalAmount.Float64()
-			frozenLimitFloat, _ := ctx.FrozenLimitAmount.Float64()
-			err = e.processInviteCommissions(tx, ctx.Order.UserId, orderId, amountFloat, ctx.TargetCurrency, ctx.IsCrypto, frozenLimitFloat, ctx.CreateBy)
+			// 2.4 处理邀请分成（使用decimal类型避免精度丢失）
+			err = e.processInviteCommissionsDecimal(tx, ctx.Order.UserId, orderId, baseInfo.UserLocalAmount, ctx.TargetCurrency, ctx.IsCrypto, ctx.FrozenLimitAmount, ctx.CreateBy)
 			if err != nil {
 				e.Log.Errorf("executeSingleWriteoffTransaction process commissions error: %s", err)
 				return err
@@ -486,9 +579,9 @@ func (e *OrdGiftcardWriteoffs) executeSingleWriteoffTransaction(item WriteoffIte
 
 // creditUserBalanceWithBaseInfo 用户入账（使用预查询的返利比例和冻结限额）
 func (e *OrdGiftcardWriteoffs) creditUserBalanceWithBaseInfo(tx *gorm.DB, user *models.HsUsers, amount decimal.Decimal, rebateRate decimal.Decimal, currencyCode string, isCrypto bool, frozenLimit decimal.Decimal, orderId int, createBy int) error {
-	// 计算返利金额和可用金额
+	// 计算返利金额（平台补贴，不从核销金额中扣除）
 	rebateAmount := amount.Mul(rebateRate)
-	availableAmount := amount.Sub(rebateAmount)
+	availableAmount := amount // 可用金额 = 核销全额
 
 	// 根据法币/虚拟币分别处理
 	if isCrypto {
@@ -517,9 +610,9 @@ func (e *OrdGiftcardWriteoffs) creditUserBalanceWithRebateTx(tx *gorm.DB, user *
 		return err
 	}
 
-	// 计算返利金额和可用金额
+	// 计算返利金额（平台补贴，不从核销金额中扣除）
 	rebateAmount := amount.Mul(rebateRateDecimal)
-	availableAmount := amount.Sub(rebateAmount)
+	availableAmount := amount // 可用金额 = 核销全额
 
 	// 根据法币/虚拟币分别处理
 	if isCrypto {
@@ -734,15 +827,29 @@ func (e *OrdGiftcardWriteoffs) updateOrderStatusAfterWriteoff(orderId int) error
 // convertToDecimalItems 将请求中的核销项转换为decimal类型
 func (e *OrdGiftcardWriteoffs) convertToDecimalItems(items []dto.OrdGiftcardWriteoffsBatchItem) ([]WriteoffItemDecimal, error) {
 	result := make([]WriteoffItemDecimal, 0, len(items))
-
+	var err error
 	for i, item := range items {
+		spid, gid := 0, 0
+		if item.SupplierId != "" {
+			spid, err = strconv.Atoi(item.SupplierId)
+			if err != nil {
+				return nil, err
+			}
+		}
+		if item.GiftCardId != "" {
+			gid, err = strconv.Atoi(item.GiftCardId)
+			if err != nil {
+				return nil, err
+			}
+		}
+
 		decimalItem := WriteoffItemDecimal{
-			GiftCardId:          item.GiftCardId,
+			GiftCardId:          gid,
 			AdminRecognizedCode: item.AdminRecognizedCode,
 			Status:              item.Status,
 			Remark:              item.Remark,
 			FailureImageUrl:     item.FailureImageUrl,
-			SupplierId:          item.SupplierId,
+			SupplierId:          spid,
 		}
 
 		// 转换 RecognizedCardValue
@@ -1058,6 +1165,7 @@ func (e *OrdGiftcardWriteoffs) buildWriteoffRecordDecimal(item WriteoffItemDecim
 	result.Record = models.OrdGiftcardWriteoffs{
 		UserId:                     ctx.Order.UserId,
 		OrderId:                    orderId,
+		OrderNo:                    ctx.Order.OrderNo, // 订单号冗余字段
 		GiftCardId:                 item.GiftCardId,
 		Status:                     item.Status,
 		Remark:                     item.Remark,
@@ -1077,7 +1185,6 @@ func (e *OrdGiftcardWriteoffs) buildWriteoffRecordDecimal(item WriteoffItemDecim
 
 	return result, nil
 }
-
 
 // prepareOrderUpdates 准备订单状态更新数据
 func (e *OrdGiftcardWriteoffs) prepareOrderUpdates(finalStatus int) map[string]interface{} {
@@ -1147,9 +1254,9 @@ func (e *OrdGiftcardWriteoffs) creditUserBalanceWithRebate(tx *gorm.DB, userId i
 		return err
 	}
 
-	// 3. 计算返利金额和可用金额
+	// 3. 计算返利金额（平台补贴，不从核销金额中扣除）
 	rebateAmount := amount.Mul(rebateRateDecimal)
-	availableAmount := amount.Sub(rebateAmount)
+	availableAmount := amount // 可用金额 = 核销全额
 
 	// 4. 根据法币/虚拟币分别处理
 	if isCrypto {
@@ -1818,12 +1925,11 @@ func (e *OrdGiftcardWriteoffs) getCurrencyRateViaUSD(tx *gorm.DB, fromCurrency, 
 
 // InviterCommissionConfig 邀请人分成配置
 type InviterCommissionConfig struct {
-	CommissionRate float64 // 分成比例
-	FrozenRate     float64 // 进入冻结余额的比例
+	CommissionRate decimal.Decimal // 分成比例
 }
 
-// processInviteCommissions 处理邀请分成
-func (e *OrdGiftcardWriteoffs) processInviteCommissions(tx *gorm.DB, userId, orderId int, amount float64, sourceCurrency string, isCrypto bool, frozenLimit float64, createBy int) error {
+// processInviteCommissionsDecimal 处理邀请分成（使用decimal类型）
+func (e *OrdGiftcardWriteoffs) processInviteCommissionsDecimal(tx *gorm.DB, userId, orderId int, amount decimal.Decimal, sourceCurrency string, isCrypto bool, frozenLimit decimal.Decimal, createBy int) error {
 	orderIdStr := strconv.Itoa(orderId)
 
 	// 1. 查询邀请关系
@@ -1838,7 +1944,7 @@ func (e *OrdGiftcardWriteoffs) processInviteCommissions(tx *gorm.DB, userId, ord
 
 	// 2. 处理一级邀请人分成
 	if inviteRelation.Level1InviterId != "" && inviteRelation.Level1InviterId != "0" {
-		err = e.processInviterCommission(tx, inviteRelation.Level1InviterId, 1, amount, sourceCurrency, isCrypto, frozenLimit, orderIdStr, createBy)
+		err = e.processInviterCommissionDecimal(tx, inviteRelation.Level1InviterId, 1, amount, sourceCurrency, isCrypto, frozenLimit, orderIdStr, createBy)
 		if err != nil {
 			return err
 		}
@@ -1846,7 +1952,7 @@ func (e *OrdGiftcardWriteoffs) processInviteCommissions(tx *gorm.DB, userId, ord
 
 	// 3. 处理二级邀请人分成
 	if inviteRelation.Level2InviterId != "" && inviteRelation.Level2InviterId != "0" {
-		err = e.processInviterCommission(tx, inviteRelation.Level2InviterId, 2, amount, sourceCurrency, isCrypto, frozenLimit, orderIdStr, createBy)
+		err = e.processInviterCommissionDecimal(tx, inviteRelation.Level2InviterId, 2, amount, sourceCurrency, isCrypto, frozenLimit, orderIdStr, createBy)
 		if err != nil {
 			return err
 		}
@@ -1855,27 +1961,34 @@ func (e *OrdGiftcardWriteoffs) processInviteCommissions(tx *gorm.DB, userId, ord
 	return nil
 }
 
-// processInviterCommission 处理单个邀请人的分成
-func (e *OrdGiftcardWriteoffs) processInviterCommission(tx *gorm.DB, inviterId string, level int, amount float64, sourceCurrency string, isCrypto bool, frozenLimit float64, orderIdStr string, createBy int) error {
-	config, err := e.getInviterCommissionConfig(tx, inviterId, level)
+// processInviteCommissions 处理邀请分成（兼容旧接口，内部转为decimal处理）
+func (e *OrdGiftcardWriteoffs) processInviteCommissions(tx *gorm.DB, userId, orderId int, amount float64, sourceCurrency string, isCrypto bool, frozenLimit float64, createBy int) error {
+	amountDecimal := decimal.NewFromFloat(amount)
+	frozenLimitDecimal := decimal.NewFromFloat(frozenLimit)
+	return e.processInviteCommissionsDecimal(tx, userId, orderId, amountDecimal, sourceCurrency, isCrypto, frozenLimitDecimal, createBy)
+}
+
+// processInviterCommissionDecimal 处理单个邀请人的分成（使用decimal类型）
+func (e *OrdGiftcardWriteoffs) processInviterCommissionDecimal(tx *gorm.DB, inviterId string, level int, amount decimal.Decimal, sourceCurrency string, isCrypto bool, frozenLimit decimal.Decimal, orderIdStr string, createBy int) error {
+	config, err := e.getInviterCommissionConfigDecimal(tx, inviterId, level)
 	if err != nil {
 		e.Log.Errorf("Get level%d inviter commission config error:%s", level, err)
 		return err
 	}
 
-	if config.CommissionRate <= 0 {
+	if config.CommissionRate.LessThanOrEqual(decimal.Zero) {
 		return nil
 	}
 
-	commissionAmount := amount * config.CommissionRate
+	commissionAmount := amount.Mul(config.CommissionRate)
 
 	// 创建分成记录
 	commission := models.HsInviteCommissions{
 		OrderId:          orderIdStr,
 		UserId:           inviterId,
 		CommissionLevel:  strconv.Itoa(level),
-		CommissionRate:   fmt.Sprintf("%.2f", config.CommissionRate),
-		CommissionAmount: fmt.Sprintf("%.8f", commissionAmount),
+		CommissionRate:   config.CommissionRate.StringFixed(4),
+		CommissionAmount: commissionAmount.StringFixed(8),
 		Status:           "1",
 	}
 	commission.CreateBy = createBy
@@ -1885,30 +1998,25 @@ func (e *OrdGiftcardWriteoffs) processInviterCommission(tx *gorm.DB, inviterId s
 		return fmt.Errorf("创建%d级分成记录失败", level)
 	}
 
-	// 根据frozen_rate分配
-	frozenAmount := commissionAmount * config.FrozenRate
-	availableAmount := commissionAmount * (1 - config.FrozenRate)
+	// 分成资金全部进入冻结余额，满足全局冻结配置，达到阈值自动进入可用余额
 	orderId, _ := strconv.Atoi(orderIdStr)
-
-	if frozenAmount > 0 {
-		err = e.updateInviterFrozenBalance(tx, inviterId, frozenAmount, sourceCurrency, isCrypto, frozenLimit, orderId, strconv.Itoa(level), createBy)
-		if err != nil {
-			return err
-		}
-	}
-
-	if availableAmount > 0 {
-		err = e.updateInviterAvailableBalance(tx, inviterId, availableAmount, sourceCurrency, isCrypto, orderId, strconv.Itoa(level), createBy)
-		if err != nil {
-			return err
-		}
+	err = e.updateInviterFrozenBalanceDecimal(tx, inviterId, commissionAmount, sourceCurrency, isCrypto, frozenLimit, orderId, strconv.Itoa(level), createBy)
+	if err != nil {
+		return err
 	}
 
 	return nil
 }
 
-// getInviterCommissionConfig 获取邀请人分成配置
-func (e *OrdGiftcardWriteoffs) getInviterCommissionConfig(tx *gorm.DB, inviterId string, level int) (*InviterCommissionConfig, error) {
+// processInviterCommission 处理单个邀请人的分成（兼容旧接口）
+func (e *OrdGiftcardWriteoffs) processInviterCommission(tx *gorm.DB, inviterId string, level int, amount float64, sourceCurrency string, isCrypto bool, frozenLimit float64, orderIdStr string, createBy int) error {
+	amountDecimal := decimal.NewFromFloat(amount)
+	frozenLimitDecimal := decimal.NewFromFloat(frozenLimit)
+	return e.processInviterCommissionDecimal(tx, inviterId, level, amountDecimal, sourceCurrency, isCrypto, frozenLimitDecimal, orderIdStr, createBy)
+}
+
+// getInviterCommissionConfigDecimal 获取邀请人分成配置（使用decimal类型）
+func (e *OrdGiftcardWriteoffs) getInviterCommissionConfigDecimal(tx *gorm.DB, inviterId string, level int) (*InviterCommissionConfig, error) {
 	var commissionConfig models.HsConfigInviteCommission
 	err := tx.Where("config_name = ? AND status = 1", "invite_config").First(&commissionConfig).Error
 	if err != nil {
@@ -1931,76 +2039,63 @@ func (e *OrdGiftcardWriteoffs) getInviterCommissionConfig(tx *gorm.DB, inviterId
 		return nil, fmt.Errorf("分成比例配置为空（%d级）", level)
 	}
 
-	commissionRate, err := strconv.ParseFloat(commissionRateStr, 64)
+	commissionRate, err := decimal.NewFromString(commissionRateStr)
 	if err != nil {
-		e.Log.Errorf("getInviterCommissionConfig parse commission rate error: rate=%s, err=%s", commissionRateStr, err)
+		e.Log.Errorf("getInviterCommissionConfigDecimal parse commission rate error: rate=%s, err=%s", commissionRateStr, err)
 		return nil, fmt.Errorf("分成比例格式错误：%s", commissionRateStr)
 	}
-	commissionRate = commissionRate / 100.0
-
-	// 获取邀请人信息
-	var inviter models.HsUsers
-	err = tx.Where("id = ?", inviterId).First(&inviter).Error
-	if err != nil {
-		e.Log.Errorf("getInviterCommissionConfig get inviter error: inviterId=%s, err=%s", inviterId, err)
-		return nil, fmt.Errorf("获取邀请人信息失败：InviterID=%s", inviterId)
-	}
-
-	// 获取邀请人等级返利比例
-	var frozenRate float64 = 1.0
-	if inviter.LevelId != "" && inviter.LevelId != "0" {
-		var userLevel models.HsConfgiUserLevels
-		err = tx.Where("id = ? AND is_active = 1", inviter.LevelId).First(&userLevel).Error
-		if err != nil {
-			e.Log.Errorf("getInviterCommissionConfig get inviter level error: levelId=%s, err=%s", inviter.LevelId, err)
-			return nil, fmt.Errorf("邀请人等级配置不存在或未启用：LevelID=%s", inviter.LevelId)
-		}
-		if userLevel.RebateRate != "" {
-			frozenRate, err = strconv.ParseFloat(userLevel.RebateRate, 64)
-			if err != nil {
-				e.Log.Errorf("getInviterCommissionConfig parse rebate rate error: rate=%s, err=%s", userLevel.RebateRate, err)
-				return nil, fmt.Errorf("邀请人等级返利比例格式错误：%s", userLevel.RebateRate)
-			}
-		}
+	if commissionRate.GreaterThan(decimal.NewFromInt(1)) {
+		return nil, fmt.Errorf("分成比例格式错误：%s", commissionRateStr)
 	}
 
 	return &InviterCommissionConfig{
 		CommissionRate: commissionRate,
-		FrozenRate:     frozenRate,
 	}, nil
 }
 
-// updateInviterFrozenBalance 更新邀请人冻结余额（法币/虚拟币分离）
-func (e *OrdGiftcardWriteoffs) updateInviterFrozenBalance(tx *gorm.DB, inviterId string, sourceAmount float64, sourceCurrency string, isCrypto bool, frozenLimit float64, orderId int, level string, createBy int) error {
-	if isCrypto {
-		return e.updateInviterCryptoFrozenBalance(tx, inviterId, sourceAmount, sourceCurrency, frozenLimit, orderId, level, createBy)
-	}
-	return e.updateInviterFiatFrozenBalance(tx, inviterId, sourceAmount, sourceCurrency, frozenLimit, orderId, level, createBy)
+// getInviterCommissionConfig 获取邀请人分成配置（兼容旧接口）
+func (e *OrdGiftcardWriteoffs) getInviterCommissionConfig(tx *gorm.DB, inviterId string, level int) (*InviterCommissionConfig, error) {
+	return e.getInviterCommissionConfigDecimal(tx, inviterId, level)
 }
 
-// updateInviterFiatFrozenBalance 更新邀请人法币冻结余额
-func (e *OrdGiftcardWriteoffs) updateInviterFiatFrozenBalance(tx *gorm.DB, inviterId string, amount float64, currency string, frozenLimit float64, orderId int, level string, createBy int) error {
+// updateInviterFrozenBalanceDecimal 更新邀请人冻结余额（法币/虚拟币分离，使用decimal类型）
+func (e *OrdGiftcardWriteoffs) updateInviterFrozenBalanceDecimal(tx *gorm.DB, inviterId string, sourceAmount decimal.Decimal, sourceCurrency string, isCrypto bool, frozenLimit decimal.Decimal, orderId int, level string, createBy int) error {
+	if isCrypto {
+		return e.updateInviterCryptoFrozenBalanceDecimal(tx, inviterId, sourceAmount, sourceCurrency, frozenLimit, orderId, level, createBy)
+	}
+	return e.updateInviterFiatFrozenBalanceDecimal(tx, inviterId, sourceAmount, sourceCurrency, frozenLimit, orderId, level, createBy)
+}
+
+// updateInviterFrozenBalance 更新邀请人冻结余额（兼容旧接口）
+func (e *OrdGiftcardWriteoffs) updateInviterFrozenBalance(tx *gorm.DB, inviterId string, sourceAmount float64, sourceCurrency string, isCrypto bool, frozenLimit float64, orderId int, level string, createBy int) error {
+	amountDecimal := decimal.NewFromFloat(sourceAmount)
+	frozenLimitDecimal := decimal.NewFromFloat(frozenLimit)
+	return e.updateInviterFrozenBalanceDecimal(tx, inviterId, amountDecimal, sourceCurrency, isCrypto, frozenLimitDecimal, orderId, level, createBy)
+}
+
+// updateInviterFiatFrozenBalanceDecimal 更新邀请人法币冻结余额（使用decimal类型）
+func (e *OrdGiftcardWriteoffs) updateInviterFiatFrozenBalanceDecimal(tx *gorm.DB, inviterId string, amount decimal.Decimal, currency string, frozenLimit decimal.Decimal, orderId int, level string, createBy int) error {
 	var inviter models.HsUsers
 	err := tx.Where("id = ?", inviterId).First(&inviter).Error
 	if err != nil {
 		return fmt.Errorf("获取邀请人信息失败")
 	}
 
-	frozenBalanceBefore, _ := strconv.ParseFloat(inviter.FrozenBalance, 64)
-	availableBalanceBefore, _ := strconv.ParseFloat(inviter.Balance, 64)
+	frozenBalanceBefore, _ := decimal.NewFromString(inviter.FrozenBalance)
+	availableBalanceBefore, _ := decimal.NewFromString(inviter.Balance)
 
 	// 计算冻结分配
-	frozenAmount, overflowAmount := e.calculateFrozenAllocation(frozenBalanceBefore, amount, frozenLimit)
-	frozenBalanceAfter := frozenBalanceBefore + frozenAmount
-	availableBalanceAfter := availableBalanceBefore + overflowAmount
+	frozenAmount, overflowAmount := e.calculateFrozenAllocationDecimal(frozenBalanceBefore, amount, frozenLimit)
+	frozenBalanceAfter := frozenBalanceBefore.Add(frozenAmount)
+	availableBalanceAfter := availableBalanceBefore.Add(overflowAmount)
 
 	// 更新余额
 	updateFields := map[string]interface{}{"version": gorm.Expr("version + 1")}
-	if frozenAmount > 0 {
-		updateFields["frozen_balance"] = fmt.Sprintf("%.2f", frozenBalanceAfter)
+	if frozenAmount.GreaterThan(decimal.Zero) {
+		updateFields["frozen_balance"] = frozenBalanceAfter.StringFixed(2)
 	}
-	if overflowAmount > 0 {
-		updateFields["balance"] = fmt.Sprintf("%.2f", availableBalanceAfter)
+	if overflowAmount.GreaterThan(decimal.Zero) {
+		updateFields["balance"] = availableBalanceAfter.StringFixed(2)
 	}
 
 	result := tx.Model(&models.HsUsers{}).Where("id = ? AND version = ?", inviterId, inviter.Version).Updates(updateFields)
@@ -2008,62 +2103,83 @@ func (e *OrdGiftcardWriteoffs) updateInviterFiatFrozenBalance(tx *gorm.DB, invit
 		return errors.New("更新邀请人法币余额失败")
 	}
 
-	// 创建流水
+	// 创建流水：分三步记录资金流动
 	nanoTime := time.Now().UnixNano()
 	orderIdStr := strconv.Itoa(orderId)
 
-	if frozenAmount > 0 {
-		ledger := models.HsUserLedger{
-			UserId: inviterId, CurrencyCode: currency, Direction: "1",
-			Amount: fmt.Sprintf("%.2f", frozenAmount), BalanceBefore: fmt.Sprintf("%.2f", frozenBalanceBefore),
-			BalanceAfter: fmt.Sprintf("%.2f", frozenBalanceAfter), BizType: "invite_commission_frozen_fiat",
-			BizId: orderIdStr, IdempotencyKey: fmt.Sprintf("INVITE_FROZEN_L%s:%d:%d", level, orderId, nanoTime),
-			RefTable: "hs_invite_commissions", RefId: orderIdStr,
-			Remark: fmt.Sprintf("邀请分成冻结（%s级），订单号: %d", level, orderId), Status: "1",
-		}
-		ledger.CreateBy = createBy
-		tx.Create(&ledger)
+	// 1. 冻结增加：全部分成金额进入冻结余额
+	frozenBalanceAfterAdd := frozenBalanceBefore.Add(amount)
+	ledger1 := models.HsUserLedger{
+		UserId: inviterId, CurrencyCode: currency, Direction: "1",
+		Amount: amount.StringFixed(2), BalanceBefore: frozenBalanceBefore.StringFixed(2),
+		BalanceAfter: frozenBalanceAfterAdd.StringFixed(2), BizType: "invite_commission_frozen_add_fiat",
+		BizId: orderIdStr, IdempotencyKey: fmt.Sprintf("INVITE_FROZEN_ADD_L%s:%d:%d", level, orderId, nanoTime),
+		RefTable: "hs_invite_commissions", RefId: orderIdStr,
+		Remark: fmt.Sprintf("邀请分成冻结增加（%s级），订单号: %d", level, orderId), Status: "1",
 	}
+	ledger1.CreateBy = createBy
+	tx.Create(&ledger1)
 
-	if overflowAmount > 0 {
-		ledger := models.HsUserLedger{
-			UserId: inviterId, CurrencyCode: currency, Direction: "1",
-			Amount: fmt.Sprintf("%.2f", overflowAmount), BalanceBefore: fmt.Sprintf("%.2f", availableBalanceBefore),
-			BalanceAfter: fmt.Sprintf("%.2f", availableBalanceAfter), BizType: "invite_commission_available_fiat",
-			BizId: orderIdStr, IdempotencyKey: fmt.Sprintf("INVITE_AVAILABLE_L%s:%d:%d", level, orderId, nanoTime+1),
+	// 2. 如果超出阈值：冻结转出 + 余额转入
+	if overflowAmount.GreaterThan(decimal.Zero) {
+		// 2.1 冻结转出
+		ledger2 := models.HsUserLedger{
+			UserId: inviterId, CurrencyCode: currency, Direction: "2",
+			Amount: overflowAmount.StringFixed(2), BalanceBefore: frozenBalanceAfterAdd.StringFixed(2),
+			BalanceAfter: frozenBalanceAfter.StringFixed(2), BizType: "invite_commission_frozen_out_fiat",
+			BizId: orderIdStr, IdempotencyKey: fmt.Sprintf("INVITE_FROZEN_OUT_L%s:%d:%d", level, orderId, nanoTime+1),
 			RefTable: "hs_invite_commissions", RefId: orderIdStr,
-			Remark: fmt.Sprintf("邀请分成可用（%s级，超冻结限额），订单号: %d", level, orderId), Status: "1",
+			Remark: fmt.Sprintf("邀请分成冻结转出（%s级，超限），订单号: %d", level, orderId), Status: "1",
 		}
-		ledger.CreateBy = createBy
-		tx.Create(&ledger)
+		ledger2.CreateBy = createBy
+		tx.Create(&ledger2)
+
+		// 2.2 余额转入
+		ledger3 := models.HsUserLedger{
+			UserId: inviterId, CurrencyCode: currency, Direction: "1",
+			Amount: overflowAmount.StringFixed(2), BalanceBefore: availableBalanceBefore.StringFixed(2),
+			BalanceAfter: availableBalanceAfter.StringFixed(2), BizType: "invite_commission_balance_in_fiat",
+			BizId: orderIdStr, IdempotencyKey: fmt.Sprintf("INVITE_BALANCE_IN_L%s:%d:%d", level, orderId, nanoTime+2),
+			RefTable: "hs_invite_commissions", RefId: orderIdStr,
+			Remark: fmt.Sprintf("邀请分成余额转入（%s级，超限），订单号: %d", level, orderId), Status: "1",
+		}
+		ledger3.CreateBy = createBy
+		tx.Create(&ledger3)
 	}
 
 	return nil
 }
 
-// updateInviterCryptoFrozenBalance 更新邀请人虚拟币冻结余额
-func (e *OrdGiftcardWriteoffs) updateInviterCryptoFrozenBalance(tx *gorm.DB, inviterId string, amount float64, currency string, frozenLimit float64, orderId int, level string, createBy int) error {
+// updateInviterFiatFrozenBalance 更新邀请人法币冻结余额（兼容旧接口）
+func (e *OrdGiftcardWriteoffs) updateInviterFiatFrozenBalance(tx *gorm.DB, inviterId string, amount float64, currency string, frozenLimit float64, orderId int, level string, createBy int) error {
+	amountDecimal := decimal.NewFromFloat(amount)
+	frozenLimitDecimal := decimal.NewFromFloat(frozenLimit)
+	return e.updateInviterFiatFrozenBalanceDecimal(tx, inviterId, amountDecimal, currency, frozenLimitDecimal, orderId, level, createBy)
+}
+
+// updateInviterCryptoFrozenBalanceDecimal 更新邀请人虚拟币冻结余额（使用decimal类型）
+func (e *OrdGiftcardWriteoffs) updateInviterCryptoFrozenBalanceDecimal(tx *gorm.DB, inviterId string, amount decimal.Decimal, currency string, frozenLimit decimal.Decimal, orderId int, level string, createBy int) error {
 	var inviter models.HsUsers
 	err := tx.Where("id = ?", inviterId).First(&inviter).Error
 	if err != nil {
 		return fmt.Errorf("获取邀请人信息失败")
 	}
 
-	frozenBalanceBefore, _ := strconv.ParseFloat(inviter.CryptoFrozenBalance, 64)
-	availableBalanceBefore, _ := strconv.ParseFloat(inviter.CryptoBalance, 64)
+	frozenBalanceBefore, _ := decimal.NewFromString(inviter.CryptoFrozenBalance)
+	availableBalanceBefore, _ := decimal.NewFromString(inviter.CryptoBalance)
 
 	// 计算冻结分配
-	frozenAmount, overflowAmount := e.calculateFrozenAllocation(frozenBalanceBefore, amount, frozenLimit)
-	frozenBalanceAfter := frozenBalanceBefore + frozenAmount
-	availableBalanceAfter := availableBalanceBefore + overflowAmount
+	frozenAmount, overflowAmount := e.calculateFrozenAllocationDecimal(frozenBalanceBefore, amount, frozenLimit)
+	frozenBalanceAfter := frozenBalanceBefore.Add(frozenAmount)
+	availableBalanceAfter := availableBalanceBefore.Add(overflowAmount)
 
 	// 更新余额
 	updateFields := map[string]interface{}{"version": gorm.Expr("version + 1")}
-	if frozenAmount > 0 {
-		updateFields["crypto_frozen_balance"] = fmt.Sprintf("%.8f", frozenBalanceAfter)
+	if frozenAmount.GreaterThan(decimal.Zero) {
+		updateFields["crypto_frozen_balance"] = frozenBalanceAfter.StringFixed(8)
 	}
-	if overflowAmount > 0 {
-		updateFields["crypto_balance"] = fmt.Sprintf("%.8f", availableBalanceAfter)
+	if overflowAmount.GreaterThan(decimal.Zero) {
+		updateFields["crypto_balance"] = availableBalanceAfter.StringFixed(8)
 	}
 
 	result := tx.Model(&models.HsUsers{}).Where("id = ? AND version = ?", inviterId, inviter.Version).Updates(updateFields)
@@ -2071,37 +2187,58 @@ func (e *OrdGiftcardWriteoffs) updateInviterCryptoFrozenBalance(tx *gorm.DB, inv
 		return errors.New("更新邀请人虚拟币余额失败")
 	}
 
-	// 创建流水
+	// 创建流水：分三步记录资金流动
 	nanoTime := time.Now().UnixNano()
 	orderIdStr := strconv.Itoa(orderId)
 
-	if frozenAmount > 0 {
-		ledger := models.HsUserLedger{
-			UserId: inviterId, CurrencyCode: currency, Direction: "1",
-			Amount: fmt.Sprintf("%.8f", frozenAmount), BalanceBefore: fmt.Sprintf("%.8f", frozenBalanceBefore),
-			BalanceAfter: fmt.Sprintf("%.8f", frozenBalanceAfter), BizType: "invite_commission_frozen_crypto",
-			BizId: orderIdStr, IdempotencyKey: fmt.Sprintf("INVITE_FROZEN_L%s:%d:%d", level, orderId, nanoTime),
-			RefTable: "hs_invite_commissions", RefId: orderIdStr,
-			Remark: fmt.Sprintf("邀请分成冻结（%s级），订单号: %d", level, orderId), Status: "1",
-		}
-		ledger.CreateBy = createBy
-		tx.Create(&ledger)
+	// 1. 冻结增加：全部分成金额进入冻结余额
+	frozenBalanceAfterAdd := frozenBalanceBefore.Add(amount)
+	ledger1 := models.HsUserLedger{
+		UserId: inviterId, CurrencyCode: currency, Direction: "1",
+		Amount: amount.StringFixed(8), BalanceBefore: frozenBalanceBefore.StringFixed(8),
+		BalanceAfter: frozenBalanceAfterAdd.StringFixed(8), BizType: "invite_commission_frozen_add_crypto",
+		BizId: orderIdStr, IdempotencyKey: fmt.Sprintf("INVITE_FROZEN_ADD_L%s:%d:%d", level, orderId, nanoTime),
+		RefTable: "hs_invite_commissions", RefId: orderIdStr,
+		Remark: fmt.Sprintf("邀请分成冻结增加（%s级），订单号: %d", level, orderId), Status: "1",
 	}
+	ledger1.CreateBy = createBy
+	tx.Create(&ledger1)
 
-	if overflowAmount > 0 {
-		ledger := models.HsUserLedger{
-			UserId: inviterId, CurrencyCode: currency, Direction: "1",
-			Amount: fmt.Sprintf("%.8f", overflowAmount), BalanceBefore: fmt.Sprintf("%.8f", availableBalanceBefore),
-			BalanceAfter: fmt.Sprintf("%.8f", availableBalanceAfter), BizType: "invite_commission_available_crypto",
-			BizId: orderIdStr, IdempotencyKey: fmt.Sprintf("INVITE_AVAILABLE_L%s:%d:%d", level, orderId, nanoTime+1),
+	// 2. 如果超出阈值：冻结转出 + 余额转入
+	if overflowAmount.GreaterThan(decimal.Zero) {
+		// 2.1 冻结转出
+		ledger2 := models.HsUserLedger{
+			UserId: inviterId, CurrencyCode: currency, Direction: "2",
+			Amount: overflowAmount.StringFixed(8), BalanceBefore: frozenBalanceAfterAdd.StringFixed(8),
+			BalanceAfter: frozenBalanceAfter.StringFixed(8), BizType: "invite_commission_frozen_out_crypto",
+			BizId: orderIdStr, IdempotencyKey: fmt.Sprintf("INVITE_FROZEN_OUT_L%s:%d:%d", level, orderId, nanoTime+1),
 			RefTable: "hs_invite_commissions", RefId: orderIdStr,
-			Remark: fmt.Sprintf("邀请分成可用（%s级，超冻结限额），订单号: %d", level, orderId), Status: "1",
+			Remark: fmt.Sprintf("邀请分成冻结转出（%s级，超限），订单号: %d", level, orderId), Status: "1",
 		}
-		ledger.CreateBy = createBy
-		tx.Create(&ledger)
+		ledger2.CreateBy = createBy
+		tx.Create(&ledger2)
+
+		// 2.2 余额转入
+		ledger3 := models.HsUserLedger{
+			UserId: inviterId, CurrencyCode: currency, Direction: "1",
+			Amount: overflowAmount.StringFixed(8), BalanceBefore: availableBalanceBefore.StringFixed(8),
+			BalanceAfter: availableBalanceAfter.StringFixed(8), BizType: "invite_commission_balance_in_crypto",
+			BizId: orderIdStr, IdempotencyKey: fmt.Sprintf("INVITE_BALANCE_IN_L%s:%d:%d", level, orderId, nanoTime+2),
+			RefTable: "hs_invite_commissions", RefId: orderIdStr,
+			Remark: fmt.Sprintf("邀请分成余额转入（%s级，超限），订单号: %d", level, orderId), Status: "1",
+		}
+		ledger3.CreateBy = createBy
+		tx.Create(&ledger3)
 	}
 
 	return nil
+}
+
+// updateInviterCryptoFrozenBalance 更新邀请人虚拟币冻结余额（兼容旧接口）
+func (e *OrdGiftcardWriteoffs) updateInviterCryptoFrozenBalance(tx *gorm.DB, inviterId string, amount float64, currency string, frozenLimit float64, orderId int, level string, createBy int) error {
+	amountDecimal := decimal.NewFromFloat(amount)
+	frozenLimitDecimal := decimal.NewFromFloat(frozenLimit)
+	return e.updateInviterCryptoFrozenBalanceDecimal(tx, inviterId, amountDecimal, currency, frozenLimitDecimal, orderId, level, createBy)
 }
 
 // updateInviterAvailableBalance 更新邀请人可用余额（法币/虚拟币分离）

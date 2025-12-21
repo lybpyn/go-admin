@@ -2,8 +2,11 @@ package service
 
 import (
 	"errors"
+	"fmt"
+	"strconv"
+	"time"
 
-    "github.com/go-admin-team/go-admin-core/sdk/service"
+	"github.com/go-admin-team/go-admin-core/sdk/service"
 	"gorm.io/gorm"
 
 	"go-admin/app/admin/models"
@@ -105,5 +108,138 @@ func (e *HsUsers) Remove(d *dto.HsUsersDeleteReq, p *actions.DataPermission) err
     if db.RowsAffected == 0 {
         return errors.New("无权删除该数据")
     }
+	return nil
+}
+
+// AdjustBalance 调整用户余额并记录流水
+func (e *HsUsers) AdjustBalance(c *dto.HsUsersAdjustBalanceReq) error {
+	// 解析调整金额
+	adjustAmount, err := strconv.ParseFloat(c.Amount, 64)
+	if err != nil {
+		return fmt.Errorf("金额格式错误: %w", err)
+	}
+	if adjustAmount == 0 {
+		return errors.New("调整金额不能为0")
+	}
+
+	// 开启事务
+	tx := e.Orm.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	// 查询用户
+	var user models.HsUsers
+	if err := tx.First(&user, c.UserId).Error; err != nil {
+		tx.Rollback()
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("用户不存在")
+		}
+		return fmt.Errorf("查询用户失败: %w", err)
+	}
+
+	// 根据余额类型获取当前余额并更新
+	var balanceBefore, balanceAfter float64
+	var balanceField, bizType, currencyCode string
+	var precision int
+
+	switch c.BalanceType {
+	case "balance":
+		balanceField = "balance"
+		bizType = "manual_adjust_balance"
+		currencyCode = user.CurrencyCode
+		precision = 2
+		balanceBefore, _ = strconv.ParseFloat(user.Balance, 64)
+	case "crypto_balance":
+		balanceField = "crypto_balance"
+		bizType = "manual_adjust_crypto"
+		currencyCode = "USDT"
+		precision = 8
+		balanceBefore, _ = strconv.ParseFloat(user.CryptoBalance, 64)
+	case "frozen_balance":
+		balanceField = "frozen_balance"
+		bizType = "manual_adjust_frozen"
+		currencyCode = user.CurrencyCode
+		precision = 2
+		balanceBefore, _ = strconv.ParseFloat(user.FrozenBalance, 64)
+	case "crypto_frozen_balance":
+		balanceField = "crypto_frozen_balance"
+		bizType = "manual_adjust_crypto_frozen"
+		currencyCode = "USDT"
+		precision = 8
+		balanceBefore, _ = strconv.ParseFloat(user.CryptoFrozenBalance, 64)
+	default:
+		tx.Rollback()
+		return fmt.Errorf("不支持的余额类型: %s", c.BalanceType)
+	}
+
+	// 计算调整后余额
+	balanceAfter = balanceBefore + adjustAmount
+	if balanceAfter < 0 {
+		tx.Rollback()
+		return fmt.Errorf("余额不足，当前余额: %."+strconv.Itoa(precision)+"f，调整金额: %."+strconv.Itoa(precision)+"f", balanceBefore, adjustAmount)
+	}
+
+	// 更新用户余额
+	var balanceAfterStr string
+	if precision == 2 {
+		balanceAfterStr = fmt.Sprintf("%.2f", balanceAfter)
+	} else {
+		balanceAfterStr = fmt.Sprintf("%.8f", balanceAfter)
+	}
+
+	if err := tx.Model(&models.HsUsers{}).Where("id = ?", c.UserId).
+		Update(balanceField, balanceAfterStr).Error; err != nil {
+		tx.Rollback()
+		return fmt.Errorf("更新余额失败: %w", err)
+	}
+
+	// 记录流水
+	direction := "1" // 入账
+	amount := adjustAmount
+	if adjustAmount < 0 {
+		direction = "2" // 出账
+		amount = -adjustAmount
+	}
+
+	var amountStr, balanceBeforeStr string
+	if precision == 2 {
+		amountStr = fmt.Sprintf("%.2f", amount)
+		balanceBeforeStr = fmt.Sprintf("%.2f", balanceBefore)
+	} else {
+		amountStr = fmt.Sprintf("%.8f", amount)
+		balanceBeforeStr = fmt.Sprintf("%.8f", balanceBefore)
+	}
+
+	ledger := models.HsUserLedger{
+		UserId:         strconv.Itoa(c.UserId),
+		CurrencyCode:   currencyCode,
+		Direction:      direction,
+		Amount:         amountStr,
+		BalanceBefore:  balanceBeforeStr,
+		BalanceAfter:   balanceAfterStr,
+		BizType:        bizType,
+		BizId:          fmt.Sprintf("MANUAL_%d_%d", c.UserId, time.Now().UnixNano()),
+		IdempotencyKey: fmt.Sprintf("MANUAL_ADJUST:%d:%d", c.UserId, time.Now().UnixNano()),
+		Remark:         c.Remark,
+		Status:         "1",
+	}
+	ledger.CreateBy = c.CreateBy
+
+	if err := tx.Create(&ledger).Error; err != nil {
+		tx.Rollback()
+		return fmt.Errorf("记录流水失败: %w", err)
+	}
+
+	// 提交事务
+	if err := tx.Commit().Error; err != nil {
+		return fmt.Errorf("提交事务失败: %w", err)
+	}
+
+	e.Log.Infof("调整用户 %d 余额成功，类型: %s，调整前: %s，调整后: %s，备注: %s",
+		c.UserId, c.BalanceType, balanceBeforeStr, balanceAfterStr, c.Remark)
+
 	return nil
 }

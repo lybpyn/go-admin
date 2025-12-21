@@ -51,6 +51,80 @@ const docTemplateadmin = `{
                 }
             }
         },
+        "/api/v1/callback/pandapay": {
+            "post": {
+                "description": "接收PandaPay的支付回调通知，更新提现订单状态",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "回调接口"
+                ],
+                "summary": "处理PandaPay回调通知",
+                "parameters": [
+                    {
+                        "description": "回调数据",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.PandaPayCallbackReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/dto.PandaPayCallbackResp"
+                        }
+                    },
+                    "400": {
+                        "description": "请求参数错误",
+                        "schema": {
+                            "$ref": "#/definitions/dto.PandaPayCallbackResp"
+                        }
+                    },
+                    "500": {
+                        "description": "服务器内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/dto.PandaPayCallbackResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/callback/pandapay/test": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "测试PandaPay回调接口是否正常工作",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "回调接口"
+                ],
+                "summary": "测试回调接口",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/captcha": {
             "get": {
                 "description": "获取验证码",
@@ -6936,6 +7010,64 @@ const docTemplateadmin = `{
                 }
             }
         },
+        "/api/v1/hs-user-withdrawal/{id}/manual-transfer": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "手动完成提现转账，记录转账截图和结果",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "提现管理"
+                ],
+                "summary": "手动处理提现转账",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "提现记录ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "手动转账信息",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsUserWithdrawalManualTransferReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/hs-user-withdrawal/{id}/reject": {
             "post": {
                 "security": [
@@ -7186,6 +7318,45 @@ const docTemplateadmin = `{
                         "description": "{\"code\": 200, \"message\": \"删除成功\"}",
                         "schema": {
                             "$ref": "#/definitions/models.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/hs-users/adjust-balance": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "调整用户余额（法币/虚拟币/冻结余额）并记录流水",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户主表"
+                ],
+                "summary": "调整用户余额",
+                "parameters": [
+                    {
+                        "description": "调整余额参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsUsersAdjustBalanceReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"调整成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -10499,6 +10670,18 @@ const docTemplateadmin = `{
                         "description": "页码",
                         "name": "pageIndex",
                         "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "订单ID",
+                        "name": "orderId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "订单号",
+                        "name": "orderNo",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -13438,9 +13621,6 @@ const docTemplateadmin = `{
                 "createBy": {
                     "type": "integer"
                 },
-                "exp": {
-                    "type": "string"
-                },
                 "isActive": {
                     "type": "string"
                 },
@@ -13469,9 +13649,6 @@ const docTemplateadmin = `{
             "properties": {
                 "createBy": {
                     "type": "integer"
-                },
-                "exp": {
-                    "type": "string"
                 },
                 "id": {
                     "description": "等级ID",
@@ -15426,6 +15603,29 @@ const docTemplateadmin = `{
                 }
             }
         },
+        "dto.HsUserWithdrawalManualTransferReq": {
+            "type": "object",
+            "properties": {
+                "createBy": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                },
+                "transferImage": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.HsUserWithdrawalRejectReq": {
             "type": "object",
             "required": [
@@ -15580,6 +15780,9 @@ const docTemplateadmin = `{
                     "description": "累计提现金额",
                     "type": "string"
                 },
+                "transferImage": {
+                    "type": "string"
+                },
                 "updateBy": {
                     "type": "integer"
                 },
@@ -15595,6 +15798,41 @@ const docTemplateadmin = `{
                 },
                 "withdrawNo": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.HsUsersAdjustBalanceReq": {
+            "type": "object",
+            "required": [
+                "amount",
+                "balanceType",
+                "remark",
+                "userId"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "string"
+                },
+                "balanceType": {
+                    "type": "string",
+                    "enum": [
+                        "balance",
+                        "crypto_balance",
+                        "frozen_balance",
+                        "crypto_frozen_balance"
+                    ]
+                },
+                "createBy": {
+                    "type": "integer"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "updateBy": {
+                    "type": "integer"
+                },
+                "userId": {
+                    "type": "integer"
                 }
             }
         },
@@ -16970,7 +17208,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "giftCardId": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "platformSettlementAmount": {
                     "type": "string"
@@ -16985,7 +17223,7 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "supplierId": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "userLocalCurrencyAmount": {
                     "type": "string"
@@ -17090,9 +17328,6 @@ const docTemplateadmin = `{
                 "failureImageUrl": {
                     "type": "string"
                 },
-                "giftCardDiscountId": {
-                    "type": "string"
-                },
                 "giftCardId": {
                     "type": "string"
                 },
@@ -17132,9 +17367,6 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "failureImageUrl": {
-                    "type": "string"
-                },
-                "giftCardDiscountId": {
                     "type": "string"
                 },
                 "giftCardId": {
@@ -17359,6 +17591,70 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "userId": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.PandaPayCallbackReq": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string"
+                },
+                "merchantAmount": {
+                    "type": "string"
+                },
+                "merchantId": {
+                    "type": "integer"
+                },
+                "merchantOrderId": {
+                    "type": "string"
+                },
+                "merchantRefundAmount": {
+                    "type": "string"
+                },
+                "msg": {
+                    "type": "string"
+                },
+                "orderId": {
+                    "type": "integer"
+                },
+                "payTime": {
+                    "type": "string"
+                },
+                "payoutBankCode": {
+                    "type": "string"
+                },
+                "payoutBankName": {
+                    "type": "string"
+                },
+                "payoutCardName": {
+                    "type": "string"
+                },
+                "payoutCardNumber": {
+                    "type": "string"
+                },
+                "session_id": {
+                    "type": "string"
+                },
+                "sign": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "timestamp": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.PandaPayCallbackResp": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
                     "type": "string"
                 }
             }
@@ -18726,9 +19022,6 @@ const docTemplateadmin = `{
                 "createdAt": {
                     "type": "string"
                 },
-                "exp": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
@@ -19762,6 +20055,9 @@ const docTemplateadmin = `{
                 "status": {
                     "type": "string"
                 },
+                "transferImage": {
+                    "type": "string"
+                },
                 "updateBy": {
                     "type": "integer"
                 },
@@ -20430,9 +20726,6 @@ const docTemplateadmin = `{
                 "failureImageUrl": {
                     "type": "string"
                 },
-                "giftCardDiscountId": {
-                    "type": "integer"
-                },
                 "giftCardId": {
                     "type": "integer"
                 },
@@ -20446,7 +20739,7 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "orderNo": {
-                    "description": "关联字段（不存储到数据库，仅用于返回）",
+                    "description": "冗余字段（方便查询）",
                     "type": "string"
                 },
                 "platformSaleRate": {
@@ -20490,6 +20783,7 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "userName": {
+                    "description": "关联字段（不存储到数据库，仅用于返回）",
                     "type": "string"
                 }
             }

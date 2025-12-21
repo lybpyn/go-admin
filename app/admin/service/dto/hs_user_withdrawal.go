@@ -208,3 +208,16 @@ type HsUserWithdrawalRejectReq struct {
 func (s *HsUserWithdrawalRejectReq) GetId() interface{} {
 	return s.Id
 }
+
+// HsUserWithdrawalManualTransferReq 手动处理提现转账请求参数
+type HsUserWithdrawalManualTransferReq struct {
+	Id            int    `uri:"id" comment:"提现记录ID"`
+	Success       bool   `json:"success" comment:"是否转账成功"`
+	TransferImage string `json:"transferImage" comment:"转账截图URL"`
+	Remark        string `json:"remark" comment:"备注"`
+	common.ControlBy
+}
+
+func (s *HsUserWithdrawalManualTransferReq) GetId() interface{} {
+	return s.Id
+}

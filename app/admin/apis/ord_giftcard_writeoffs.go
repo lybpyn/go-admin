@@ -25,6 +25,8 @@ type OrdGiftcardWriteoffs struct {
 // @Tags 礼品卡核销记录表
 // @Param pageSize query int false "页条数"
 // @Param pageIndex query int false "页码"
+// @Param orderId query int false "订单ID"
+// @Param orderNo query string false "订单号"
 // @Success 200 {object} models.Response{data=models.Page{list=[]models.OrdGiftcardWriteoffs}} "{"code": 200, "data": [...]}"
 // @Router /api/v1/ord-giftcard-writeoffs [get]
 // @Security Bearer

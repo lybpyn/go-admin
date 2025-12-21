@@ -79,7 +79,11 @@ func (e *HsConfgiUserLevels) Update(c *dto.HsConfgiUserLevelsUpdateReq, p *actio
         ).First(&data, c.GetId())
     c.Generate(&data)
 
-    db := e.Orm.Save(&data)
+    // 使用 Select 明确指定要更新的字段，避免零值被忽略
+    db := e.Orm.Model(&data).Select(
+        "level_name", "up_experience", "level_icon", "rebate_rate",
+        "sort_order", "is_active", "update_by", "updated_at",
+    ).Updates(&data)
     if err = db.Error; err != nil {
         e.Log.Errorf("HsConfgiUserLevelsService Save error:%s \r\n", err)
         return err

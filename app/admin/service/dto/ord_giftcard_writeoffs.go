@@ -10,6 +10,8 @@ import (
 
 type OrdGiftcardWriteoffsGetPageReq struct {
 	dto.Pagination `search:"-"`
+	OrderId        int    `form:"orderId" search:"type:exact;column:order_id;table:ord_giftcard_writeoffs"`
+	OrderNo        string `form:"orderNo" search:"-"` // 订单号，需要手动处理关联查询
 	OrdGiftcardWriteoffsOrder
 }
 
@@ -141,14 +143,14 @@ func (e *OrdGiftcardWriteoffsBatchInsertReq) SetUpdateBy(updateBy int) {
 
 // OrdGiftcardWriteoffsBatchItem 批量核销项
 type OrdGiftcardWriteoffsBatchItem struct {
-	GiftCardId               int    `json:"giftCardId" comment:"礼品卡ID，关联 ord_giftcard.id"`
+	GiftCardId               string    `json:"giftCardId" comment:"礼品卡ID，关联 ord_giftcard.id"`
 	AdminRecognizedCode      string `json:"adminRecognizedCode" binding:"required" comment:"管理员识别的兑换码"`
 	RecognizedCardValue      string `json:"recognizedCardValue" comment:"识别的卡片面值"`
 	UserLocalCurrencyAmount  string `json:"userLocalCurrencyAmount" comment:"用户入账的本地货币金额"`
 	Status                   int    `json:"status" comment:"核销状态：0=待核销，1=已核销，2=失败"`
 	Remark                   string `json:"remark" comment:"备注信息"`
 	FailureImageUrl          string `json:"failureImageUrl" comment:"失败时的截图URL"`
-	SupplierId               int    `json:"supplierId" comment:"收卡品牌商ID"`
+	SupplierId               string    `json:"supplierId" comment:"收卡品牌商ID"`
 	PlatformSettlementAmount string `json:"platformSettlementAmount" comment:"平台入账货币金额"`
 }
 

@@ -199,39 +199,18 @@ type BankAccountInfo struct {
 	Address       string `json:"address"`
 }
 
-// Approve 审核通过提现申请，并自动转账（bank方式调用PandaPay）
-func (e *HsUserWithdrawal) Approve(c *dto.HsUserWithdrawalApproveReq, p *actions.DataPermission) error {
-	var withdrawal models.HsUserWithdrawal
+// WithdrawalPayoutResult 提现转账结果
+type WithdrawalPayoutResult struct {
+	ChannelTxnId string // 通道交易ID
+	Status       string // 提现状态：processing/success/failed
+	Reason       string // 失败原因
+}
 
-	// 查询提现记录
-	err := e.Orm.Model(&withdrawal).
-		Scopes(
-			actions.Permission(withdrawal.TableName(), p),
-		).
-		First(&withdrawal, c.GetId()).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return errors.New("提现记录不存在或无权操作")
-		}
-		e.Log.Errorf("查询提现记录失败: %s", err)
-		return err
-	}
-
-	// 检查状态，只有review状态才能审核通过
-	if withdrawal.Status != "review" && withdrawal.Status != "pending" {
-		return fmt.Errorf("提现记录状态不正确，当前状态: %s，只能审核review或pending状态", withdrawal.Status)
-	}
-
-	// 解析金额
-	amount, err := pandapay.ParseAmount(withdrawal.NetAmount)
-	if err != nil {
-		return fmt.Errorf("金额解析失败: %w", err)
-	}
+// SubmitWithdrawalPayout 提交提现转账（公共方法，供approve和自动处理器使用）
+func (e *HsUserWithdrawal) SubmitWithdrawalPayout(withdrawal *models.HsUserWithdrawal) (*WithdrawalPayoutResult, error) {
+	result := &WithdrawalPayoutResult{}
 
 	// 根据提现方式处理
-	var channelTxnId string
-	var payoutErr error
-
 	if withdrawal.Method == "bank" {
 		// 银行卡提现，调用PandaPay代付接口
 		e.Log.Infof("开始处理银行卡提现，提现单号: %s", withdrawal.WithdrawNo)
@@ -239,7 +218,7 @@ func (e *HsUserWithdrawal) Approve(c *dto.HsUserWithdrawalApproveReq, p *actions
 		// 解析账户信息
 		var accountInfo BankAccountInfo
 		if err := json.Unmarshal([]byte(withdrawal.AccountInfo), &accountInfo); err != nil {
-			return fmt.Errorf("解析账户信息失败: %w", err)
+			return nil, fmt.Errorf("解析账户信息失败: %w", err)
 		}
 
 		// 判断是新格式还是旧格式，并统一处理
@@ -254,10 +233,10 @@ func (e *HsUserWithdrawal) Approve(c *dto.HsUserWithdrawalApproveReq, p *actions
 			err := e.Orm.Where("id = ? AND status = 1", accountInfo.BankId).First(&bank).Error
 			if err != nil {
 				if errors.Is(err, gorm.ErrRecordNotFound) {
-					return fmt.Errorf("银行信息不存在或已禁用，BankId: %d", accountInfo.BankId)
+					return nil, fmt.Errorf("银行信息不存在或已禁用，BankId: %d", accountInfo.BankId)
 				}
 				e.Log.Errorf("查询银行信息失败: %s", err)
-				return fmt.Errorf("查询银行信息失败: %w", err)
+				return nil, fmt.Errorf("查询银行信息失败: %w", err)
 			}
 
 			// 映射新格式字段
@@ -285,7 +264,13 @@ func (e *HsUserWithdrawal) Approve(c *dto.HsUserWithdrawalApproveReq, p *actions
 
 		// 验证必填字段
 		if accountName == "" || bankCode == "" || accountNumber == "" {
-			return errors.New("银行账户信息不完整：缺少持卡人姓名、银行编码或卡号")
+			return nil, errors.New("银行账户信息不完整：缺少持卡人姓名、银行编码或卡号")
+		}
+
+		// 解析金额
+		amount, err := pandapay.ParseAmount(withdrawal.NetAmount)
+		if err != nil {
+			return nil, fmt.Errorf("金额解析失败: %w", err)
 		}
 
 		// 构建PandaPay请求
@@ -306,37 +291,77 @@ func (e *HsUserWithdrawal) Approve(c *dto.HsUserWithdrawalApproveReq, p *actions
 		e.Log.Infof("调用PandaPay代付接口，订单号: %s, 金额: %.2f", withdrawal.WithdrawNo, amount)
 		resp, err := client.SubmitPayout(payoutReq)
 		if err != nil {
-			payoutErr = err
 			e.Log.Errorf("PandaPay代付失败: %s", err)
+			result.Status = "failed"
+			result.Reason = fmt.Sprintf("代付失败: %s", err.Error())
+			return result, err
+		}
 
-			// 更新为失败状态
-			withdrawal.Status = "failed"
-			withdrawal.Reason = fmt.Sprintf("代付失败: %s", err.Error())
-		} else {
-			// 代付成功
-			channelTxnId = resp.Data.ChannelTxnId
-			e.Log.Infof("PandaPay代付成功，通道流水号: %s, 状态: %d", channelTxnId, resp.Data.Status)
+		// 代付成功
+		result.ChannelTxnId = resp.Data.ChannelTxnId
+		e.Log.Infof("PandaPay代付成功，通道流水号: %s, 状态: %d", result.ChannelTxnId, resp.Data.Status)
 
-			// 根据PandaPay返回的状态设置提现状态
-			// 0=等待, 1=成功, 2=失败, 4=处理中
-			switch resp.Data.Status {
-			case 1:
-				withdrawal.Status = "success"
-			case 0, 4:
-				withdrawal.Status = "processing"
-			case 2, 3:
-				withdrawal.Status = "failed"
-				withdrawal.Reason = fmt.Sprintf("PandaPay返回失败状态: %d", resp.Data.Status)
-			default:
-				withdrawal.Status = "processing"
-			}
+		// 根据PandaPay返回的状态设置提现状态
+		// 0=等待, 1=成功, 2=失败, 4=处理中
+		switch resp.Data.Status {
+		case 1:
+			result.Status = "success"
+		case 0, 4:
+			result.Status = "processing"
+		case 2, 3:
+			result.Status = "failed"
+			result.Reason = fmt.Sprintf("PandaPay返回失败状态: %d", resp.Data.Status)
+		default:
+			result.Status = "processing"
 		}
 	} else if withdrawal.Method == "crypto" {
 		// 加密货币提现，不调用PandaPay，直接标记为成功
 		e.Log.Infof("加密货币提现，提现单号: %s, 无需调用代付接口", withdrawal.WithdrawNo)
-		withdrawal.Status = "success"
+		result.Status = "success"
 	} else {
-		return fmt.Errorf("不支持的提现方式: %s", withdrawal.Method)
+		return nil, fmt.Errorf("不支持的提现方式: %s", withdrawal.Method)
+	}
+
+	return result, nil
+}
+
+// Approve 审核通过提现申请，并自动转账（bank方式调用PandaPay）
+func (e *HsUserWithdrawal) Approve(c *dto.HsUserWithdrawalApproveReq, p *actions.DataPermission) error {
+	var withdrawal models.HsUserWithdrawal
+
+	// 查询提现记录
+	err := e.Orm.Model(&withdrawal).
+		Scopes(
+			actions.Permission(withdrawal.TableName(), p),
+		).
+		First(&withdrawal, c.GetId()).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("提现记录不存在或无权操作")
+		}
+		e.Log.Errorf("查询提现记录失败: %s", err)
+		return err
+	}
+
+	// 检查状态，只有review状态才能审核通过
+	if withdrawal.Status != "review" && withdrawal.Status != "pending" {
+		return fmt.Errorf("提现记录状态不正确，当前状态: %s，只能审核review或pending状态", withdrawal.Status)
+	}
+
+	// 调用公共转账方法
+	result, payoutErr := e.SubmitWithdrawalPayout(&withdrawal)
+
+	var channelTxnId string
+	if result != nil {
+		channelTxnId = result.ChannelTxnId
+		withdrawal.Status = result.Status
+		withdrawal.Reason = result.Reason
+	} else {
+		// 转账失败
+		withdrawal.Status = "failed"
+		if payoutErr != nil {
+			withdrawal.Reason = payoutErr.Error()
+		}
 	}
 
 	// 更新提现记录
@@ -424,5 +449,62 @@ func (e *HsUserWithdrawal) Reject(c *dto.HsUserWithdrawalRejectReq, p *actions.D
 		return errors.New("无权更新该数据")
 	}
 
+	return nil
+}
+
+// ManualTransfer 手动处理提现转账
+func (e *HsUserWithdrawal) ManualTransfer(c *dto.HsUserWithdrawalManualTransferReq, p *actions.DataPermission) error {
+	var withdrawal models.HsUserWithdrawal
+
+	// 查询提现记录
+	err := e.Orm.Model(&withdrawal).
+		Scopes(
+			actions.Permission(withdrawal.TableName(), p),
+		).
+		First(&withdrawal, c.GetId()).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("提现记录不存在或无权操作")
+		}
+		e.Log.Errorf("查询提现记录失败: %s", err)
+		return err
+	}
+
+	// 检查状态，只有 review 或 processing 状态才能手动处理
+	if withdrawal.Status != "review" && withdrawal.Status != "processing" {
+		return fmt.Errorf("提现记录状态不正确，当前状态: %s，只能手动处理review或processing状态", withdrawal.Status)
+	}
+
+	// 根据是否成功设置状态
+	if c.Success {
+		withdrawal.Status = "success"
+	} else {
+		withdrawal.Status = "failed"
+	}
+
+	// 构建备注信息
+	reasonData := map[string]interface{}{
+		"manual_transfer": true,
+		"remark":          c.Remark,
+		"time":            time.Now().Format("2006-01-02 15:04:05"),
+	}
+	reasonJSON, _ := json.Marshal(reasonData)
+
+	withdrawal.Reason = string(reasonJSON)
+	withdrawal.TransferImage = c.TransferImage
+	withdrawal.ProcessedAt = time.Now()
+	withdrawal.UpdateBy = c.UpdateBy
+
+	// 保存更新
+	db := e.Orm.Save(&withdrawal)
+	if err := db.Error; err != nil {
+		e.Log.Errorf("更新提现记录失败: %s", err)
+		return fmt.Errorf("更新提现记录失败: %w", err)
+	}
+	if db.RowsAffected == 0 {
+		return errors.New("无权更新该数据")
+	}
+
+	e.Log.Infof("手动处理提现单 %s，结果: %v", withdrawal.WithdrawNo, c.Success)
 	return nil
 }

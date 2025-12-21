@@ -23,5 +23,6 @@ func registerHsUsersRouter(v1 *gin.RouterGroup, authMiddleware *jwt.GinJWTMiddle
 		r.POST("", api.Insert)
 		r.PUT("/:id", actions.PermissionAction(), api.Update)
 		r.DELETE("", api.Delete)
+		r.POST("/adjust-balance", actions.PermissionAction(), api.AdjustBalance)
 	}
 }

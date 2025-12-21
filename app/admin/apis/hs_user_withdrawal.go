@@ -283,3 +283,40 @@ func (e HsUserWithdrawal) Reject(c *gin.Context) {
 
 	e.OK(req.GetId(), "拒绝成功")
 }
+
+// ManualTransfer 手动处理提现转账
+// @Summary 手动处理提现转账
+// @Description 手动完成提现转账，记录转账截图和结果
+// @Tags 提现管理
+// @Accept json
+// @Produce json
+// @Param id path int true "提现记录ID"
+// @Param data body dto.HsUserWithdrawalManualTransferReq true "手动转账信息"
+// @Success 200 {object} response.Response{data=int} "{"code": 200, "data": [...]}"
+// @Router /api/v1/hs-user-withdrawal/{id}/manual-transfer [post]
+// @Security Bearer
+func (e HsUserWithdrawal) ManualTransfer(c *gin.Context) {
+	req := dto.HsUserWithdrawalManualTransferReq{}
+	s := service.HsUserWithdrawal{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
+
+	req.SetUpdateBy(user.GetUserId(c))
+	p := actions.GetPermissionFromContext(c)
+
+	err = s.ManualTransfer(&req, p)
+	if err != nil {
+		e.Error(500, err, fmt.Sprintf("手动处理提现转账失败，\r\n失败信息 %s", err.Error()))
+		return
+	}
+
+	e.OK(req.GetId(), "处理成功")
+}

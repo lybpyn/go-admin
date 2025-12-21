@@ -96,7 +96,12 @@ func run() error {
 	go func() {
 		jobs.InitJob()
 		jobs.Setup(sdk.Runtime.GetDb())
+	}()
 
+	// 启动提现自动处理器（每5秒扫描一次）
+	go func() {
+		processor := jobs.NewWithdrawalProcessor()
+		processor.Start()
 	}()
 
 	if apiCheck {

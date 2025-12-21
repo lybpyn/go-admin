@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strings"
 	"time"
 
@@ -31,6 +32,15 @@ const defaultPath = "static/uploadfile/"
 
 type File struct {
 	api.Api
+}
+
+// ensureDirExists 确保目录存在，如果不存在则创建，权限设置为 0777 避免权限问题
+func ensureDirExists(path string) error {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		// 使用 0777 权限创建目录，允许所有用户读写执行
+		return os.MkdirAll(path, 0777)
+	}
+	return nil
 }
 
 // getUploadPath 获取上传路径，优先使用配置，否则使用默认路径
@@ -136,7 +146,7 @@ func (e File) baseImg(c *gin.Context, fileResponse FileResponse, urlPrefix strin
 	fileName := uuid.New().String() + ".jpg"
 
 	uploadPath := getUploadPath()
-	if err := utils.IsNotExistMkDir(uploadPath); err != nil {
+	if err := ensureDirExists(uploadPath); err != nil {
 		e.Error(500, errors.New(""), "初始化文件路径失败")
 		return fileResponse
 	}
@@ -169,7 +179,7 @@ func (e File) multipleFile(c *gin.Context, urlPrefix string) []FileResponse {
 	for _, f := range files {
 		fileName := uuid.New().String() + utils.GetExt(f.Filename)
 
-		if err := utils.IsNotExistMkDir(uploadPath); err != nil {
+		if err := ensureDirExists(uploadPath); err != nil {
 			e.Error(500, errors.New(""), "初始化文件路径失败")
 			continue
 		}
@@ -207,7 +217,7 @@ func (e File) singleFile(c *gin.Context, fileResponse FileResponse, urlPrefix st
 	fileName := uuid.New().String() + utils.GetExt(files.Filename)
 
 	// 创建目录
-	if err := utils.IsNotExistMkDir(localPath); err != nil {
+	if err := ensureDirExists(localPath); err != nil {
 		e.Error(500, errors.New(err.Error()), "初始化文件路径失败")
 		return FileResponse{}, true
 	}

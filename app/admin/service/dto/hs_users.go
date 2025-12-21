@@ -163,3 +163,12 @@ type HsUsersDeleteReq struct {
 func (s *HsUsersDeleteReq) GetId() interface{} {
 	return s.Ids
 }
+
+// HsUsersAdjustBalanceReq 调整用户余额请求参数
+type HsUsersAdjustBalanceReq struct {
+	UserId      int    `json:"userId" binding:"required" comment:"用户ID"`
+	BalanceType string `json:"balanceType" binding:"required,oneof=balance crypto_balance frozen_balance crypto_frozen_balance" comment:"余额类型：balance-法币余额，crypto_balance-虚拟币余额，frozen_balance-法币冻结余额，crypto_frozen_balance-虚拟币冻结余额"`
+	Amount      string `json:"amount" binding:"required" comment:"调整金额，正数增加，负数减少"`
+	Remark      string `json:"remark" binding:"required" comment:"调整原因/备注"`
+	common.ControlBy
+}

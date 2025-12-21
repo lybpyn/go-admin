@@ -24,8 +24,9 @@ type HsUserWithdrawal struct {
     ClaimedAt time.Time `json:"claimedAt" gorm:"type:datetime(3);comment:接单时间"` 
     IsClaimed string `json:"isClaimed" gorm:"type:tinyint(1);comment:是否已接单：0=未接单(可接单), 1=已接单(已锁定)"` 
     Reason string `json:"reason" gorm:"type:json;comment:失败/取消原因"` 
-    ChannelTxnId string `json:"channelTxnId" gorm:"type:varchar(128);comment:通道回执流水号"` 
-    RequestedAt time.Time `json:"requestedAt" gorm:"type:datetime(3);comment:发起时间"` 
+    ChannelTxnId string `json:"channelTxnId" gorm:"type:varchar(128);comment:通道回执流水号"`
+    TransferImage string `json:"transferImage" gorm:"type:varchar(512);comment:手动转账截图URL"`
+    RequestedAt time.Time `json:"requestedAt" gorm:"type:datetime(3);comment:发起时间"`
     ProcessedAt time.Time `json:"processedAt" gorm:"type:datetime(3);comment:处理完成时间"` 
     models.ModelTime
     models.ControlBy
