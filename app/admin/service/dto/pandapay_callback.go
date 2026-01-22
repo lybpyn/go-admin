@@ -50,7 +50,7 @@ type PandaPayCallbackReq struct {
 	Sign                 string          `json:"sign" form:"sign" comment:"签名"`
 	Msg                  string          `json:"msg" form:"msg" comment:"错误消息"`
 	PayTime              string          `json:"payTime" form:"payTime" comment:"支付时间"`
-	SessionId            string          `json:"session_id" form:"session_id" comment:"银行交易sessionId"`
+	SessionId            string          `json:"sessionId" form:"sessionId" comment:"银行交易sessionId"`
 	PayoutBankCode       string          `json:"payoutBankCode" form:"payoutBankCode" comment:"收款银行编码"`
 	PayoutBankName       string          `json:"payoutBankName" form:"payoutBankName" comment:"收款银行名称"`
 	PayoutCardName       string          `json:"payoutCardName" form:"payoutCardName" comment:"收款卡号持卡人姓名"`

@@ -21,9 +21,13 @@ type HsUsers struct {
 	RegionName          string `json:"regionName" gorm:"type:varchar(128);comment:区域名称"`
 	TotalExperience     string `json:"totalExperience" gorm:"type:int(11);comment:累计经验"`
 	InviteCode   string `json:"inviteCode" gorm:"type:varchar(8);comment:邀请码"`
-	Status       string `json:"status" gorm:"type:tinyint(4);comment:状态：1正常，0封禁"`
-	Version      string `json:"version" gorm:"type:bigint(20);comment:Version"`
-	CurrencyCode string `json:"currencyCode" gorm:"type:char(3);comment:用户所属地区货币，如 NGN/KES/USD"`
+	Status        string `json:"status" gorm:"type:tinyint(4);comment:状态：1正常，0封禁"`
+	Version       string `json:"version" gorm:"type:bigint(20);comment:Version"`
+	CurrencyCode  string `json:"currencyCode" gorm:"type:char(3);comment:用户所属地区货币，如 NGN/KES/USD"`
+	TotalWithdraw       string `json:"totalWithdraw" gorm:"type:decimal(20,2);comment:总提现金额"`
+	TotalIncome         string `json:"totalIncome" gorm:"type:decimal(20,2);comment:总收入金额"`
+	TotalWithdrawCrypto string `json:"totalWithdrawCrypto" gorm:"type:decimal(20,2);comment:总提现虚拟币金额"`
+	TotalIncomeCrypto   string `json:"totalIncomeCrypto" gorm:"type:decimal(20,2);comment:总收入虚拟币金额"`
 	models.ModelTime
 	models.ControlBy
 }

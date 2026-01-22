@@ -42,6 +42,14 @@ func (m *HsConfigWithdrawRulesGetPageReq) GetNeedSearch() interface{} {
 	return *m
 }
 
+// FeeTierItem 阶梯手续费配置项
+type FeeTierItem struct {
+    MinAmount string `json:"minAmount" comment:"区间最小金额（包含）"`
+    MaxAmount string `json:"maxAmount" comment:"区间最大金额（包含），0表示无上限"`
+    FeeAmount string `json:"feeAmount" comment:"该区间的手续费金额"`
+    SortOrder int    `json:"sortOrder" comment:"排序顺序，值越小越优先"`
+}
+
 type HsConfigWithdrawRulesInsertReq struct {
     Id int `json:"-" comment:"主键ID"` // 主键ID
     CurrencyCode string `json:"currencyCode" comment:"币种代码，如 USD、CNY、USDT、BTC"`
@@ -51,12 +59,13 @@ type HsConfigWithdrawRulesInsertReq struct {
     SingleMax string `json:"singleMax" comment:"单笔最大提现数量/金额"`
     DailyLimitAmount string `json:"dailyLimitAmount" comment:"每日累计提现上限"`
     DailyLimitCount string `json:"dailyLimitCount" comment:"每日提现次数上限"`
-    FeeType string `json:"feeType" comment:"手续费类型：fixed=固定，rate=按比例，mixed=固定+比例"`
+    FeeType string `json:"feeType" comment:"手续费类型：fixed=固定，rate=按比例，mixed=固定+比例，tiered=阶梯收费"`
     FeeFixed string `json:"feeFixed" comment:"固定手续费数量/金额"`
     FeeRate string `json:"feeRate" comment:"手续费率（例如 0.015 表示 1.5%）"`
     MinFee string `json:"minFee" comment:"最小手续费"`
     MaxFee string `json:"maxFee" comment:"最高手续费"`
     IsActive string `json:"isActive" comment:"是否启用：1=启用，0=禁用"`
+    FeeTiers []FeeTierItem `json:"feeTiers" comment:"阶梯手续费配置（仅当feeType=tiered时有效）"`
     common.ControlBy
 }
 
@@ -93,12 +102,13 @@ type HsConfigWithdrawRulesUpdateReq struct {
     SingleMax string `json:"singleMax" comment:"单笔最大提现数量/金额"`
     DailyLimitAmount string `json:"dailyLimitAmount" comment:"每日累计提现上限"`
     DailyLimitCount string `json:"dailyLimitCount" comment:"每日提现次数上限"`
-    FeeType string `json:"feeType" comment:"手续费类型：fixed=固定，rate=按比例，mixed=固定+比例"`
+    FeeType string `json:"feeType" comment:"手续费类型：fixed=固定，rate=按比例，mixed=固定+比例，tiered=阶梯收费"`
     FeeFixed string `json:"feeFixed" comment:"固定手续费数量/金额"`
     FeeRate string `json:"feeRate" comment:"手续费率（例如 0.015 表示 1.5%）"`
     MinFee string `json:"minFee" comment:"最小手续费"`
     MaxFee string `json:"maxFee" comment:"最高手续费"`
     IsActive string `json:"isActive" comment:"是否启用：1=启用，0=禁用"`
+    FeeTiers []FeeTierItem `json:"feeTiers" comment:"阶梯手续费配置（仅当feeType=tiered时有效）"`
     common.ControlBy
 }
 

@@ -636,12 +636,16 @@ func (e *OrdGiftcardWriteoffs) creditFiatBalanceWithRebateDecimalTx(tx *gorm.DB,
 	frozenBalanceAfter := frozenBalanceBefore.Add(frozenDelta)
 	balanceAfter = balanceAfter.Add(overflowAmount)
 
-	// 4. 更新用户余额（使用乐观锁）
+	// 4. 计算本次收入总额（核销金额 + 返利金额）
+	incomeAmount := availableAmount.Add(rebateAmount)
+
+	// 5. 更新用户余额（使用乐观锁）
 	result := tx.Model(&models.HsUsers{}).
 		Where("id = ? AND version = ?", user.Id, user.Version).
 		Updates(map[string]interface{}{
 			"balance":        balanceAfter.StringFixed(2),
 			"frozen_balance": frozenBalanceAfter.StringFixed(2),
+			"total_income":   gorm.Expr("COALESCE(total_income, 0) + ?", incomeAmount.StringFixed(2)),
 			"version":        gorm.Expr("version + 1"),
 		})
 
@@ -722,12 +726,16 @@ func (e *OrdGiftcardWriteoffs) creditCryptoBalanceWithRebateDecimalTx(tx *gorm.D
 	frozenBalanceAfter := frozenBalanceBefore.Add(frozenDelta)
 	balanceAfter = balanceAfter.Add(overflowAmount)
 
-	// 4. 更新用户余额（使用乐观锁）
+	// 4. 计算本次收入总额（核销金额 + 返利金额）
+	incomeAmount := availableAmount.Add(rebateAmount)
+
+	// 5. 更新用户余额（使用乐观锁）
 	result := tx.Model(&models.HsUsers{}).
 		Where("id = ? AND version = ?", user.Id, user.Version).
 		Updates(map[string]interface{}{
 			"crypto_balance":        balanceAfter.StringFixed(8),
 			"crypto_frozen_balance": frozenBalanceAfter.StringFixed(8),
+			"total_income_crypto":   gorm.Expr("COALESCE(total_income_crypto, 0) + ?", incomeAmount.StringFixed(8)),
 			"version":               gorm.Expr("version + 1"),
 		})
 
@@ -1331,235 +1339,237 @@ func (e *OrdGiftcardWriteoffs) getUserRebateRateDecimal(tx *gorm.DB, user *model
 	return rebateRate, nil
 }
 
-// ============ 法币入账处理 ============
+// // ============ 法币入账处理 ============
 
-// creditFiatBalanceWithRebate 法币入账（含返利到冻结余额）
-func (e *OrdGiftcardWriteoffs) creditFiatBalanceWithRebate(tx *gorm.DB, user *models.HsUsers, availableAmount, rebateAmount float64, currencyCode string, frozenLimit float64, orderId int, createBy int) error {
-	const decimalPlaces = 2
+// // creditFiatBalanceWithRebate 法币入账（含返利到冻结余额）
+// func (e *OrdGiftcardWriteoffs) creditFiatBalanceWithRebate(tx *gorm.DB, user *models.HsUsers, availableAmount, rebateAmount float64, currencyCode string, frozenLimit float64, orderId int, createBy int) error {
+// 	const decimalPlaces = 2
 
-	// 1. 获取当前余额
-	balanceBefore, _ := strconv.ParseFloat(user.Balance, 64)
-	frozenBalanceBefore, _ := strconv.ParseFloat(user.FrozenBalance, 64)
+// 	// 1. 获取当前余额
+// 	balanceBefore, _ := strconv.ParseFloat(user.Balance, 64)
+// 	frozenBalanceBefore, _ := strconv.ParseFloat(user.FrozenBalance, 64)
 
-	// 2. 处理可用金额入账
-	balanceAfter := balanceBefore + availableAmount
+// 	// 2. 处理可用金额入账
+// 	balanceAfter := balanceBefore + availableAmount
 
-	// 3. 处理返利金额到冻结余额（根据冻结配置）
-	frozenAmount, overflowAmount := e.calculateFrozenAllocation(frozenBalanceBefore, rebateAmount, frozenLimit)
-	frozenBalanceAfter := frozenBalanceBefore + frozenAmount
-	balanceAfter += overflowAmount // 超出冻结限额的部分进入可用余额
+// 	// 3. 处理返利金额到冻结余额（根据冻结配置）
+// 	frozenAmount, overflowAmount := e.calculateFrozenAllocation(frozenBalanceBefore, rebateAmount, frozenLimit)
+// 	frozenBalanceAfter := frozenBalanceBefore + frozenAmount
+// 	balanceAfter += overflowAmount // 超出冻结限额的部分进入可用余额
 
-	// 4. 更新用户余额（使用乐观锁）
-	result := tx.Model(&models.HsUsers{}).
-		Where("id = ? AND version = ?", user.Id, user.Version).
-		Updates(map[string]interface{}{
-			"balance":        fmt.Sprintf("%.2f", balanceAfter),
-			"frozen_balance": fmt.Sprintf("%.2f", frozenBalanceAfter),
-			"version":        gorm.Expr("version + 1"),
-		})
+// 	// 4. 更新用户余额（使用乐观锁）
+// 	result := tx.Model(&models.HsUsers{}).
+// 		Where("id = ? AND version = ?", user.Id, user.Version).
+// 		Updates(map[string]interface{}{
+// 			"balance":        fmt.Sprintf("%.2f", balanceAfter),
+// 			"frozen_balance": fmt.Sprintf("%.2f", frozenBalanceAfter),
+// 			"version":        gorm.Expr("version + 1"),
+// 		})
 
-	if result.Error != nil {
-		e.Log.Errorf("creditFiatBalanceWithRebate update balance error:%s", result.Error)
-		return errors.New("更新用户法币余额失败")
-	}
+// 	if result.Error != nil {
+// 		e.Log.Errorf("creditFiatBalanceWithRebate update balance error:%s", result.Error)
+// 		return errors.New("更新用户法币余额失败")
+// 	}
 
-	if result.RowsAffected == 0 {
-		e.Log.Errorf("creditFiatBalanceWithRebate update balance conflict for user %d", user.Id)
-		return errors.New("法币余额更新冲突，请重试")
-	}
+// 	if result.RowsAffected == 0 {
+// 		e.Log.Errorf("creditFiatBalanceWithRebate update balance conflict for user %d", user.Id)
+// 		return errors.New("法币余额更新冲突，请重试")
+// 	}
 
-	// 5. 创建流水记录
-	nanoTime := time.Now().UnixNano()
+// 	// 5. 创建流水记录
+// 	nanoTime := time.Now().UnixNano()
 
-	// 5.1 可用余额流水（包含溢出的冻结金额）
-	totalAvailable := availableAmount + overflowAmount
-	if totalAvailable > 0 {
-		err := e.createFiatLedger(tx, user.Id, totalAvailable, balanceBefore, balanceBefore+totalAvailable,
-			currencyCode, "giftcard_writeoff_fiat", orderId, nanoTime, "礼品卡核销到账", createBy)
-		if err != nil {
-			return err
-		}
-	}
+// 	// 5.1 可用余额流水（包含溢出的冻结金额）
+// 	totalAvailable := availableAmount + overflowAmount
+// 	if totalAvailable > 0 {
+// 		err := e.createFiatLedger(tx, user.Id, totalAvailable, balanceBefore, balanceBefore+totalAvailable,
+// 			currencyCode, "giftcard_writeoff_fiat", orderId, nanoTime, "礼品卡核销到账", createBy)
+// 		if err != nil {
+// 			return err
+// 		}
+// 	}
 
-	// 5.2 冻结余额流水（返利部分）
-	if frozenAmount > 0 {
-		err := e.createFiatFrozenLedger(tx, user.Id, frozenAmount, frozenBalanceBefore, frozenBalanceAfter,
-			currencyCode, "giftcard_writeoff_rebate_frozen", orderId, nanoTime+1, "礼品卡核销返利（冻结）", createBy)
-		if err != nil {
-			return err
-		}
-	}
+// 	// 5.2 冻结余额流水（返利部分）
+// 	if frozenAmount > 0 {
+// 		err := e.createFiatFrozenLedger(tx, user.Id, frozenAmount, frozenBalanceBefore, frozenBalanceAfter,
+// 			currencyCode, "giftcard_writeoff_rebate_frozen", orderId, nanoTime+1, "礼品卡核销返利（冻结）", createBy)
+// 		if err != nil {
+// 			return err
+// 		}
+// 	}
 
-	e.Log.Infof("User %d fiat credited: available=%.2f, rebate_frozen=%.2f, overflow=%.2f, currency=%s",
-		user.Id, availableAmount, frozenAmount, overflowAmount, currencyCode)
+// 	e.Log.Infof("User %d fiat credited: available=%.2f, rebate_frozen=%.2f, overflow=%.2f, currency=%s",
+// 		user.Id, availableAmount, frozenAmount, overflowAmount, currencyCode)
 
-	return nil
-}
+// 	return nil
+// }
 
-// createFiatLedger 创建法币流水记录
-func (e *OrdGiftcardWriteoffs) createFiatLedger(tx *gorm.DB, userId int, amount, balanceBefore, balanceAfter float64, currencyCode, bizType string, orderId int, nanoTime int64, remark string, createBy int) error {
-	ledger := models.HsUserLedger{
-		UserId:         strconv.Itoa(userId),
-		CurrencyCode:   currencyCode,
-		Direction:      "1",
-		Amount:         fmt.Sprintf("%.2f", amount),
-		BalanceBefore:  fmt.Sprintf("%.2f", balanceBefore),
-		BalanceAfter:   fmt.Sprintf("%.2f", balanceAfter),
-		BizType:        bizType,
-		BizId:          strconv.Itoa(orderId),
-		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, nanoTime),
-		RefTable:       "ord_giftcard_writeoffs",
-		RefId:          strconv.Itoa(orderId),
-		Remark:         fmt.Sprintf("%s，订单号: %d", remark, orderId),
-		Status:         "1",
-	}
-	ledger.CreateBy = createBy
 
-	if err := tx.Create(&ledger).Error; err != nil {
-		e.Log.Errorf("createFiatLedger error:%s", err)
-		return errors.New("创建法币流水记录失败")
-	}
-	return nil
-}
+// // createFiatLedger 创建法币流水记录
+// func (e *OrdGiftcardWriteoffs) createFiatLedger(tx *gorm.DB, userId int, amount, balanceBefore, balanceAfter float64, currencyCode, bizType string, orderId int, nanoTime int64, remark string, createBy int) error {
+// 	ledger := models.HsUserLedger{
+// 		UserId:         strconv.Itoa(userId),
+// 		CurrencyCode:   currencyCode,
+// 		Direction:      "1",
+// 		Amount:         fmt.Sprintf("%.2f", amount),
+// 		BalanceBefore:  fmt.Sprintf("%.2f", balanceBefore),
+// 		BalanceAfter:   fmt.Sprintf("%.2f", balanceAfter),
+// 		BizType:        bizType,
+// 		BizId:          strconv.Itoa(orderId),
+// 		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, nanoTime),
+// 		RefTable:       "ord_giftcard_writeoffs",
+// 		RefId:          strconv.Itoa(orderId),
+// 		Remark:         fmt.Sprintf("%s，订单号: %d", remark, orderId),
+// 		Status:         "1",
+// 	}
+// 	ledger.CreateBy = createBy
 
-// createFiatFrozenLedger 创建法币冻结流水记录
-func (e *OrdGiftcardWriteoffs) createFiatFrozenLedger(tx *gorm.DB, userId int, amount, balanceBefore, balanceAfter float64, currencyCode, bizType string, orderId int, nanoTime int64, remark string, createBy int) error {
-	ledger := models.HsUserFrozenLedger{
-		UserId:         strconv.Itoa(userId),
-		CurrencyCode:   currencyCode,
-		Direction:      "1",
-		Amount:         fmt.Sprintf("%.2f", amount),
-		FrozenBefore:   fmt.Sprintf("%.2f", balanceBefore),
-		FrozenAfter:    fmt.Sprintf("%.2f", balanceAfter),
-		BizType:        bizType,
-		BizId:          strconv.Itoa(orderId),
-		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, nanoTime),
-		Remark:         fmt.Sprintf("%s，订单号: %d，关联表: ord_giftcard_writeoffs", remark, orderId),
-		Status:         "1",
-	}
-	ledger.CreateBy = createBy
+// 	if err := tx.Create(&ledger).Error; err != nil {
+// 		e.Log.Errorf("createFiatLedger error:%s", err)
+// 		return errors.New("创建法币流水记录失败")
+// 	}
+// 	return nil
+// }
 
-	if err := tx.Create(&ledger).Error; err != nil {
-		e.Log.Errorf("createFiatFrozenLedger error:%s", err)
-		return errors.New("创建法币冻结流水记录失败")
-	}
-	return nil
-}
+
+// // createFiatFrozenLedger 创建法币冻结流水记录
+// func (e *OrdGiftcardWriteoffs) createFiatFrozenLedger(tx *gorm.DB, userId int, amount, balanceBefore, balanceAfter float64, currencyCode, bizType string, orderId int, nanoTime int64, remark string, createBy int) error {
+// 	ledger := models.HsUserFrozenLedger{
+// 		UserId:         strconv.Itoa(userId),
+// 		CurrencyCode:   currencyCode,
+// 		Direction:      "1",
+// 		Amount:         fmt.Sprintf("%.2f", amount),
+// 		FrozenBefore:   fmt.Sprintf("%.2f", balanceBefore),
+// 		FrozenAfter:    fmt.Sprintf("%.2f", balanceAfter),
+// 		BizType:        bizType,
+// 		BizId:          strconv.Itoa(orderId),
+// 		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, nanoTime),
+// 		Remark:         fmt.Sprintf("%s，订单号: %d，关联表: ord_giftcard_writeoffs", remark, orderId),
+// 		Status:         "1",
+// 	}
+// 	ledger.CreateBy = createBy
+
+// 	if err := tx.Create(&ledger).Error; err != nil {
+// 		e.Log.Errorf("createFiatFrozenLedger error:%s", err)
+// 		return errors.New("创建法币冻结流水记录失败")
+// 	}
+// 	return nil
+// }
 
 // ============ 虚拟币入账处理 ============
 
-// creditCryptoBalanceWithRebate 虚拟币入账（含返利到冻结余额）
-func (e *OrdGiftcardWriteoffs) creditCryptoBalanceWithRebate(tx *gorm.DB, user *models.HsUsers, availableAmount, rebateAmount float64, currencyCode string, frozenLimit float64, orderId int, createBy int) error {
-	const decimalPlaces = 8
+// // creditCryptoBalanceWithRebate 虚拟币入账（含返利到冻结余额）
+// func (e *OrdGiftcardWriteoffs) creditCryptoBalanceWithRebate(tx *gorm.DB, user *models.HsUsers, availableAmount, rebateAmount float64, currencyCode string, frozenLimit float64, orderId int, createBy int) error {
+// 	const decimalPlaces = 8
 
-	// 1. 获取当前余额
-	balanceBefore, _ := strconv.ParseFloat(user.CryptoBalance, 64)
-	frozenBalanceBefore, _ := strconv.ParseFloat(user.CryptoFrozenBalance, 64)
+// 	// 1. 获取当前余额
+// 	balanceBefore, _ := strconv.ParseFloat(user.CryptoBalance, 64)
+// 	frozenBalanceBefore, _ := strconv.ParseFloat(user.CryptoFrozenBalance, 64)
 
-	// 2. 处理可用金额入账
-	balanceAfter := balanceBefore + availableAmount
+// 	// 2. 处理可用金额入账
+// 	balanceAfter := balanceBefore + availableAmount
 
-	// 3. 处理返利金额到冻结余额（根据冻结配置）
-	frozenAmount, overflowAmount := e.calculateFrozenAllocation(frozenBalanceBefore, rebateAmount, frozenLimit)
-	frozenBalanceAfter := frozenBalanceBefore + frozenAmount
-	balanceAfter += overflowAmount // 超出冻结限额的部分进入可用余额
+// 	// 3. 处理返利金额到冻结余额（根据冻结配置）
+// 	frozenAmount, overflowAmount := e.calculateFrozenAllocation(frozenBalanceBefore, rebateAmount, frozenLimit)
+// 	frozenBalanceAfter := frozenBalanceBefore + frozenAmount
+// 	balanceAfter += overflowAmount // 超出冻结限额的部分进入可用余额
 
-	// 4. 更新用户余额（使用乐观锁）
-	result := tx.Model(&models.HsUsers{}).
-		Where("id = ? AND version = ?", user.Id, user.Version).
-		Updates(map[string]interface{}{
-			"crypto_balance":        fmt.Sprintf("%.8f", balanceAfter),
-			"crypto_frozen_balance": fmt.Sprintf("%.8f", frozenBalanceAfter),
-			"version":               gorm.Expr("version + 1"),
-		})
+// 	// 4. 更新用户余额（使用乐观锁）
+// 	result := tx.Model(&models.HsUsers{}).
+// 		Where("id = ? AND version = ?", user.Id, user.Version).
+// 		Updates(map[string]interface{}{
+// 			"crypto_balance":        fmt.Sprintf("%.8f", balanceAfter),
+// 			"crypto_frozen_balance": fmt.Sprintf("%.8f", frozenBalanceAfter),
+// 			"version":               gorm.Expr("version + 1"),
+// 		})
 
-	if result.Error != nil {
-		e.Log.Errorf("creditCryptoBalanceWithRebate update balance error:%s", result.Error)
-		return errors.New("更新用户虚拟币余额失败")
-	}
+// 	if result.Error != nil {
+// 		e.Log.Errorf("creditCryptoBalanceWithRebate update balance error:%s", result.Error)
+// 		return errors.New("更新用户虚拟币余额失败")
+// 	}
 
-	if result.RowsAffected == 0 {
-		e.Log.Errorf("creditCryptoBalanceWithRebate update balance conflict for user %d", user.Id)
-		return errors.New("虚拟币余额更新冲突，请重试")
-	}
+// 	if result.RowsAffected == 0 {
+// 		e.Log.Errorf("creditCryptoBalanceWithRebate update balance conflict for user %d", user.Id)
+// 		return errors.New("虚拟币余额更新冲突，请重试")
+// 	}
 
-	// 5. 创建流水记录
-	nanoTime := time.Now().UnixNano()
+// 	// 5. 创建流水记录
+// 	nanoTime := time.Now().UnixNano()
 
-	// 5.1 可用余额流水（包含溢出的冻结金额）
-	totalAvailable := availableAmount + overflowAmount
-	if totalAvailable > 0 {
-		err := e.createCryptoLedger(tx, user.Id, totalAvailable, balanceBefore, balanceBefore+totalAvailable,
-			currencyCode, "giftcard_writeoff_crypto", orderId, nanoTime, "礼品卡核销到账", createBy)
-		if err != nil {
-			return err
-		}
-	}
+// 	// 5.1 可用余额流水（包含溢出的冻结金额）
+// 	totalAvailable := availableAmount + overflowAmount
+// 	if totalAvailable > 0 {
+// 		err := e.createCryptoLedger(tx, user.Id, totalAvailable, balanceBefore, balanceBefore+totalAvailable,
+// 			currencyCode, "giftcard_writeoff_crypto", orderId, nanoTime, "礼品卡核销到账", createBy)
+// 		if err != nil {
+// 			return err
+// 		}
+// 	}
 
-	// 5.2 冻结余额流水（返利部分）
-	if frozenAmount > 0 {
-		err := e.createCryptoFrozenLedger(tx, user.Id, frozenAmount, frozenBalanceBefore, frozenBalanceAfter,
-			currencyCode, "giftcard_writeoff_rebate_frozen", orderId, nanoTime+1, "礼品卡核销返利（冻结）", createBy)
-		if err != nil {
-			return err
-		}
-	}
+// 	// 5.2 冻结余额流水（返利部分）
+// 	if frozenAmount > 0 {
+// 		err := e.createCryptoFrozenLedger(tx, user.Id, frozenAmount, frozenBalanceBefore, frozenBalanceAfter,
+// 			currencyCode, "giftcard_writeoff_rebate_frozen", orderId, nanoTime+1, "礼品卡核销返利（冻结）", createBy)
+// 		if err != nil {
+// 			return err
+// 		}
+// 	}
 
-	e.Log.Infof("User %d crypto credited: available=%.8f, rebate_frozen=%.8f, overflow=%.8f, currency=%s",
-		user.Id, availableAmount, frozenAmount, overflowAmount, currencyCode)
+// 	e.Log.Infof("User %d crypto credited: available=%.8f, rebate_frozen=%.8f, overflow=%.8f, currency=%s",
+// 		user.Id, availableAmount, frozenAmount, overflowAmount, currencyCode)
 
-	return nil
-}
+// 	return nil
+// }
 
 // createCryptoLedger 创建虚拟币流水记录
-func (e *OrdGiftcardWriteoffs) createCryptoLedger(tx *gorm.DB, userId int, amount, balanceBefore, balanceAfter float64, currencyCode, bizType string, orderId int, nanoTime int64, remark string, createBy int) error {
-	ledger := models.HsUserLedger{
-		UserId:         strconv.Itoa(userId),
-		CurrencyCode:   currencyCode,
-		Direction:      "1",
-		Amount:         fmt.Sprintf("%.8f", amount),
-		BalanceBefore:  fmt.Sprintf("%.8f", balanceBefore),
-		BalanceAfter:   fmt.Sprintf("%.8f", balanceAfter),
-		BizType:        bizType,
-		BizId:          strconv.Itoa(orderId),
-		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, nanoTime),
-		RefTable:       "ord_giftcard_writeoffs",
-		RefId:          strconv.Itoa(orderId),
-		Remark:         fmt.Sprintf("%s，订单号: %d", remark, orderId),
-		Status:         "1",
-	}
-	ledger.CreateBy = createBy
+// func (e *OrdGiftcardWriteoffs) createCryptoLedger(tx *gorm.DB, userId int, amount, balanceBefore, balanceAfter float64, currencyCode, bizType string, orderId int, nanoTime int64, remark string, createBy int) error {
+// 	ledger := models.HsUserLedger{
+// 		UserId:         strconv.Itoa(userId),
+// 		CurrencyCode:   currencyCode,
+// 		Direction:      "1",
+// 		Amount:         fmt.Sprintf("%.8f", amount),
+// 		BalanceBefore:  fmt.Sprintf("%.8f", balanceBefore),
+// 		BalanceAfter:   fmt.Sprintf("%.8f", balanceAfter),
+// 		BizType:        bizType,
+// 		BizId:          strconv.Itoa(orderId),
+// 		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, nanoTime),
+// 		RefTable:       "ord_giftcard_writeoffs",
+// 		RefId:          strconv.Itoa(orderId),
+// 		Remark:         fmt.Sprintf("%s，订单号: %d", remark, orderId),
+// 		Status:         "1",
+// 	}
+// 	ledger.CreateBy = createBy
 
-	if err := tx.Create(&ledger).Error; err != nil {
-		e.Log.Errorf("createCryptoLedger error:%s", err)
-		return errors.New("创建虚拟币流水记录失败")
-	}
-	return nil
-}
+// 	if err := tx.Create(&ledger).Error; err != nil {
+// 		e.Log.Errorf("createCryptoLedger error:%s", err)
+// 		return errors.New("创建虚拟币流水记录失败")
+// 	}
+// 	return nil
+// }
 
 // createCryptoFrozenLedger 创建虚拟币冻结流水记录
-func (e *OrdGiftcardWriteoffs) createCryptoFrozenLedger(tx *gorm.DB, userId int, amount, balanceBefore, balanceAfter float64, currencyCode, bizType string, orderId int, nanoTime int64, remark string, createBy int) error {
-	ledger := models.HsUserFrozenLedger{
-		UserId:         strconv.Itoa(userId),
-		CurrencyCode:   currencyCode,
-		Direction:      "1",
-		Amount:         fmt.Sprintf("%.8f", amount),
-		FrozenBefore:   fmt.Sprintf("%.8f", balanceBefore),
-		FrozenAfter:    fmt.Sprintf("%.8f", balanceAfter),
-		BizType:        bizType,
-		BizId:          strconv.Itoa(orderId),
-		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, nanoTime),
-		Remark:         fmt.Sprintf("%s，订单号: %d，关联表: ord_giftcard_writeoffs", remark, orderId),
-		Status:         "1",
-	}
-	ledger.CreateBy = createBy
+// func (e *OrdGiftcardWriteoffs) createCryptoFrozenLedger(tx *gorm.DB, userId int, amount, balanceBefore, balanceAfter float64, currencyCode, bizType string, orderId int, nanoTime int64, remark string, createBy int) error {
+// 	ledger := models.HsUserFrozenLedger{
+// 		UserId:         strconv.Itoa(userId),
+// 		CurrencyCode:   currencyCode,
+// 		Direction:      "1",
+// 		Amount:         fmt.Sprintf("%.8f", amount),
+// 		FrozenBefore:   fmt.Sprintf("%.8f", balanceBefore),
+// 		FrozenAfter:    fmt.Sprintf("%.8f", balanceAfter),
+// 		BizType:        bizType,
+// 		BizId:          strconv.Itoa(orderId),
+// 		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, nanoTime),
+// 		Remark:         fmt.Sprintf("%s，订单号: %d，关联表: ord_giftcard_writeoffs", remark, orderId),
+// 		Status:         "1",
+// 	}
+// 	ledger.CreateBy = createBy
 
-	if err := tx.Create(&ledger).Error; err != nil {
-		e.Log.Errorf("createCryptoFrozenLedger error:%s", err)
-		return errors.New("创建虚拟币冻结流水记录失败")
-	}
-	return nil
-}
+// 	if err := tx.Create(&ledger).Error; err != nil {
+// 		e.Log.Errorf("createCryptoFrozenLedger error:%s", err)
+// 		return errors.New("创建虚拟币冻结流水记录失败")
+// 	}
+// 	return nil
+// }
 
 // ============ 法币/虚拟币入账处理（Decimal版本） ============
 

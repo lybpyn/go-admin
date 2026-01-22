@@ -2808,6 +2808,305 @@ const docTemplateadmin = `{
                 }
             }
         },
+        "/api/v1/hs-config-withdraw-fee-tiers": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取提现阶梯手续费配置列表",
+                "tags": [
+                    "提现阶梯手续费配置"
+                ],
+                "summary": "获取提现阶梯手续费配置列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "关联的提现规则ID",
+                        "name": "ruleId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "pageIndex",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/response.Page"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "list": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/models.HsConfigWithdrawFeeTiers"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建提现阶梯手续费配置",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "提现阶梯手续费配置"
+                ],
+                "summary": "创建提现阶梯手续费配置",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigWithdrawFeeTiersInsertReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"添加成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除提现阶梯手续费配置",
+                "tags": [
+                    "提现阶梯手续费配置"
+                ],
+                "summary": "删除提现阶梯手续费配置",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigWithdrawFeeTiersDeleteReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"删除成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/hs-config-withdraw-fee-tiers/batch": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "批量保存提现阶梯手续费配置（会先删除该规则下的所有旧配置）",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "提现阶梯手续费配置"
+                ],
+                "summary": "批量保存提现阶梯手续费配置",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigWithdrawFeeTiersBatchReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"保存成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/hs-config-withdraw-fee-tiers/rule/{ruleId}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "根据规则ID获取阶梯手续费配置列表",
+                "tags": [
+                    "提现阶梯手续费配置"
+                ],
+                "summary": "根据规则ID获取阶梯手续费配置",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "提现规则ID",
+                        "name": "ruleId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/models.HsConfigWithdrawFeeTiers"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/hs-config-withdraw-fee-tiers/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取提现阶梯手续费配置",
+                "tags": [
+                    "提现阶梯手续费配置"
+                ],
+                "summary": "获取提现阶梯手续费配置",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"data\": [...]}",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/models.HsConfigWithdrawFeeTiers"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "修改提现阶梯手续费配置",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "提现阶梯手续费配置"
+                ],
+                "summary": "修改提现阶梯手续费配置",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "body",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HsConfigWithdrawFeeTiersUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\": 200, \"message\": \"修改成功\"}",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/hs-config-withdraw-fee/{id}": {
             "get": {
                 "security": [
@@ -3218,7 +3517,7 @@ const docTemplateadmin = `{
                         "Bearer": []
                     }
                 ],
-                "description": "创建提现规则配置表（兼容法币与虚拟币）",
+                "description": "创建提现规则配置表（兼容法币与虚拟币）。当feeType=tiered（阶梯收费）时，可通过feeTiers参数同步创建阶梯收费配置",
                 "consumes": [
                     "application/json"
                 ],
@@ -3228,7 +3527,7 @@ const docTemplateadmin = `{
                 "summary": "创建提现规则配置表（兼容法币与虚拟币）",
                 "parameters": [
                     {
-                        "description": "data",
+                        "description": "data，当feeType=tiered时，feeTiers数组包含阶梯配置：minAmount(区间最小金额)、maxAmount(区间最大金额，0表示无上限)、feeAmount(手续费金额)、sortOrder(排序)",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -7124,6 +7423,12 @@ const docTemplateadmin = `{
                 ],
                 "summary": "获取用户主表列表",
                 "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "用户ID",
+                        "name": "id",
+                        "in": "query"
+                    },
                     {
                         "type": "string",
                         "description": "用户名（可选展示用）",
@@ -13449,6 +13754,23 @@ const docTemplateadmin = `{
                 }
             }
         },
+        "dto.FeeTierItem": {
+            "type": "object",
+            "properties": {
+                "feeAmount": {
+                    "type": "string"
+                },
+                "maxAmount": {
+                    "type": "string"
+                },
+                "minAmount": {
+                    "type": "string"
+                },
+                "sortOrder": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.GetSetSysConfigReq": {
             "type": "object",
             "properties": {
@@ -14097,6 +14419,109 @@ const docTemplateadmin = `{
                 }
             }
         },
+        "dto.HsConfigWithdrawFeeTiersBatchItem": {
+            "type": "object",
+            "required": [
+                "feeAmount",
+                "maxAmount",
+                "minAmount"
+            ],
+            "properties": {
+                "feeAmount": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "maxAmount": {
+                    "type": "string"
+                },
+                "minAmount": {
+                    "type": "string"
+                },
+                "sortOrder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.HsConfigWithdrawFeeTiersBatchReq": {
+            "type": "object",
+            "required": [
+                "ruleId",
+                "tiers"
+            ],
+            "properties": {
+                "ruleId": {
+                    "type": "integer"
+                },
+                "tiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.HsConfigWithdrawFeeTiersBatchItem"
+                    }
+                }
+            }
+        },
+        "dto.HsConfigWithdrawFeeTiersDeleteReq": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "dto.HsConfigWithdrawFeeTiersInsertReq": {
+            "type": "object",
+            "required": [
+                "feeAmount",
+                "maxAmount",
+                "minAmount",
+                "ruleId"
+            ],
+            "properties": {
+                "feeAmount": {
+                    "type": "string"
+                },
+                "maxAmount": {
+                    "type": "string"
+                },
+                "minAmount": {
+                    "type": "string"
+                },
+                "ruleId": {
+                    "type": "integer"
+                },
+                "sortOrder": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.HsConfigWithdrawFeeTiersUpdateReq": {
+            "type": "object",
+            "properties": {
+                "feeAmount": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "maxAmount": {
+                    "type": "string"
+                },
+                "minAmount": {
+                    "type": "string"
+                },
+                "ruleId": {
+                    "type": "integer"
+                },
+                "sortOrder": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.HsConfigWithdrawFeeUpdateReq": {
             "type": "object",
             "properties": {
@@ -14232,6 +14657,12 @@ const docTemplateadmin = `{
                 "feeRate": {
                     "type": "string"
                 },
+                "feeTiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.FeeTierItem"
+                    }
+                },
                 "feeType": {
                     "type": "string"
                 },
@@ -14281,6 +14712,12 @@ const docTemplateadmin = `{
                 },
                 "feeRate": {
                     "type": "string"
+                },
+                "feeTiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.FeeTierItem"
+                    }
                 },
                 "feeType": {
                     "type": "string"
@@ -17084,6 +17521,9 @@ const docTemplateadmin = `{
                 "currencyCode": {
                     "type": "string"
                 },
+                "currencyCodeShow": {
+                    "type": "string"
+                },
                 "currencySymbol": {
                     "type": "string"
                 },
@@ -17114,6 +17554,9 @@ const docTemplateadmin = `{
                     "type": "integer"
                 },
                 "currencyCode": {
+                    "type": "string"
+                },
+                "currencyCodeShow": {
                     "type": "string"
                 },
                 "currencySymbol": {
@@ -17634,7 +18077,7 @@ const docTemplateadmin = `{
                 "payoutCardNumber": {
                     "type": "string"
                 },
-                "session_id": {
+                "sessionId": {
                     "type": "string"
                 },
                 "sign": {
@@ -19285,6 +19728,35 @@ const docTemplateadmin = `{
                 }
             }
         },
+        "models.HsConfigWithdrawFeeTiers": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "feeAmount": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "maxAmount": {
+                    "type": "string"
+                },
+                "minAmount": {
+                    "type": "string"
+                },
+                "ruleId": {
+                    "type": "integer"
+                },
+                "sortOrder": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "models.HsConfigWithdrawLimit": {
             "type": "object",
             "properties": {
@@ -19349,6 +19821,12 @@ const docTemplateadmin = `{
                 },
                 "feeRate": {
                     "type": "string"
+                },
+                "feeTiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.HsConfigWithdrawFeeTiers"
+                    }
                 },
                 "feeType": {
                     "type": "string"
@@ -20129,6 +20607,18 @@ const docTemplateadmin = `{
                 "totalExperience": {
                     "type": "string"
                 },
+                "totalIncome": {
+                    "type": "string"
+                },
+                "totalIncomeCrypto": {
+                    "type": "string"
+                },
+                "totalWithdraw": {
+                    "type": "string"
+                },
+                "totalWithdrawCrypto": {
+                    "type": "string"
+                },
                 "updateBy": {
                     "type": "integer"
                 },
@@ -20679,6 +21169,9 @@ const docTemplateadmin = `{
                     "type": "string"
                 },
                 "currencyCode": {
+                    "type": "string"
+                },
+                "currencyCodeShow": {
                     "type": "string"
                 },
                 "currencySymbol": {

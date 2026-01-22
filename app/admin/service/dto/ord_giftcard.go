@@ -36,7 +36,7 @@ type OrdGiftcardInsertReq struct {
     RegionId string `json:"regionId" comment:"地区ID"`
     Name string `json:"name" comment:"卡名称，例如 Steam 50 USD"`
     ValuesConfig string `json:"valuesConfig" comment:"面额配置，支持区间和固定值"`
-    CardType string `json:"cardType" comment:"卡类型: code=兑换码, physical=实体卡, horizontal=横版卡, whiteboard=白板卡"`
+    CardType string `json:"cardType" comment:"卡类型: code=兑换码, physical=实体卡, horizontal=横版卡, whiteboard=白板卡, Debit Receipt=借记收据, Cash Receipt=现金收据"`
     DiscountRate string `json:"discountRate" comment:"折扣汇率，例如0.95表示95折"`
     Status string `json:"status" comment:"状态: 1=启用, 0=禁用"`
     Extra string `json:"extra" comment:"扩展信息，如购买说明、限制条件"`
@@ -66,7 +66,7 @@ type OrdGiftcardUpdateReq struct {
     RegionId string `json:"regionId" comment:"地区ID"`
     Name string `json:"name" comment:"卡名称，例如 Steam 50 USD"`
     ValuesConfig string `json:"valuesConfig" comment:"面额配置，支持区间和固定值"`
-    CardType string `json:"cardType" comment:"卡类型: code=兑换码, physical=实体卡, horizontal=横版卡, whiteboard=白板卡"`
+    CardType string `json:"cardType" comment:"卡类型: code=兑换码, physical=实体卡, horizontal=横版卡, whiteboard=白板卡, Debit Receipt=借记收据, Cash Receipt=现金收据"`
     DiscountRate string `json:"discountRate" comment:"折扣汇率，例如0.95表示95折"`
     Status string `json:"status" comment:"状态: 1=启用, 0=禁用"`
     Extra string `json:"extra" comment:"扩展信息，如购买说明、限制条件"`
@@ -130,7 +130,7 @@ type OrdGiftcardBatchSetItem struct {
 	RegionId     string `json:"regionId" binding:"required" comment:"地区ID"`
 	Name         string `json:"name" binding:"required" comment:"卡名称，例如 Steam 50 USD"`
 	ValuesConfig string `json:"valuesConfig" binding:"required" comment:"面额配置，支持区间和固定值"`
-	CardType     string `json:"cardType" binding:"required" comment:"卡类型: code=兑换码, physical=实体卡, horizontal=横版卡, whiteboard=白板卡"`
+	CardType     string `json:"cardType" binding:"required" comment:"卡类型: code=兑换码, physical=实体卡, horizontal=横版卡, whiteboard=白板卡, Debit Receipt=借记收据, Cash Receipt=现金收据"`
 	DiscountRate string `json:"discountRate" binding:"required" comment:"折扣汇率，例如0.95表示95折"`
 	Status       string `json:"status" comment:"状态: 1=启用, 0=禁用"`
 	Extra        string `json:"extra" comment:"扩展信息，如购买说明、限制条件"`

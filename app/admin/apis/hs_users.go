@@ -23,6 +23,7 @@ type HsUsers struct {
 // @Summary 获取用户主表列表
 // @Description 获取用户主表列表
 // @Tags 用户主表
+// @Param id query int false "用户ID"
 // @Param username query string false "用户名（可选展示用）"
 // @Param passwordHash query string false "密码"
 // @Param firstname query string false "姓"

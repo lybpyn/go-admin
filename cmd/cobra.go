@@ -3,17 +3,18 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"github.com/go-admin-team/go-admin-core/sdk/pkg"
-	"go-admin/cmd/app"
-	"go-admin/common/global"
 	"os"
+	"time"
 
+	"github.com/go-admin-team/go-admin-core/sdk/pkg"
 	"github.com/spf13/cobra"
 
 	"go-admin/cmd/api"
+	"go-admin/cmd/app"
 	"go-admin/cmd/config"
 	"go-admin/cmd/migrate"
 	"go-admin/cmd/version"
+	"go-admin/common/global"
 )
 
 var rootCmd = &cobra.Command{
@@ -42,6 +43,12 @@ func tip() {
 }
 
 func init() {
+	// 设置时区为亚洲/上海
+	loc, err := time.LoadLocation("Asia/Shanghai")
+	if err == nil {
+		time.Local = loc
+	}
+
 	rootCmd.AddCommand(api.StartCmd)
 	rootCmd.AddCommand(migrate.StartCmd)
 	rootCmd.AddCommand(version.StartCmd)

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/go-admin-team/go-admin-core/sdk/service"
@@ -20,6 +21,22 @@ type HsUserWithdrawal struct {
 	service.Service
 }
 
+// buildReasonJSON 将原因字符串转换为JSON格式
+func buildReasonJSON(message string, extras ...map[string]interface{}) string {
+	data := map[string]interface{}{
+		"message": message,
+		"time":    time.Now().Format("2006-01-02 15:04:05"),
+	}
+	// 合并额外的字段
+	for _, extra := range extras {
+		for k, v := range extra {
+			data[k] = v
+		}
+	}
+	jsonBytes, _ := json.Marshal(data)
+	return string(jsonBytes)
+}
+
 // GetPage 获取HsUserWithdrawal列表
 func (e *HsUserWithdrawal) GetPage(c *dto.HsUserWithdrawalGetPageReq, p *actions.DataPermission, list *[]models.HsUserWithdrawal, count *int64) error {
 	var err error
@@ -31,7 +48,7 @@ func (e *HsUserWithdrawal) GetPage(c *dto.HsUserWithdrawalGetPageReq, p *actions
 			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
 			actions.Permission(data.TableName(), p),
 		).
-		Find(list).Limit(-1).Offset(-1).
+		Find(list).Limit(-1).Offset(-1).Order("created_at DESC").
 		Count(count).Error
 	if err != nil {
 		e.Log.Errorf("HsUserWithdrawalService GetPage error:%s \r\n", err)
@@ -53,7 +70,7 @@ func (e *HsUserWithdrawal) GetPageWithStats(c *dto.HsUserWithdrawalGetPageReq, p
 			cDto.Paginate(c.GetPageSize(), c.GetPageIndex()),
 			actions.Permission(data.TableName(), p),
 		).
-		Find(&withdrawalList).Limit(-1).Offset(-1).
+		Order("created_at DESC").Find(&withdrawalList).Limit(-1).Offset(-1).
 		Count(count).Error
 	if err != nil {
 		e.Log.Errorf("HsUserWithdrawalService GetPageWithStats error:%s \r\n", err)
@@ -293,7 +310,7 @@ func (e *HsUserWithdrawal) SubmitWithdrawalPayout(withdrawal *models.HsUserWithd
 		if err != nil {
 			e.Log.Errorf("PandaPay代付失败: %s", err)
 			result.Status = "failed"
-			result.Reason = fmt.Sprintf("代付失败: %s", err.Error())
+			result.Reason = buildReasonJSON(fmt.Sprintf("代付失败: %s", err.Error()))
 			return result, err
 		}
 
@@ -310,7 +327,7 @@ func (e *HsUserWithdrawal) SubmitWithdrawalPayout(withdrawal *models.HsUserWithd
 			result.Status = "processing"
 		case 2, 3:
 			result.Status = "failed"
-			result.Reason = fmt.Sprintf("PandaPay返回失败状态: %d", resp.Data.Status)
+			result.Reason = buildReasonJSON(fmt.Sprintf("PandaPay返回失败状态: %d", resp.Data.Status))
 		default:
 			result.Status = "processing"
 		}
@@ -360,7 +377,7 @@ func (e *HsUserWithdrawal) Approve(c *dto.HsUserWithdrawalApproveReq, p *actions
 		// 转账失败
 		withdrawal.Status = "failed"
 		if payoutErr != nil {
-			withdrawal.Reason = payoutErr.Error()
+			withdrawal.Reason = buildReasonJSON(payoutErr.Error())
 		}
 	}
 
@@ -383,9 +400,18 @@ func (e *HsUserWithdrawal) Approve(c *dto.HsUserWithdrawalApproveReq, p *actions
 		// 如果有备注，添加到reason字段
 		if c.Remark != "" {
 			if reasonValue != "" {
-				reasonValue = reasonValue + "; " + c.Remark
+				// 尝试解析现有的JSON，添加备注
+				var existingData map[string]interface{}
+				if err := json.Unmarshal([]byte(reasonValue), &existingData); err == nil {
+					existingData["remark"] = c.Remark
+					jsonBytes, _ := json.Marshal(existingData)
+					reasonValue = string(jsonBytes)
+				} else {
+					// 如果不是有效JSON，创建新的JSON
+					reasonValue = buildReasonJSON(reasonValue, map[string]interface{}{"remark": c.Remark})
+				}
 			} else {
-				reasonValue = c.Remark
+				reasonValue = buildReasonJSON(c.Remark)
 			}
 		}
 		updateData["reason"] = reasonValue
@@ -435,7 +461,7 @@ func (e *HsUserWithdrawal) Reject(c *dto.HsUserWithdrawalRejectReq, p *actions.D
 
 	// 更新为失败状态
 	withdrawal.Status = "failed"
-	withdrawal.Reason = c.Reason
+	withdrawal.Reason = buildReasonJSON(c.Reason, map[string]interface{}{"type": "rejected"})
 	withdrawal.ProcessedAt = time.Now()
 	withdrawal.UpdateBy = c.UpdateBy
 
@@ -478,6 +504,42 @@ func (e *HsUserWithdrawal) ManualTransfer(c *dto.HsUserWithdrawalManualTransferR
 	// 根据是否成功设置状态
 	if c.Success {
 		withdrawal.Status = "success"
+
+		// 手动处理成功，更新用户的总提现金额
+		userId, _ := strconv.Atoi(withdrawal.UserId)
+		netAmount := withdrawal.NetAmount
+
+		// 1. 查询用户当前版本号
+		var user models.HsUsers
+		if err := e.Orm.Select("id, version").Where("id = ?", userId).First(&user).Error; err != nil {
+			e.Log.Errorf("ManualTransfer get user error: %s", err)
+			return errors.New("获取用户信息失败")
+		}
+
+		// 2. 根据提现方式选择更新的字段
+		var updateField string
+		if withdrawal.Method == "crypto" {
+			updateField = "total_withdraw_crypto"
+		} else {
+			updateField = "total_withdraw"
+		}
+
+		// 3. 使用乐观锁更新
+		result := e.Orm.Model(&models.HsUsers{}).
+			Where("id = ? AND version = ?", userId, user.Version).
+			Updates(map[string]interface{}{
+				updateField: gorm.Expr("COALESCE("+updateField+", 0) + ?", netAmount),
+				"version":   gorm.Expr("version + 1"),
+			})
+		if result.Error != nil {
+			e.Log.Errorf("ManualTransfer update %s error: %s", updateField, result.Error)
+			return errors.New("更新用户总提现金额失败")
+		}
+		if result.RowsAffected == 0 {
+			e.Log.Errorf("ManualTransfer version conflict for user %d", userId)
+			return errors.New("用户数据更新冲突，请重试")
+		}
+		e.Log.Infof("Updated user %d %s: +%s", userId, updateField, netAmount)
 	} else {
 		withdrawal.Status = "failed"
 	}

@@ -8,6 +8,7 @@ import (
 
 type HsUsersGetPageReq struct {
 	dto.Pagination     `search:"-"`
+    Id int `form:"id"  search:"type:exact;column:id;table:hs_users" comment:"用户ID"`
     Username string `form:"username"  search:"type:exact;column:username;table:hs_users" comment:"用户名（可选展示用）"`
     PasswordHash string `form:"passwordHash"  search:"type:exact;column:password_hash;table:hs_users" comment:""`
     Firstname string `form:"firstname"  search:"type:exact;column:firstname;table:hs_users" comment:""`

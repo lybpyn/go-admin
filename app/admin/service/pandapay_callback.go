@@ -56,6 +56,13 @@ func (e *PandaPayCallback) HandleCallback(c *dto.PandaPayCallbackReq) error {
 			updates["processed_at"] = time.Now()
 			updates["channel_txn_id"] = c.SessionId
 
+			// 提现成功，更新用户的total_withdraw
+			err := e.updateUserTotalWithdraw(tx, &withdrawal)
+			if err != nil {
+				e.Log.Errorf("PandaPayCallback update user total_withdraw error: %s", err)
+				return err
+			}
+
 		case 2, 3: // 失败或下单失败
 			updates["status"] = "failed"
 			updates["processed_at"] = time.Now()
@@ -212,5 +219,48 @@ func (e *PandaPayCallback) refundToUser(tx *gorm.DB, withdrawal *models.HsUserWi
 	e.Log.Infof("Refund to user %d: amount=%.2f %s, balance: %.2f -> %.2f",
 		userId, totalRefund, currencyCode, balanceBefore, balanceAfter)
 
+	return nil
+}
+
+// updateUserTotalWithdraw 更新用户的总提现金额
+func (e *PandaPayCallback) updateUserTotalWithdraw(tx *gorm.DB, withdrawal *models.HsUserWithdrawal) error {
+	userId, _ := strconv.Atoi(withdrawal.UserId)
+	netAmount := withdrawal.NetAmount // 实际到账金额
+
+	// 1. 查询用户当前版本号
+	var user models.HsUsers
+	err := tx.Select("id, version").Where("id = ?", userId).First(&user).Error
+	if err != nil {
+		e.Log.Errorf("updateUserTotalWithdraw get user error: %s", err)
+		return errors.New("获取用户信息失败")
+	}
+
+	// 2. 根据提现方式选择更新的字段
+	var updateField string
+	if withdrawal.Method == "crypto" {
+		updateField = "total_withdraw_crypto"
+	} else {
+		updateField = "total_withdraw"
+	}
+
+	// 3. 使用乐观锁更新用户的总提现金额
+	result := tx.Model(&models.HsUsers{}).
+		Where("id = ? AND version = ?", userId, user.Version).
+		Updates(map[string]interface{}{
+			updateField: gorm.Expr("COALESCE("+updateField+", 0) + ?", netAmount),
+			"version":   gorm.Expr("version + 1"),
+		})
+
+	if result.Error != nil {
+		e.Log.Errorf("updateUserTotalWithdraw error: %s", result.Error)
+		return errors.New("更新用户总提现金额失败")
+	}
+
+	if result.RowsAffected == 0 {
+		e.Log.Errorf("updateUserTotalWithdraw version conflict for user %d", userId)
+		return errors.New("用户数据更新冲突，请重试")
+	}
+
+	e.Log.Infof("Updated user %d %s: +%s", userId, updateField, netAmount)
 	return nil
 }

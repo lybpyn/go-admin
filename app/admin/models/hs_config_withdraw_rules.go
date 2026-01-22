@@ -16,12 +16,13 @@ type HsConfigWithdrawRules struct {
     SingleMax string `json:"singleMax" gorm:"type:decimal(36,18);comment:单笔最大提现数量/金额"` 
     DailyLimitAmount string `json:"dailyLimitAmount" gorm:"type:decimal(36,18);comment:每日累计提现上限"` 
     DailyLimitCount string `json:"dailyLimitCount" gorm:"type:int(11);comment:每日提现次数上限"` 
-    FeeType string `json:"feeType" gorm:"type:enum('fixed','rate','mixed');comment:手续费类型：fixed=固定，rate=按比例，mixed=固定+比例"` 
+    FeeType string `json:"feeType" gorm:"type:enum('fixed','rate','mixed','tiered');comment:手续费类型：fixed=固定，rate=按比例，mixed=固定+比例，tiered=阶梯收费"` 
     FeeFixed string `json:"feeFixed" gorm:"type:decimal(36,18);comment:固定手续费数量/金额"` 
     FeeRate string `json:"feeRate" gorm:"type:decimal(8,6);comment:手续费率（例如 0.015 表示 1.5%）"` 
     MinFee string `json:"minFee" gorm:"type:decimal(36,18);comment:最小手续费"` 
     MaxFee string `json:"maxFee" gorm:"type:decimal(36,18);comment:最高手续费"` 
-    IsActive string `json:"isActive" gorm:"type:tinyint(1);comment:是否启用：1=启用，0=禁用"` 
+    IsActive string `json:"isActive" gorm:"type:tinyint(1);comment:是否启用：1=启用，0=禁用"`
+    FeeTiers []HsConfigWithdrawFeeTiers `json:"feeTiers" gorm:"foreignKey:RuleId;references:Id"`
     models.ModelTime
     models.ControlBy
 }

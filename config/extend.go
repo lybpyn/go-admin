@@ -12,7 +12,7 @@ var ExtConfig Extend
 type Extend struct {
 	AMap     AMap     // 这里配置对应配置文件的结构即可
 	Upload   Upload   // 文件上传配置
-	PandaPay PandaPay // PandaPay支付配置
+	PandaPay PandaPay `yaml:"Pandapay" json:"Pandapay"` // PandaPay支付配置
 }
 
 type AMap struct {
@@ -27,9 +27,9 @@ type Upload struct {
 
 // PandaPay 支付配置
 type PandaPay struct {
-	ApiUrl     string // API地址，如：https://xxx/api
-	MerchantId int    // 商户ID（纯数字）
-	AppSecret  string // 商户密钥
-	NotifyUrl  string // 异步通知地址
-	Currency   string // 默认币种，如：NGN（尼日利亚-奈拉）、KES（肯尼亚先令）
+	ApiUrl     string `yaml:"ApiUrl" json:"ApiUrl"`         // API地址，如：https://xxx/api
+	MerchantId int    `yaml:"MerchantId" json:"MerchantId"` // 商户ID（纯数字）
+	AppSecret  string `yaml:"AppSecret" json:"AppSecret"`   // 商户密钥
+	NotifyUrl  string `yaml:"NotifyUrl" json:"NotifyUrl"`   // 异步通知地址
+	Currency   string `yaml:"Currency" json:"Currency"`     // 默认币种，如：NGN（尼日利亚-奈拉）、KES（肯尼亚先令）
 }

@@ -93,11 +93,11 @@ func (e HsConfigWithdrawRules) Get(c *gin.Context) {
 
 // Insert 创建提现规则配置表（兼容法币与虚拟币）
 // @Summary 创建提现规则配置表（兼容法币与虚拟币）
-// @Description 创建提现规则配置表（兼容法币与虚拟币）
+// @Description 创建提现规则配置表（兼容法币与虚拟币）。当feeType=tiered（阶梯收费）时，可通过feeTiers参数同步创建阶梯收费配置
 // @Tags 提现规则配置表（兼容法币与虚拟币）
 // @Accept application/json
 // @Product application/json
-// @Param data body dto.HsConfigWithdrawRulesInsertReq true "data"
+// @Param data body dto.HsConfigWithdrawRulesInsertReq true "data，当feeType=tiered时，feeTiers数组包含阶梯配置：minAmount(区间最小金额)、maxAmount(区间最大金额，0表示无上限)、feeAmount(手续费金额)、sortOrder(排序)"
 // @Success 200 {object} response.Response	"{"code": 200, "message": "添加成功"}"
 // @Router /api/v1/hs-config-withdraw-rules [post]
 // @Security Bearer
