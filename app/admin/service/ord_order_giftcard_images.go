@@ -3,7 +3,7 @@ package service
 import (
 	"errors"
 
-    "github.com/go-admin-team/go-admin-core/sdk/service"
+	"github.com/go-admin-team/go-admin-core/sdk/service"
 	"gorm.io/gorm"
 
 	"go-admin/app/admin/models"
@@ -87,8 +87,8 @@ func (e *OrdOrderGiftcardImages) checkImagePermission(image *models.OrdOrderGift
 		return err
 	}
 
-	// 如果订单已完成（status=2），所有人都可以查看
-	if order.Status == 2 {
+	// 如果订单已完成（status=2）或已驳回（status=4），所有人都可以查看
+	if order.Status == 2 || order.Status == 4 {
 		return nil
 	}
 
@@ -103,9 +103,9 @@ func (e *OrdOrderGiftcardImages) checkImagePermission(image *models.OrdOrderGift
 
 // Insert 创建OrdOrderGiftcardImages对象
 func (e *OrdOrderGiftcardImages) Insert(c *dto.OrdOrderGiftcardImagesInsertReq) error {
-    var err error
-    var data models.OrdOrderGiftcardImages
-    c.Generate(&data)
+	var err error
+	var data models.OrdOrderGiftcardImages
+	c.Generate(&data)
 	err = e.Orm.Create(&data).Error
 	if err != nil {
 		e.Log.Errorf("OrdOrderGiftcardImagesService Insert error:%s \r\n", err)
@@ -116,22 +116,22 @@ func (e *OrdOrderGiftcardImages) Insert(c *dto.OrdOrderGiftcardImagesInsertReq) 
 
 // Update 修改OrdOrderGiftcardImages对象
 func (e *OrdOrderGiftcardImages) Update(c *dto.OrdOrderGiftcardImagesUpdateReq, p *actions.DataPermission) error {
-    var err error
-    var data = models.OrdOrderGiftcardImages{}
-    e.Orm.Scopes(
-            actions.Permission(data.TableName(), p),
-        ).First(&data, c.GetId())
-    c.Generate(&data)
+	var err error
+	var data = models.OrdOrderGiftcardImages{}
+	e.Orm.Scopes(
+		actions.Permission(data.TableName(), p),
+	).First(&data, c.GetId())
+	c.Generate(&data)
 
-    db := e.Orm.Save(&data)
-    if err = db.Error; err != nil {
-        e.Log.Errorf("OrdOrderGiftcardImagesService Save error:%s \r\n", err)
-        return err
-    }
-    if db.RowsAffected == 0 {
-        return errors.New("无权更新该数据")
-    }
-    return nil
+	db := e.Orm.Save(&data)
+	if err = db.Error; err != nil {
+		e.Log.Errorf("OrdOrderGiftcardImagesService Save error:%s \r\n", err)
+		return err
+	}
+	if db.RowsAffected == 0 {
+		return errors.New("无权更新该数据")
+	}
+	return nil
 }
 
 // Remove 删除OrdOrderGiftcardImages
@@ -143,11 +143,11 @@ func (e *OrdOrderGiftcardImages) Remove(d *dto.OrdOrderGiftcardImagesDeleteReq, 
 			actions.Permission(data.TableName(), p),
 		).Delete(&data, d.GetId())
 	if err := db.Error; err != nil {
-        e.Log.Errorf("Service RemoveOrdOrderGiftcardImages error:%s \r\n", err)
-        return err
-    }
-    if db.RowsAffected == 0 {
-        return errors.New("无权删除该数据")
-    }
+		e.Log.Errorf("Service RemoveOrdOrderGiftcardImages error:%s \r\n", err)
+		return err
+	}
+	if db.RowsAffected == 0 {
+		return errors.New("无权删除该数据")
+	}
 	return nil
 }

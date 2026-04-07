@@ -34,3 +34,5 @@ access.log
 deploy.sh
 __debug_bin
 settings.yml
+
+*_debug*

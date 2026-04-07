@@ -106,7 +106,7 @@ func (s *OrdConfigCurrencyRatesDeleteReq) GetId() interface{} {
 
 // OrdConfigCurrencyRatesBatchQueryReq 批量查询汇率请求参数
 type OrdConfigCurrencyRatesBatchQueryReq struct {
-	CurrencyPairs []CurrencyPair `json:"currencyPairs" binding:"required,min=1,max=50" comment:"货币对列表，最多50个"`
+	CurrencyPairs []CurrencyPair `json:"currencyPairs" binding:"required,min=1,max=500" comment:"货币对列表，最多300个"`
 }
 
 // CurrencyPair 货币对

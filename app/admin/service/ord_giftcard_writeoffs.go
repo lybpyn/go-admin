@@ -17,6 +17,7 @@ import (
 	"go-admin/app/admin/service/dto"
 	"go-admin/common/actions"
 	cDto "go-admin/common/dto"
+	"go-admin/common/tenjin"
 )
 
 type OrdGiftcardWriteoffs struct {
@@ -185,29 +186,42 @@ func (e *OrdGiftcardWriteoffs) Remove(d *dto.OrdGiftcardWriteoffsDeleteReq, p *a
 func (e *OrdGiftcardWriteoffs) BatchInsert(c *dto.OrdGiftcardWriteoffsBatchInsertReq) error {
 	// 1. 验证核销列表
 	if len(c.WriteoffList) == 0 {
-		return errors.New("核销记录列表不能为空")
+		return errors.New("Writeoff list cannot be empty")
 	}
 
-	// 2. 获取核销状态（以第一条记录为准）
-	finalStatus := c.WriteoffList[0].Status
-	if finalStatus != 1 && finalStatus != 2 && finalStatus != 3 {
-		e.Log.Errorf("BatchInsert invalid writeoff status: %d", finalStatus)
-		return errors.New("核销状态无效，只能是已核销(1)、驳回(2)或失败(3)")
+	// 2. 统计所有记录的状态
+	hasSuccess := false
+	hasReject := false
+	hasFailed := false
+
+	for _, item := range c.WriteoffList {
+		if item.Status != 1 && item.Status != 2 && item.Status != 3 {
+			e.Log.Errorf("BatchInsert invalid writeoff status: %d", item.Status)
+			return errors.New("Invalid writeoff status, must be success(1), reject(2) or failed(3)")
+		}
+		if item.Status == 1 {
+			hasSuccess = true
+		} else if item.Status == 2 {
+			hasReject = true
+		} else if item.Status == 3 {
+			hasFailed = true
+		}
 	}
 
-	// 3. 根据状态分别处理
-	if finalStatus == 2 {
-		// 驳回状态：订单驳回，不需要转换decimal
+	// 3. 根据状态分别处理：只要有一个成功，就按成功处理
+	if hasSuccess {
+		return e.processSuccessWriteoff(c)
+	}
+
+	if hasReject {
 		return e.processRejectedWriteoff(c)
 	}
 
-	if finalStatus == 3 {
-		// 失败状态：核销失败但不驳回订单，只记录核销失败
+	if hasFailed {
 		return e.processFailedWriteoff(c)
 	}
 
-	// 成功状态：转换decimal后处理
-	return e.processSuccessWriteoff(c)
+	return errors.New("No valid writeoff status found")
 }
 
 // ============ 驳回状态处理 ============
@@ -463,7 +477,17 @@ func (e *OrdGiftcardWriteoffs) processSuccessWriteoff(c *dto.OrdGiftcardWriteoff
 	results := make([]SingleWriteoffResult, 0, len(decimalItems))
 
 	for i, item := range decimalItems {
-		// 3.1 查询基础信息（事务外）
+		// 3.1 如果是失败状态（status=2或3），直接插入记录，不查询基础信息
+		if item.Status == 2 || item.Status == 3 {
+			result := e.insertFailedWriteoffRecord(item, ctx, c.OrderId, i)
+			results = append(results, result)
+			if !result.Success {
+				e.Log.Errorf("processSuccessWriteoff item %d insert failed record error: %s", i, result.Error)
+			}
+			continue
+		}
+
+		// 3.2 成功状态（status=1）：查询基础信息（事务外）
 		baseInfo, err := e.queryWriteoffItemBaseInfo(item, ctx, c.OrderId, i)
 		if err != nil {
 			results = append(results, SingleWriteoffResult{
@@ -475,7 +499,7 @@ func (e *OrdGiftcardWriteoffs) processSuccessWriteoff(c *dto.OrdGiftcardWriteoff
 			continue
 		}
 
-		// 3.2 执行事务（只做插入和更新）
+		// 3.3 执行事务（只做插入和更新）
 		result := e.executeSingleWriteoffTransaction(item, ctx, baseInfo, c.OrderId, i)
 		results = append(results, result)
 
@@ -484,22 +508,18 @@ func (e *OrdGiftcardWriteoffs) processSuccessWriteoff(c *dto.OrdGiftcardWriteoff
 		}
 	}
 
-	// 4. 检查是否有成功入账的核销项（只有Status=1且事务成功才算成功）
-	successCount := 0
-	for _, r := range results {
-		if r.Success && r.ItemStatus == 1 {
-			successCount++
-		}
+	// 4. 查询数据库中该订单的核销记录，检查是否有状态为1的记录
+	var count int64
+	err = e.Orm.Model(&models.OrdGiftcardWriteoffs{}).
+		Where("order_id = ? AND status = 1", c.OrderId).
+		Count(&count).Error
+	if err != nil {
+		e.Log.Errorf("processSuccessWriteoff query writeoff records error: %s", err)
+		return errors.New("Failed to query writeoff records")
 	}
 
-	if successCount == 0 {
-		// 所有成功状态的核销项都失败了，返回第一个错误
-		for _, r := range results {
-			if !r.Success && r.Error != nil {
-				return r.Error
-			}
-		}
-		return errors.New("所有核销项处理失败")
+	if count == 0 {
+		return errors.New("All writeoff items failed")
 	}
 
 	// 5. 更新订单状态（只要有一个成功，订单就是成功）
@@ -509,7 +529,60 @@ func (e *OrdGiftcardWriteoffs) processSuccessWriteoff(c *dto.OrdGiftcardWriteoff
 		return err
 	}
 
+	// 6. 上报Tenjin埋点
+	go e.reportTenjinOrderSuccess(ctx.Order.UserId, c.OrderId)
+
 	return nil
+}
+
+// insertFailedWriteoffRecord 插入失败状态的核销记录（不需要查询礼品卡等基础信息）
+func (e *OrdGiftcardWriteoffs) insertFailedWriteoffRecord(item WriteoffItemDecimal, ctx *WriteoffContext, orderId int, index int) SingleWriteoffResult {
+	result := SingleWriteoffResult{
+		Index:      index,
+		Success:    false,
+		ItemStatus: item.Status,
+	}
+
+	err := e.Orm.Transaction(func(tx *gorm.DB) error {
+		now := time.Now()
+		sql := `INSERT INTO ord_giftcard_writeoffs
+			(user_id, order_id, order_no, gift_card_id, status, remark,
+			 admin_recognized_code, failure_image_url, supplier_id,
+			 created_at, updated_at, create_by, update_by)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+
+		err := tx.Exec(sql,
+			ctx.Order.UserId,
+			orderId,
+			ctx.Order.OrderNo,
+			item.GiftCardId,
+			item.Status,
+			item.Remark,
+			item.AdminRecognizedCode,
+			item.FailureImageUrl,
+			item.SupplierId,
+			now,
+			now,
+			ctx.CreateBy,
+			0,
+		).Error
+
+		if err != nil {
+			e.Log.Errorf("insertFailedWriteoffRecord insert error: %s", err)
+			return fmt.Errorf("Failed to insert writeoff record %d", index+1)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		result.Error = err
+		result.Success = false
+	} else {
+		result.Success = true
+	}
+
+	return result
 }
 
 // executeSingleWriteoffTransaction 执行单个核销项事务（只做插入和更新）
@@ -668,7 +741,7 @@ func (e *OrdGiftcardWriteoffs) creditFiatBalanceWithRebateDecimalTx(tx *gorm.DB,
 	if availableAmount.GreaterThan(decimal.Zero) {
 		newBalance := balanceRunning.Add(availableAmount)
 		err := e.createFiatLedgerDecimal(tx, user.Id, availableAmount, balanceRunning, newBalance,
-			currencyCode, "giftcard_writeoff_fiat", orderId, nanoTime, "礼品卡核销到账", createBy)
+			currencyCode, "giftcard_writeoff_fiat", orderId, nanoTime, "Gift card redemption credited", createBy)
 		if err != nil {
 			return err
 		}
@@ -679,7 +752,7 @@ func (e *OrdGiftcardWriteoffs) creditFiatBalanceWithRebateDecimalTx(tx *gorm.DB,
 	if rebateAmount.GreaterThan(decimal.Zero) {
 		newFrozenBalance := frozenBalanceRunning.Add(rebateAmount)
 		err := e.createFiatFrozenLedgerDecimal(tx, user.Id, rebateAmount, frozenBalanceRunning, newFrozenBalance,
-			currencyCode, "giftcard_writeoff_rebate_frozen_in", orderId, nanoTime+1, "礼品卡核销返利（转入冻结）", createBy)
+			currencyCode, "giftcard_writeoff_rebate_frozen_in", orderId, nanoTime+1, "Gift card rebate (transferred to frozen)", createBy)
 		if err != nil {
 			return err
 		}
@@ -691,7 +764,7 @@ func (e *OrdGiftcardWriteoffs) creditFiatBalanceWithRebateDecimalTx(tx *gorm.DB,
 		// 冻结余额流水2：达到阈值后从冻结转出
 		newFrozenBalance := frozenBalanceRunning.Sub(overflowAmount)
 		err := e.createFiatFrozenLedgerOutDecimal(tx, user.Id, overflowAmount, frozenBalanceRunning, newFrozenBalance,
-			currencyCode, "giftcard_writeoff_rebate_frozen_out", orderId, nanoTime+2, "礼品卡返利达到阈值（转出冻结）", createBy)
+			currencyCode, "giftcard_writeoff_rebate_frozen_out", orderId, nanoTime+2, "Gift card rebate threshold reached (transferred out of frozen)", createBy)
 		if err != nil {
 			return err
 		}
@@ -699,7 +772,7 @@ func (e *OrdGiftcardWriteoffs) creditFiatBalanceWithRebateDecimalTx(tx *gorm.DB,
 		// 可用余额流水2：从冻结余额转入
 		newBalance := balanceRunning.Add(overflowAmount)
 		err = e.createFiatLedgerDecimal(tx, user.Id, overflowAmount, balanceRunning, newBalance,
-			currencyCode, "giftcard_writeoff_rebate_unfrozen", orderId, nanoTime+3, "礼品卡返利（冻结转入可用）", createBy)
+			currencyCode, "giftcard_writeoff_rebate_unfrozen", orderId, nanoTime+3, "Gift card rebate (frozen to available)", createBy)
 		if err != nil {
 			return err
 		}
@@ -758,7 +831,7 @@ func (e *OrdGiftcardWriteoffs) creditCryptoBalanceWithRebateDecimalTx(tx *gorm.D
 	if availableAmount.GreaterThan(decimal.Zero) {
 		newBalance := balanceRunning.Add(availableAmount)
 		err := e.createCryptoLedgerDecimal(tx, user.Id, availableAmount, balanceRunning, newBalance,
-			currencyCode, "giftcard_writeoff_crypto", orderId, nanoTime, "礼品卡核销到账", createBy)
+			currencyCode, "giftcard_writeoff_crypto", orderId, nanoTime, "Gift card redemption credited", createBy)
 		if err != nil {
 			return err
 		}
@@ -769,7 +842,7 @@ func (e *OrdGiftcardWriteoffs) creditCryptoBalanceWithRebateDecimalTx(tx *gorm.D
 	if rebateAmount.GreaterThan(decimal.Zero) {
 		newFrozenBalance := frozenBalanceRunning.Add(rebateAmount)
 		err := e.createCryptoFrozenLedgerDecimal(tx, user.Id, rebateAmount, frozenBalanceRunning, newFrozenBalance,
-			currencyCode, "giftcard_writeoff_rebate_frozen_in", orderId, nanoTime+1, "礼品卡核销返利（转入冻结）", createBy)
+			currencyCode, "giftcard_writeoff_rebate_frozen_in", orderId, nanoTime+1, "Gift card rebate (transferred to frozen)", createBy)
 		if err != nil {
 			return err
 		}
@@ -781,7 +854,7 @@ func (e *OrdGiftcardWriteoffs) creditCryptoBalanceWithRebateDecimalTx(tx *gorm.D
 		// 冻结余额流水2：达到阈值后从冻结转出
 		newFrozenBalance := frozenBalanceRunning.Sub(overflowAmount)
 		err := e.createCryptoFrozenLedgerOutDecimal(tx, user.Id, overflowAmount, frozenBalanceRunning, newFrozenBalance,
-			currencyCode, "giftcard_writeoff_rebate_frozen_out", orderId, nanoTime+2, "礼品卡返利达到阈值（转出冻结）", createBy)
+			currencyCode, "giftcard_writeoff_rebate_frozen_out", orderId, nanoTime+2, "Gift card rebate threshold reached (transferred out of frozen)", createBy)
 		if err != nil {
 			return err
 		}
@@ -789,7 +862,7 @@ func (e *OrdGiftcardWriteoffs) creditCryptoBalanceWithRebateDecimalTx(tx *gorm.D
 		// 可用余额流水2：从冻结余额转入
 		newBalance := balanceRunning.Add(overflowAmount)
 		err = e.createCryptoLedgerDecimal(tx, user.Id, overflowAmount, balanceRunning, newBalance,
-			currencyCode, "giftcard_writeoff_rebate_unfrozen", orderId, nanoTime+3, "礼品卡返利（冻结转入可用）", createBy)
+			currencyCode, "giftcard_writeoff_rebate_unfrozen", orderId, nanoTime+3, "Gift card rebate (frozen to available)", createBy)
 		if err != nil {
 			return err
 		}
@@ -1404,7 +1477,6 @@ func (e *OrdGiftcardWriteoffs) getUserRebateRateDecimal(tx *gorm.DB, user *model
 // 	return nil
 // }
 
-
 // // createFiatLedger 创建法币流水记录
 // func (e *OrdGiftcardWriteoffs) createFiatLedger(tx *gorm.DB, userId int, amount, balanceBefore, balanceAfter float64, currencyCode, bizType string, orderId int, nanoTime int64, remark string, createBy int) error {
 // 	ledger := models.HsUserLedger{
@@ -1419,7 +1491,7 @@ func (e *OrdGiftcardWriteoffs) getUserRebateRateDecimal(tx *gorm.DB, user *model
 // 		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, nanoTime),
 // 		RefTable:       "ord_giftcard_writeoffs",
 // 		RefId:          strconv.Itoa(orderId),
-// 		Remark:         fmt.Sprintf("%s，订单号: %d", remark, orderId),
+// 		Remark:         fmt.Sprintf("%s, Order: %d", remark, orderId),
 // 		Status:         "1",
 // 	}
 // 	ledger.CreateBy = createBy
@@ -1430,7 +1502,6 @@ func (e *OrdGiftcardWriteoffs) getUserRebateRateDecimal(tx *gorm.DB, user *model
 // 	}
 // 	return nil
 // }
-
 
 // // createFiatFrozenLedger 创建法币冻结流水记录
 // func (e *OrdGiftcardWriteoffs) createFiatFrozenLedger(tx *gorm.DB, userId int, amount, balanceBefore, balanceAfter float64, currencyCode, bizType string, orderId int, nanoTime int64, remark string, createBy int) error {
@@ -1444,7 +1515,7 @@ func (e *OrdGiftcardWriteoffs) getUserRebateRateDecimal(tx *gorm.DB, user *model
 // 		BizType:        bizType,
 // 		BizId:          strconv.Itoa(orderId),
 // 		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, nanoTime),
-// 		Remark:         fmt.Sprintf("%s，订单号: %d，关联表: ord_giftcard_writeoffs", remark, orderId),
+// 		Remark:         fmt.Sprintf("%s, Order: %d, Related table: ord_giftcard_writeoffs", remark, orderId),
 // 		Status:         "1",
 // 	}
 // 	ledger.CreateBy = createBy
@@ -1535,7 +1606,7 @@ func (e *OrdGiftcardWriteoffs) getUserRebateRateDecimal(tx *gorm.DB, user *model
 // 		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, nanoTime),
 // 		RefTable:       "ord_giftcard_writeoffs",
 // 		RefId:          strconv.Itoa(orderId),
-// 		Remark:         fmt.Sprintf("%s，订单号: %d", remark, orderId),
+// 		Remark:         fmt.Sprintf("%s, Order: %d", remark, orderId),
 // 		Status:         "1",
 // 	}
 // 	ledger.CreateBy = createBy
@@ -1559,7 +1630,7 @@ func (e *OrdGiftcardWriteoffs) getUserRebateRateDecimal(tx *gorm.DB, user *model
 // 		BizType:        bizType,
 // 		BizId:          strconv.Itoa(orderId),
 // 		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, nanoTime),
-// 		Remark:         fmt.Sprintf("%s，订单号: %d，关联表: ord_giftcard_writeoffs", remark, orderId),
+// 		Remark:         fmt.Sprintf("%s, Order: %d, Related table: ord_giftcard_writeoffs", remark, orderId),
 // 		Status:         "1",
 // 	}
 // 	ledger.CreateBy = createBy
@@ -1648,7 +1719,7 @@ func (e *OrdGiftcardWriteoffs) createFiatLedgerDecimal(tx *gorm.DB, userId int, 
 		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, nanoTime),
 		RefTable:       "ord_giftcard_writeoffs",
 		RefId:          strconv.Itoa(orderId),
-		Remark:         fmt.Sprintf("%s，订单号: %d", remark, orderId),
+		Remark:         fmt.Sprintf("%s, Order: %d", remark, orderId),
 		Status:         "1",
 	}
 	ledger.CreateBy = createBy
@@ -1672,7 +1743,7 @@ func (e *OrdGiftcardWriteoffs) createFiatFrozenLedgerDecimal(tx *gorm.DB, userId
 		BizType:        bizType,
 		BizId:          strconv.Itoa(orderId),
 		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, nanoTime),
-		Remark:         fmt.Sprintf("%s，订单号: %d，关联表: ord_giftcard_writeoffs", remark, orderId),
+		Remark:         fmt.Sprintf("%s, Order: %d, Related table: ord_giftcard_writeoffs", remark, orderId),
 		Status:         "1",
 	}
 	ledger.CreateBy = createBy
@@ -1696,7 +1767,7 @@ func (e *OrdGiftcardWriteoffs) createFiatFrozenLedgerOutDecimal(tx *gorm.DB, use
 		BizType:        bizType,
 		BizId:          strconv.Itoa(orderId),
 		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, nanoTime),
-		Remark:         fmt.Sprintf("%s，订单号: %d，关联表: ord_giftcard_writeoffs", remark, orderId),
+		Remark:         fmt.Sprintf("%s, Order: %d, Related table: ord_giftcard_writeoffs", remark, orderId),
 		Status:         "1",
 	}
 	ledger.CreateBy = createBy
@@ -1783,7 +1854,7 @@ func (e *OrdGiftcardWriteoffs) createCryptoLedgerDecimal(tx *gorm.DB, userId int
 		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, nanoTime),
 		RefTable:       "ord_giftcard_writeoffs",
 		RefId:          strconv.Itoa(orderId),
-		Remark:         fmt.Sprintf("%s，订单号: %d", remark, orderId),
+		Remark:         fmt.Sprintf("%s, Order: %d", remark, orderId),
 		Status:         "1",
 	}
 	ledger.CreateBy = createBy
@@ -1807,7 +1878,7 @@ func (e *OrdGiftcardWriteoffs) createCryptoFrozenLedgerDecimal(tx *gorm.DB, user
 		BizType:        bizType,
 		BizId:          strconv.Itoa(orderId),
 		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, nanoTime),
-		Remark:         fmt.Sprintf("%s，订单号: %d，关联表: ord_giftcard_writeoffs", remark, orderId),
+		Remark:         fmt.Sprintf("%s, Order: %d, Related table: ord_giftcard_writeoffs", remark, orderId),
 		Status:         "1",
 	}
 	ledger.CreateBy = createBy
@@ -1831,7 +1902,7 @@ func (e *OrdGiftcardWriteoffs) createCryptoFrozenLedgerOutDecimal(tx *gorm.DB, u
 		BizType:        bizType,
 		BizId:          strconv.Itoa(orderId),
 		IdempotencyKey: fmt.Sprintf("%s:%d:%d", bizType, orderId, nanoTime),
-		Remark:         fmt.Sprintf("%s，订单号: %d，关联表: ord_giftcard_writeoffs", remark, orderId),
+		Remark:         fmt.Sprintf("%s, Order: %d, Related table: ord_giftcard_writeoffs", remark, orderId),
 		Status:         "1",
 	}
 	ledger.CreateBy = createBy
@@ -2125,7 +2196,7 @@ func (e *OrdGiftcardWriteoffs) updateInviterFiatFrozenBalanceDecimal(tx *gorm.DB
 		BalanceAfter: frozenBalanceAfterAdd.StringFixed(2), BizType: "invite_commission_frozen_add_fiat",
 		BizId: orderIdStr, IdempotencyKey: fmt.Sprintf("INVITE_FROZEN_ADD_L%s:%d:%d", level, orderId, nanoTime),
 		RefTable: "hs_invite_commissions", RefId: orderIdStr,
-		Remark: fmt.Sprintf("邀请分成冻结增加（%s级），订单号: %d", level, orderId), Status: "1",
+		Remark: fmt.Sprintf("Invite commission frozen increase (Level %s), Order: %d", level, orderId), Status: "1",
 	}
 	ledger1.CreateBy = createBy
 	tx.Create(&ledger1)
@@ -2139,7 +2210,7 @@ func (e *OrdGiftcardWriteoffs) updateInviterFiatFrozenBalanceDecimal(tx *gorm.DB
 			BalanceAfter: frozenBalanceAfter.StringFixed(2), BizType: "invite_commission_frozen_out_fiat",
 			BizId: orderIdStr, IdempotencyKey: fmt.Sprintf("INVITE_FROZEN_OUT_L%s:%d:%d", level, orderId, nanoTime+1),
 			RefTable: "hs_invite_commissions", RefId: orderIdStr,
-			Remark: fmt.Sprintf("邀请分成冻结转出（%s级，超限），订单号: %d", level, orderId), Status: "1",
+			Remark: fmt.Sprintf("Invite commission frozen out (Level %s, over limit), Order: %d", level, orderId), Status: "1",
 		}
 		ledger2.CreateBy = createBy
 		tx.Create(&ledger2)
@@ -2151,7 +2222,7 @@ func (e *OrdGiftcardWriteoffs) updateInviterFiatFrozenBalanceDecimal(tx *gorm.DB
 			BalanceAfter: availableBalanceAfter.StringFixed(2), BizType: "invite_commission_balance_in_fiat",
 			BizId: orderIdStr, IdempotencyKey: fmt.Sprintf("INVITE_BALANCE_IN_L%s:%d:%d", level, orderId, nanoTime+2),
 			RefTable: "hs_invite_commissions", RefId: orderIdStr,
-			Remark: fmt.Sprintf("邀请分成余额转入（%s级，超限），订单号: %d", level, orderId), Status: "1",
+			Remark: fmt.Sprintf("Invite commission balance in (Level %s, over limit), Order: %d", level, orderId), Status: "1",
 		}
 		ledger3.CreateBy = createBy
 		tx.Create(&ledger3)
@@ -2209,7 +2280,7 @@ func (e *OrdGiftcardWriteoffs) updateInviterCryptoFrozenBalanceDecimal(tx *gorm.
 		BalanceAfter: frozenBalanceAfterAdd.StringFixed(8), BizType: "invite_commission_frozen_add_crypto",
 		BizId: orderIdStr, IdempotencyKey: fmt.Sprintf("INVITE_FROZEN_ADD_L%s:%d:%d", level, orderId, nanoTime),
 		RefTable: "hs_invite_commissions", RefId: orderIdStr,
-		Remark: fmt.Sprintf("邀请分成冻结增加（%s级），订单号: %d", level, orderId), Status: "1",
+		Remark: fmt.Sprintf("Invite commission frozen increase (Level %s), Order: %d", level, orderId), Status: "1",
 	}
 	ledger1.CreateBy = createBy
 	tx.Create(&ledger1)
@@ -2223,7 +2294,7 @@ func (e *OrdGiftcardWriteoffs) updateInviterCryptoFrozenBalanceDecimal(tx *gorm.
 			BalanceAfter: frozenBalanceAfter.StringFixed(8), BizType: "invite_commission_frozen_out_crypto",
 			BizId: orderIdStr, IdempotencyKey: fmt.Sprintf("INVITE_FROZEN_OUT_L%s:%d:%d", level, orderId, nanoTime+1),
 			RefTable: "hs_invite_commissions", RefId: orderIdStr,
-			Remark: fmt.Sprintf("邀请分成冻结转出（%s级，超限），订单号: %d", level, orderId), Status: "1",
+			Remark: fmt.Sprintf("Invite commission frozen out (Level %s, over limit), Order: %d", level, orderId), Status: "1",
 		}
 		ledger2.CreateBy = createBy
 		tx.Create(&ledger2)
@@ -2235,7 +2306,7 @@ func (e *OrdGiftcardWriteoffs) updateInviterCryptoFrozenBalanceDecimal(tx *gorm.
 			BalanceAfter: availableBalanceAfter.StringFixed(8), BizType: "invite_commission_balance_in_crypto",
 			BizId: orderIdStr, IdempotencyKey: fmt.Sprintf("INVITE_BALANCE_IN_L%s:%d:%d", level, orderId, nanoTime+2),
 			RefTable: "hs_invite_commissions", RefId: orderIdStr,
-			Remark: fmt.Sprintf("邀请分成余额转入（%s级，超限），订单号: %d", level, orderId), Status: "1",
+			Remark: fmt.Sprintf("Invite commission balance in (Level %s, over limit), Order: %d", level, orderId), Status: "1",
 		}
 		ledger3.CreateBy = createBy
 		tx.Create(&ledger3)
@@ -2288,7 +2359,7 @@ func (e *OrdGiftcardWriteoffs) updateInviterFiatAvailableBalance(tx *gorm.DB, in
 		BalanceAfter: fmt.Sprintf("%.2f", balanceAfter), BizType: "invite_commission_available_fiat",
 		BizId: orderIdStr, IdempotencyKey: fmt.Sprintf("INVITE_AVAILABLE_L%s:%d:%d", level, orderId, time.Now().UnixNano()),
 		RefTable: "hs_invite_commissions", RefId: orderIdStr,
-		Remark: fmt.Sprintf("邀请分成可用（%s级），订单号: %d", level, orderId), Status: "1",
+		Remark: fmt.Sprintf("Invite commission available (Level %s), Order: %d", level, orderId), Status: "1",
 	}
 	ledger.CreateBy = createBy
 	return tx.Create(&ledger).Error
@@ -2323,7 +2394,7 @@ func (e *OrdGiftcardWriteoffs) updateInviterCryptoAvailableBalance(tx *gorm.DB, 
 		BalanceAfter: fmt.Sprintf("%.8f", balanceAfter), BizType: "invite_commission_available_crypto",
 		BizId: orderIdStr, IdempotencyKey: fmt.Sprintf("INVITE_AVAILABLE_L%s:%d:%d", level, orderId, time.Now().UnixNano()),
 		RefTable: "hs_invite_commissions", RefId: orderIdStr,
-		Remark: fmt.Sprintf("邀请分成可用（%s级），订单号: %d", level, orderId), Status: "1",
+		Remark: fmt.Sprintf("Invite commission available (Level %s), Order: %d", level, orderId), Status: "1",
 	}
 	ledger.CreateBy = createBy
 	return tx.Create(&ledger).Error
@@ -2488,7 +2559,7 @@ func (e *OrdGiftcardWriteoffs) addUserExperience(tx *gorm.DB, userId int, experi
 		ExperienceAfter:  strconv.Itoa(experienceAfter),
 		SourceType:       sourceType,
 		SourceId:         strconv.Itoa(orderId),
-		Description:      fmt.Sprintf("礼品卡核销获得经验值，订单号: %d", orderId),
+		Description:      fmt.Sprintf("Gift card redemption experience gained, Order: %d", orderId),
 	}
 	experienceLog.CreateBy = createBy
 
@@ -2655,4 +2726,41 @@ func (e *OrdGiftcardWriteoffs) CalculateUserLocalCurrency(c *dto.OrdGiftcardWrit
 		OrderCurrencyCode:       sourceCurrencyCode,
 		DenominationValidation:  denominationValidation,
 	}, nil
+}
+
+// reportTenjinOrderSuccess 上报Tenjin订单成功事件
+func (e *OrdGiftcardWriteoffs) reportTenjinOrderSuccess(userId int, orderId int) {
+	var appInstall models.MdAppInstall
+	err := e.Orm.Where("user_id = ?", userId).
+		Order("update_time desc").
+		First(&appInstall).Error
+	if err != nil {
+		e.Log.Errorf("reportTenjinOrderSuccess get app install error: userId=%d, err=%s", userId, err)
+		return
+	}
+
+	eventName := tenjinOrderEventName(appInstall.Platform)
+	inserted, err := insertTenjinReport(e.Orm, tenjinBizTypeOrder, strconv.Itoa(orderId), eventName, int64(userId))
+	if err != nil {
+		e.Log.Errorf("reportTenjinOrderSuccess insert report error: orderId=%d, userId=%d, err=%s", orderId, userId, err)
+		return
+	}
+	if !inserted {
+		return
+	}
+
+	err = tenjin.ReportOrderSuccess(
+		appInstall.Platform,
+		appInstall.AnalyticsInstallationId,
+		appInstall.AdvertisingId,
+		appInstall.DeveloperDeviceId,
+		appInstall.OsVersion,
+		appInstall.AppVersion,
+		appInstall.IpAddress,
+		1,
+	)
+	if err != nil {
+		e.Log.Errorf("reportTenjinOrderSuccess error: userId=%d, err=%s", userId, err)
+		_ = deleteTenjinReport(e.Orm, tenjinBizTypeOrder, strconv.Itoa(orderId), eventName)
+	}
 }

@@ -1,7 +1,9 @@
 package main
 
 import (
+
 	"go-admin/cmd"
+
 )
 
 //go:generate swag init --parseDependency --parseDepth=6 --instanceName admin -o ./docs/admin
@@ -20,5 +22,7 @@ import (
 // @in header
 // @name Authorization
 func main() {
+
 	cmd.Execute()
+
 }

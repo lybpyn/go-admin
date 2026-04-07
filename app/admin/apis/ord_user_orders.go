@@ -1,7 +1,7 @@
 package apis
 
 import (
-    "fmt"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -35,18 +35,18 @@ type OrdUserOrders struct {
 // @Router /api/v1/ord-user-orders [get]
 // @Security Bearer
 func (e OrdUserOrders) GetPage(c *gin.Context) {
-    req := dto.OrdUserOrdersGetPageReq{}
-    s := service.OrdUserOrders{}
-    err := e.MakeContext(c).
-        MakeOrm().
-        Bind(&req, binding.Form, binding.Query).
-        MakeService(&s.Service).
-        Errors
-   	if err != nil {
-   		e.Logger.Error(err)
-   		e.Error(500, err, err.Error())
-   		return
-   	}
+	req := dto.OrdUserOrdersGetPageReq{}
+	s := service.OrdUserOrders{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req, binding.Form, binding.Query).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
 
 	p := actions.GetPermissionFromContext(c)
 	list := make([]models.OrdUserOrders, 0)
@@ -55,7 +55,7 @@ func (e OrdUserOrders) GetPage(c *gin.Context) {
 	err = s.GetPage(&req, p, &list, &count)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("获取礼品卡订单表失败，\r\n失败信息 %s", err.Error()))
-        return
+		return
 	}
 
 	e.PageOK(list, int(count), req.GetPageIndex(), req.GetPageSize(), "查询成功")
@@ -72,7 +72,7 @@ func (e OrdUserOrders) GetPage(c *gin.Context) {
 func (e OrdUserOrders) Get(c *gin.Context) {
 	req := dto.OrdUserOrdersGetReq{}
 	s := service.OrdUserOrders{}
-    err := e.MakeContext(c).
+	err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
 		MakeService(&s.Service).
@@ -84,14 +84,17 @@ func (e OrdUserOrders) Get(c *gin.Context) {
 	}
 	var object models.OrdUserOrders
 
+	// 获取当前管理员ID
+	adminId := user.GetUserId(c)
+
 	p := actions.GetPermissionFromContext(c)
-	err = s.Get(&req, p, &object)
+	err = s.Get(&req, p, adminId, &object)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("获取礼品卡订单表失败，\r\n失败信息 %s", err.Error()))
-        return
+		return
 	}
 
-	e.OK( object, "查询成功")
+	e.OK(object, "查询成功")
 }
 
 // Insert 创建礼品卡订单表
@@ -105,25 +108,25 @@ func (e OrdUserOrders) Get(c *gin.Context) {
 // @Router /api/v1/ord-user-orders [post]
 // @Security Bearer
 func (e OrdUserOrders) Insert(c *gin.Context) {
-    req := dto.OrdUserOrdersInsertReq{}
-    s := service.OrdUserOrders{}
-    err := e.MakeContext(c).
-        MakeOrm().
-        Bind(&req).
-        MakeService(&s.Service).
-        Errors
-    if err != nil {
-        e.Logger.Error(err)
-        e.Error(500, err, err.Error())
-        return
-    }
+	req := dto.OrdUserOrdersInsertReq{}
+	s := service.OrdUserOrders{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
 	// 设置创建人
 	req.SetCreateBy(user.GetUserId(c))
 
 	err = s.Insert(&req)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("创建礼品卡订单表失败，\r\n失败信息 %s", err.Error()))
-        return
+		return
 	}
 
 	e.OK(req.GetId(), "创建成功")
@@ -141,27 +144,27 @@ func (e OrdUserOrders) Insert(c *gin.Context) {
 // @Router /api/v1/ord-user-orders/{id} [put]
 // @Security Bearer
 func (e OrdUserOrders) Update(c *gin.Context) {
-    req := dto.OrdUserOrdersUpdateReq{}
-    s := service.OrdUserOrders{}
-    err := e.MakeContext(c).
-        MakeOrm().
-        Bind(&req).
-        MakeService(&s.Service).
-        Errors
-    if err != nil {
-        e.Logger.Error(err)
-        e.Error(500, err, err.Error())
-        return
-    }
+	req := dto.OrdUserOrdersUpdateReq{}
+	s := service.OrdUserOrders{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
 	req.SetUpdateBy(user.GetUserId(c))
 	p := actions.GetPermissionFromContext(c)
 
 	err = s.Update(&req, p)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("修改礼品卡订单表失败，\r\n失败信息 %s", err.Error()))
-        return
+		return
 	}
-	e.OK( req.GetId(), "修改成功")
+	e.OK(req.GetId(), "修改成功")
 }
 
 // Delete 删除礼品卡订单表
@@ -173,18 +176,18 @@ func (e OrdUserOrders) Update(c *gin.Context) {
 // @Router /api/v1/ord-user-orders [delete]
 // @Security Bearer
 func (e OrdUserOrders) Delete(c *gin.Context) {
-    s := service.OrdUserOrders{}
-    req := dto.OrdUserOrdersDeleteReq{}
-    err := e.MakeContext(c).
-        MakeOrm().
-        Bind(&req).
-        MakeService(&s.Service).
-        Errors
-    if err != nil {
-        e.Logger.Error(err)
-        e.Error(500, err, err.Error())
-        return
-    }
+	s := service.OrdUserOrders{}
+	req := dto.OrdUserOrdersDeleteReq{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
 
 	// req.SetUpdateBy(user.GetUserId(c))
 	p := actions.GetPermissionFromContext(c)
@@ -192,9 +195,9 @@ func (e OrdUserOrders) Delete(c *gin.Context) {
 	err = s.Remove(&req, p)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("删除礼品卡订单表失败，\r\n失败信息 %s", err.Error()))
-        return
+		return
 	}
-	e.OK( req.GetId(), "删除成功")
+	e.OK(req.GetId(), "删除成功")
 }
 
 // GetPageByAssign 根据接单人和状态查询订单列表
@@ -210,18 +213,18 @@ func (e OrdUserOrders) Delete(c *gin.Context) {
 // @Router /api/v1/ord-user-orders/my-assigned [get]
 // @Security Bearer
 func (e OrdUserOrders) GetPageByAssign(c *gin.Context) {
-    req := dto.OrdUserOrdersGetByAssignReq{}
-    s := service.OrdUserOrders{}
-    err := e.MakeContext(c).
-        MakeOrm().
-        Bind(&req).
-        MakeService(&s.Service).
-        Errors
-   	if err != nil {
-   		e.Logger.Error(err)
-   		e.Error(500, err, err.Error())
-   		return
-   	}
+	req := dto.OrdUserOrdersGetByAssignReq{}
+	s := service.OrdUserOrders{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
 
 	// 自动设置接单人ID为当前登录用户ID，确保只能查询自己接的单
 	req.AssignBy = user.GetUserId(c)
@@ -233,7 +236,7 @@ func (e OrdUserOrders) GetPageByAssign(c *gin.Context) {
 	err = s.GetPageByAssign(&req, p, &list, &count)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("查询接单人订单失败，\r\n失败信息 %s", err.Error()))
-        return
+		return
 	}
 
 	e.PageOK(list, int(count), req.GetPageIndex(), req.GetPageSize(), "查询成功")
@@ -248,18 +251,18 @@ func (e OrdUserOrders) GetPageByAssign(c *gin.Context) {
 // @Router /api/v1/ord-user-orders/{id}/accept [post]
 // @Security Bearer
 func (e OrdUserOrders) AcceptOrder(c *gin.Context) {
-    req := dto.OrdUserOrdersAcceptReq{}
-    s := service.OrdUserOrders{}
-    err := e.MakeContext(c).
-        MakeOrm().
-        Bind(&req).
-        MakeService(&s.Service).
-        Errors
-    if err != nil {
-        e.Logger.Error(err)
-        e.Error(500, err, err.Error())
-        return
-    }
+	req := dto.OrdUserOrdersAcceptReq{}
+	s := service.OrdUserOrders{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
 
 	// 获取当前管理员ID
 	adminId := user.GetUserId(c)
@@ -279,7 +282,7 @@ func (e OrdUserOrders) AcceptOrder(c *gin.Context) {
 	err = s.AcceptOrder(&req, adminId, admin.NickName, p)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("接单失败，\r\n失败信息 %s", err.Error()))
-        return
+		return
 	}
 
 	e.OK(req.GetId(), "接单成功")
@@ -295,18 +298,18 @@ func (e OrdUserOrders) AcceptOrder(c *gin.Context) {
 // @Router /api/v1/ord-user-orders/{id}/cancel-accept [post]
 // @Security Bearer
 func (e OrdUserOrders) CancelAcceptOrder(c *gin.Context) {
-    req := dto.OrdUserOrdersCancelAcceptReq{}
-    s := service.OrdUserOrders{}
-    err := e.MakeContext(c).
-        MakeOrm().
-        Bind(&req).
-        MakeService(&s.Service).
-        Errors
-    if err != nil {
-        e.Logger.Error(err)
-        e.Error(500, err, err.Error())
-        return
-    }
+	req := dto.OrdUserOrdersCancelAcceptReq{}
+	s := service.OrdUserOrders{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
 
 	// 获取当前管理员ID
 	adminId := user.GetUserId(c)
@@ -317,7 +320,7 @@ func (e OrdUserOrders) CancelAcceptOrder(c *gin.Context) {
 	err = s.CancelAcceptOrder(&req, adminId, p)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("取消接单失败，\r\n失败信息 %s", err.Error()))
-        return
+		return
 	}
 
 	e.OK(req.GetId(), "取消接单成功")

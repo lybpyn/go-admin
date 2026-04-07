@@ -97,7 +97,7 @@ func (e *NoSystemNotifications) Remove(d *dto.NoSystemNotificationsDeleteReq, p 
 	db := e.Orm.Model(&data).
 		Scopes(
 			actions.Permission(data.TableName(), p),
-		).Delete(&data, d.GetId())
+		).Unscoped().Delete(&data, d.GetId())
 	if err := db.Error; err != nil {
         e.Log.Errorf("Service RemoveNoSystemNotifications error:%s \r\n", err)
         return err

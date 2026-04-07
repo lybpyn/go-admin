@@ -74,14 +74,14 @@ func (p *WithdrawalProcessor) processOne(withdrawal *models.HsUserWithdrawal) er
 	if err != nil {
 		log.Errorf("[WithdrawalProcessor] 获取提现规则失败: %v", err)
 		// 如果没有找到规则，转人工审核
-		return p.updateStatusToReview(withdrawal, "未找到提现规则")
+		return p.updateStatusToReview(withdrawal, "Withdrawal rule not found")
 	}
 
 	// 2. 检查是否满足规则
 	pass, reason, err := p.checkRules(withdrawal, &rule)
 	if err != nil {
 		log.Errorf("[WithdrawalProcessor] 检查规则失败: %v", err)
-		return p.updateStatusToReview(withdrawal, "检查规则失败: "+err.Error())
+		return p.updateStatusToReview(withdrawal, "Rule check failed: "+err.Error())
 	}
 	if !pass {
 		log.Infof("[WithdrawalProcessor] 提现单 %s 不满足自动处理条件: %s", withdrawal.WithdrawNo, reason)
@@ -107,7 +107,7 @@ func (p *WithdrawalProcessor) checkRules(withdrawal *models.HsUserWithdrawal, ru
 		today := time.Now().Format("2006-01-02")
 		if err := p.db.Model(&models.HsUserWithdrawal{}).
 			Select("COALESCE(SUM(CAST(amount AS DECIMAL(18,2))), 0)").
-			Where("user_id = ? AND currency_code = ?  AND DATE(requested_at) = ?",
+			Where("user_id = ? AND currency_code = ?  AND DATE(created_at) = ?",
 				withdrawal.UserId, withdrawal.CurrencyCode, today).
 			Scan(&todayTotal).Error; err != nil {
 			return false, "", fmt.Errorf("查询今日提现总额失败: %w", err)
@@ -120,7 +120,7 @@ func (p *WithdrawalProcessor) checkRules(withdrawal *models.HsUserWithdrawal, ru
 		}
 
 		if todayTotal+currentAmount > dailyLimit {
-			return false, fmt.Sprintf("超出每日提现限额：已提现 %.2f，限额 %.2f", todayTotal, dailyLimit), nil
+			return false, fmt.Sprintf("Daily withdrawal limit exceeded: withdrawn %.2f, limit %.2f", todayTotal, dailyLimit), nil
 		}
 	}
 
@@ -135,7 +135,7 @@ func (p *WithdrawalProcessor) checkRules(withdrawal *models.HsUserWithdrawal, ru
 		var todayCount int64
 		today := time.Now().Format("2006-01-02")
 		if err := p.db.Model(&models.HsUserWithdrawal{}).
-			Where("user_id = ? AND currency_code = ?  AND DATE(requested_at) = ?",
+			Where("user_id = ? AND currency_code = ?  AND DATE(created_at) = ?",
 				withdrawal.UserId, withdrawal.CurrencyCode, today).
 			Count(&todayCount).Error; err != nil {
 			return false, "", fmt.Errorf("查询今日提现次数失败: %w", err)
@@ -143,14 +143,14 @@ func (p *WithdrawalProcessor) checkRules(withdrawal *models.HsUserWithdrawal, ru
 
 		// 加上当前这笔
 		if int(todayCount)+1 > dailyCount {
-			return false, fmt.Sprintf("超出每日提现次数限制：已提现 %d 次，限额 %d 次", todayCount, dailyCount), nil
+			return false, fmt.Sprintf("Daily withdrawal count limit exceeded: %d withdrawals, limit %d", todayCount, dailyCount), nil
 		}
 	}
 
 	return true, "", nil
 }
 
-// updateStatusToReview 更新状态为人工审核
+// updateStatusToReview Update status to manual review
 func (p *WithdrawalProcessor) updateStatusToReview(withdrawal *models.HsUserWithdrawal, reason string) error {
 	reasonJSON, _ := json.Marshal(map[string]string{
 		"auto_review_reason": reason,

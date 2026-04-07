@@ -15,6 +15,7 @@ import (
 	"go-admin/common/actions"
 	cDto "go-admin/common/dto"
 	"go-admin/common/pandapay"
+	"go-admin/common/tenjin"
 )
 
 type HsUserWithdrawal struct {
@@ -147,9 +148,9 @@ func (e *HsUserWithdrawal) Get(d *dto.HsUserWithdrawalGetReq, p *actions.DataPer
 
 // Insert 创建HsUserWithdrawal对象
 func (e *HsUserWithdrawal) Insert(c *dto.HsUserWithdrawalInsertReq) error {
-    var err error
-    var data models.HsUserWithdrawal
-    c.Generate(&data)
+	var err error
+	var data models.HsUserWithdrawal
+	c.Generate(&data)
 	err = e.Orm.Create(&data).Error
 	if err != nil {
 		e.Log.Errorf("HsUserWithdrawalService Insert error:%s \r\n", err)
@@ -160,22 +161,22 @@ func (e *HsUserWithdrawal) Insert(c *dto.HsUserWithdrawalInsertReq) error {
 
 // Update 修改HsUserWithdrawal对象
 func (e *HsUserWithdrawal) Update(c *dto.HsUserWithdrawalUpdateReq, p *actions.DataPermission) error {
-    var err error
-    var data = models.HsUserWithdrawal{}
-    e.Orm.Scopes(
-            actions.Permission(data.TableName(), p),
-        ).First(&data, c.GetId())
-    c.Generate(&data)
+	var err error
+	var data = models.HsUserWithdrawal{}
+	e.Orm.Scopes(
+		actions.Permission(data.TableName(), p),
+	).First(&data, c.GetId())
+	c.Generate(&data)
 
-    db := e.Orm.Save(&data)
-    if err = db.Error; err != nil {
-        e.Log.Errorf("HsUserWithdrawalService Save error:%s \r\n", err)
-        return err
-    }
-    if db.RowsAffected == 0 {
-        return errors.New("无权更新该数据")
-    }
-    return nil
+	db := e.Orm.Save(&data)
+	if err = db.Error; err != nil {
+		e.Log.Errorf("HsUserWithdrawalService Save error:%s \r\n", err)
+		return err
+	}
+	if db.RowsAffected == 0 {
+		return errors.New("无权更新该数据")
+	}
+	return nil
 }
 
 // Remove 删除HsUserWithdrawal
@@ -235,7 +236,7 @@ func (e *HsUserWithdrawal) SubmitWithdrawalPayout(withdrawal *models.HsUserWithd
 		// 解析账户信息
 		var accountInfo BankAccountInfo
 		if err := json.Unmarshal([]byte(withdrawal.AccountInfo), &accountInfo); err != nil {
-			return nil, fmt.Errorf("解析账户信息失败: %w", err)
+			return nil, fmt.Errorf("Failed to parse account info: %w", err)
 		}
 
 		// 判断是新格式还是旧格式，并统一处理
@@ -250,19 +251,19 @@ func (e *HsUserWithdrawal) SubmitWithdrawalPayout(withdrawal *models.HsUserWithd
 			err := e.Orm.Where("id = ? AND status = 1", accountInfo.BankId).First(&bank).Error
 			if err != nil {
 				if errors.Is(err, gorm.ErrRecordNotFound) {
-					return nil, fmt.Errorf("银行信息不存在或已禁用，BankId: %d", accountInfo.BankId)
+					return nil, fmt.Errorf("Bank not found or disabled, BankId: %d", accountInfo.BankId)
 				}
 				e.Log.Errorf("查询银行信息失败: %s", err)
-				return nil, fmt.Errorf("查询银行信息失败: %w", err)
+				return nil, fmt.Errorf("Failed to query bank info: %w", err)
 			}
 
 			// 映射新格式字段
 			accountName = accountInfo.CardHolderName
 			bankCode = bank.BankCode
 			accountNumber = accountInfo.CardNumber
-			email = ""    // 新格式没有email
-			mobile = ""   // 新格式没有mobile
-			address = ""  // 可以使用分行名称
+			email = ""   // 新格式没有email
+			mobile = ""  // 新格式没有mobile
+			address = "" // 可以使用分行名称
 			if accountInfo.BranchName != "" {
 				address = accountInfo.BranchName
 			}
@@ -281,13 +282,13 @@ func (e *HsUserWithdrawal) SubmitWithdrawalPayout(withdrawal *models.HsUserWithd
 
 		// 验证必填字段
 		if accountName == "" || bankCode == "" || accountNumber == "" {
-			return nil, errors.New("银行账户信息不完整：缺少持卡人姓名、银行编码或卡号")
+			return nil, errors.New("Incomplete bank account info: missing cardholder name, bank code or card number")
 		}
 
 		// 解析金额
 		amount, err := pandapay.ParseAmount(withdrawal.NetAmount)
 		if err != nil {
-			return nil, fmt.Errorf("金额解析失败: %w", err)
+			return nil, fmt.Errorf("Failed to parse amount: %w", err)
 		}
 
 		// 构建PandaPay请求
@@ -310,7 +311,7 @@ func (e *HsUserWithdrawal) SubmitWithdrawalPayout(withdrawal *models.HsUserWithd
 		if err != nil {
 			e.Log.Errorf("PandaPay代付失败: %s", err)
 			result.Status = "failed"
-			result.Reason = buildReasonJSON(fmt.Sprintf("代付失败: %s", err.Error()))
+			result.Reason = buildReasonJSON(fmt.Sprintf("Payout failed: %s", err.Error()))
 			return result, err
 		}
 
@@ -327,7 +328,7 @@ func (e *HsUserWithdrawal) SubmitWithdrawalPayout(withdrawal *models.HsUserWithd
 			result.Status = "processing"
 		case 2, 3:
 			result.Status = "failed"
-			result.Reason = buildReasonJSON(fmt.Sprintf("PandaPay返回失败状态: %d", resp.Data.Status))
+			result.Reason = buildReasonJSON(fmt.Sprintf("PandaPay returned failed status: %d", resp.Data.Status))
 		default:
 			result.Status = "processing"
 		}
@@ -336,7 +337,7 @@ func (e *HsUserWithdrawal) SubmitWithdrawalPayout(withdrawal *models.HsUserWithd
 		e.Log.Infof("加密货币提现，提现单号: %s, 无需调用代付接口", withdrawal.WithdrawNo)
 		result.Status = "success"
 	} else {
-		return nil, fmt.Errorf("不支持的提现方式: %s", withdrawal.Method)
+		return nil, fmt.Errorf("Unsupported withdrawal method: %s", withdrawal.Method)
 	}
 
 	return result, nil
@@ -362,7 +363,7 @@ func (e *HsUserWithdrawal) Approve(c *dto.HsUserWithdrawalApproveReq, p *actions
 
 	// 检查状态，只有review状态才能审核通过
 	if withdrawal.Status != "review" && withdrawal.Status != "pending" {
-		return fmt.Errorf("提现记录状态不正确，当前状态: %s，只能审核review或pending状态", withdrawal.Status)
+		return fmt.Errorf("Invalid withdrawal status: %s, can only approve review or pending status", withdrawal.Status)
 	}
 
 	// 调用公共转账方法
@@ -422,15 +423,15 @@ func (e *HsUserWithdrawal) Approve(c *dto.HsUserWithdrawalApproveReq, p *actions
 	db := e.Orm.Model(&withdrawal).Where("id = ?", withdrawal.Id).Updates(updateData)
 	if err := db.Error; err != nil {
 		e.Log.Errorf("更新提现记录失败: %s", err)
-		return fmt.Errorf("更新提现记录失败: %w", err)
+		return fmt.Errorf("Failed to update withdrawal record: %w", err)
 	}
 	if db.RowsAffected == 0 {
-		return errors.New("无权更新该数据")
+		return errors.New("No permission to update this record")
 	}
 
 	// 如果代付失败，返回错误
 	if payoutErr != nil {
-		return fmt.Errorf("审核通过但代付失败: %w", payoutErr)
+		return fmt.Errorf("Approved but payout failed: %w", payoutErr)
 	}
 
 	return nil
@@ -448,7 +449,7 @@ func (e *HsUserWithdrawal) Reject(c *dto.HsUserWithdrawalRejectReq, p *actions.D
 		First(&withdrawal, c.GetId()).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return errors.New("提现记录不存在或无权操作")
+			return errors.New("Withdrawal record not found or no permission")
 		}
 		e.Log.Errorf("查询提现记录失败: %s", err)
 		return err
@@ -456,7 +457,7 @@ func (e *HsUserWithdrawal) Reject(c *dto.HsUserWithdrawalRejectReq, p *actions.D
 
 	// 检查状态
 	if withdrawal.Status != "review" && withdrawal.Status != "pending" {
-		return fmt.Errorf("提现记录状态不正确，当前状态: %s，只能拒绝review或pending状态", withdrawal.Status)
+		return fmt.Errorf("Invalid withdrawal status: %s, can only reject review or pending status", withdrawal.Status)
 	}
 
 	// 更新为失败状态
@@ -469,10 +470,10 @@ func (e *HsUserWithdrawal) Reject(c *dto.HsUserWithdrawalRejectReq, p *actions.D
 	db := e.Orm.Save(&withdrawal)
 	if err := db.Error; err != nil {
 		e.Log.Errorf("更新提现记录失败: %s", err)
-		return fmt.Errorf("更新提现记录失败: %w", err)
+		return fmt.Errorf("Failed to update withdrawal record: %w", err)
 	}
 	if db.RowsAffected == 0 {
-		return errors.New("无权更新该数据")
+		return errors.New("No permission to update this record")
 	}
 
 	return nil
@@ -490,7 +491,7 @@ func (e *HsUserWithdrawal) ManualTransfer(c *dto.HsUserWithdrawalManualTransferR
 		First(&withdrawal, c.GetId()).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return errors.New("提现记录不存在或无权操作")
+			return errors.New("Withdrawal record not found or no permission")
 		}
 		e.Log.Errorf("查询提现记录失败: %s", err)
 		return err
@@ -498,22 +499,24 @@ func (e *HsUserWithdrawal) ManualTransfer(c *dto.HsUserWithdrawalManualTransferR
 
 	// 检查状态，只有 review 或 processing 状态才能手动处理
 	if withdrawal.Status != "review" && withdrawal.Status != "processing" {
-		return fmt.Errorf("提现记录状态不正确，当前状态: %s，只能手动处理review或processing状态", withdrawal.Status)
+		return fmt.Errorf("Invalid withdrawal status: %s, can only manually process review or processing status", withdrawal.Status)
 	}
+
+	// 提前声明变量，用于Tenjin上报
+	userId, _ := strconv.Atoi(withdrawal.UserId)
+	netAmount := withdrawal.NetAmount
 
 	// 根据是否成功设置状态
 	if c.Success {
 		withdrawal.Status = "success"
 
 		// 手动处理成功，更新用户的总提现金额
-		userId, _ := strconv.Atoi(withdrawal.UserId)
-		netAmount := withdrawal.NetAmount
 
 		// 1. 查询用户当前版本号
 		var user models.HsUsers
 		if err := e.Orm.Select("id, version").Where("id = ?", userId).First(&user).Error; err != nil {
 			e.Log.Errorf("ManualTransfer get user error: %s", err)
-			return errors.New("获取用户信息失败")
+			return errors.New("Failed to get user info")
 		}
 
 		// 2. 根据提现方式选择更新的字段
@@ -533,40 +536,183 @@ func (e *HsUserWithdrawal) ManualTransfer(c *dto.HsUserWithdrawalManualTransferR
 			})
 		if result.Error != nil {
 			e.Log.Errorf("ManualTransfer update %s error: %s", updateField, result.Error)
-			return errors.New("更新用户总提现金额失败")
+			return errors.New("Failed to update user total withdrawal amount")
 		}
 		if result.RowsAffected == 0 {
 			e.Log.Errorf("ManualTransfer version conflict for user %d", userId)
-			return errors.New("用户数据更新冲突，请重试")
+			return errors.New("User data update conflict, please retry")
 		}
 		e.Log.Infof("Updated user %d %s: +%s", userId, updateField, netAmount)
 	} else {
 		withdrawal.Status = "failed"
+
+		tx := e.Orm.Begin()
+		defer func() {
+			if r := recover(); r != nil {
+				tx.Rollback()
+			}
+		}()
+
+		amount, errAmt := strconv.ParseFloat(withdrawal.Amount, 64)
+		if errAmt != nil {
+			tx.Rollback()
+			return errors.New("Failed to parse withdrawal amount")
+		}
+		fee, _ := strconv.ParseFloat(withdrawal.Fee, 64)
+		totalRefund := amount + fee
+
+		userId, _ := strconv.Atoi(withdrawal.UserId)
+		currencyCode := withdrawal.CurrencyCode
+
+		var user models.HsUsers
+		if err := tx.Select("id, balance, crypto_balance, version").Where("id = ?", userId).First(&user).Error; err != nil {
+			tx.Rollback()
+			e.Log.Errorf("ManualTransfer refund get user error: %s", err)
+			return errors.New("Failed to get user info")
+		}
+
+		var balanceField string
+		var balanceBefore float64
+		var decimalPlaces int
+		isCrypto := withdrawal.Method == "crypto"
+		if isCrypto {
+			balanceField = "crypto_balance"
+			balanceBefore, _ = strconv.ParseFloat(user.CryptoBalance, 64)
+			decimalPlaces = 8
+		} else {
+			balanceField = "balance"
+			balanceBefore, _ = strconv.ParseFloat(user.Balance, 64)
+			decimalPlaces = 2
+		}
+
+		balanceAfter := balanceBefore + totalRefund
+
+		result := tx.Model(&models.HsUsers{}).
+			Where("id = ? AND version = ?", userId, user.Version).
+			Updates(map[string]interface{}{
+				balanceField: fmt.Sprintf("%.*f", decimalPlaces, balanceAfter),
+				"version":    gorm.Expr("version + 1"),
+			})
+		if result.Error != nil {
+			tx.Rollback()
+			e.Log.Errorf("ManualTransfer refund update balance error: %s", result.Error)
+			return errors.New("Failed to update user balance")
+		}
+		if result.RowsAffected == 0 {
+			tx.Rollback()
+			e.Log.Errorf("ManualTransfer refund update balance conflict for user %d", userId)
+			return errors.New("Balance update conflict, please retry")
+		}
+
+		ledger := models.HsUserLedger{
+			UserId:        withdrawal.UserId,
+			CurrencyCode:  currencyCode,
+			Direction:     "1",
+			Amount:        fmt.Sprintf("%.*f", decimalPlaces, totalRefund),
+			BalanceBefore: fmt.Sprintf("%.*f", decimalPlaces, balanceBefore),
+			BalanceAfter:  fmt.Sprintf("%.*f", decimalPlaces, balanceAfter),
+			BizType:       "withdrawal_refund",
+			BizId:         strconv.Itoa(withdrawal.Id),
+			IdempotencyKey: fmt.Sprintf("WITHDRAWAL_REFUND:%s:%d",
+				withdrawal.WithdrawNo, time.Now().UnixNano()),
+			RefTable: "hs_user_withdrawal",
+			RefId:    strconv.Itoa(withdrawal.Id),
+			Remark:   fmt.Sprintf("Manual transfer failed refund, withdrawal no: %s", withdrawal.WithdrawNo),
+			Status:   "1",
+		}
+		if err := tx.Create(&ledger).Error; err != nil {
+			tx.Rollback()
+			e.Log.Errorf("ManualTransfer refund create ledger error: %s", err)
+			return errors.New("Failed to create ledger record")
+		}
+
+		reasonData := map[string]interface{}{
+			"manual_transfer": true,
+			"remark":          c.Remark,
+			"time":            time.Now().Format("2006-01-02 15:04:05"),
+		}
+		reasonJSON, _ := json.Marshal(reasonData)
+		withdrawal.Reason = string(reasonJSON)
+		withdrawal.TransferImage = c.TransferImage
+		withdrawal.ProcessedAt = time.Now()
+		withdrawal.UpdateBy = c.UpdateBy
+
+		if err := tx.Save(&withdrawal).Error; err != nil {
+			tx.Rollback()
+			e.Log.Errorf("更新提现记录失败: %s", err)
+			return fmt.Errorf("Failed to update withdrawal record: %w", err)
+		}
+
+		if err := tx.Commit().Error; err != nil {
+			e.Log.Errorf("ManualTransfer refund commit error: %s", err)
+			return errors.New("Transaction commit failed")
+		}
 	}
 
-	// 构建备注信息
-	reasonData := map[string]interface{}{
-		"manual_transfer": true,
-		"remark":          c.Remark,
-		"time":            time.Now().Format("2006-01-02 15:04:05"),
-	}
-	reasonJSON, _ := json.Marshal(reasonData)
+	// 保存更新（若失败分支已在事务中保存，这里仅处理成功分支）
+	if c.Success {
+		reasonData := map[string]interface{}{
+			"manual_transfer": true,
+			"remark":          c.Remark,
+			"time":            time.Now().Format("2006-01-02 15:04:05"),
+		}
+		reasonJSON, _ := json.Marshal(reasonData)
+		withdrawal.Reason = string(reasonJSON)
+		withdrawal.TransferImage = c.TransferImage
+		withdrawal.ProcessedAt = time.Now()
+		withdrawal.UpdateBy = c.UpdateBy
 
-	withdrawal.Reason = string(reasonJSON)
-	withdrawal.TransferImage = c.TransferImage
-	withdrawal.ProcessedAt = time.Now()
-	withdrawal.UpdateBy = c.UpdateBy
+		db := e.Orm.Save(&withdrawal)
+		if err := db.Error; err != nil {
+			e.Log.Errorf("更新提现记录失败: %s", err)
+			return fmt.Errorf("Failed to update withdrawal record: %w", err)
+		}
+		if db.RowsAffected == 0 {
+			return errors.New("No permission to update this record")
+		}
 
-	// 保存更新
-	db := e.Orm.Save(&withdrawal)
-	if err := db.Error; err != nil {
-		e.Log.Errorf("更新提现记录失败: %s", err)
-		return fmt.Errorf("更新提现记录失败: %w", err)
-	}
-	if db.RowsAffected == 0 {
-		return errors.New("无权更新该数据")
+		// 手动转账成功，上报Tenjin埋点
+		go e.reportTenjinWithdrawalSuccess(strconv.Itoa(userId), netAmount, strconv.Itoa(withdrawal.Id))
 	}
 
 	e.Log.Infof("手动处理提现单 %s，结果: %v", withdrawal.WithdrawNo, c.Success)
 	return nil
+}
+
+// reportTenjinWithdrawalSuccess 上报Tenjin提现成功事件
+func (e *HsUserWithdrawal) reportTenjinWithdrawalSuccess(userId, amount, withdrawalId string) {
+	userIdInt, _ := strconv.Atoi(userId)
+	var appInstall models.MdAppInstall
+	err := e.Orm.Where("user_id = ?", userIdInt).
+		Order("update_time desc").
+		First(&appInstall).Error
+	if err != nil {
+		e.Log.Errorf("reportTenjinWithdrawalSuccess get app install error: userId=%s, err=%s", userId, err)
+		return
+	}
+
+	eventName := tenjinWithdrawalEventName(appInstall.Platform)
+	inserted, err := insertTenjinReport(e.Orm, tenjinBizTypeWithdrawal, withdrawalId, eventName, int64(userIdInt))
+	if err != nil {
+		e.Log.Errorf("reportTenjinWithdrawalSuccess insert report error: withdrawalId=%s, userId=%s, err=%s", withdrawalId, userId, err)
+		return
+	}
+	if !inserted {
+		return
+	}
+
+	err = tenjin.ReportWithdrawalSuccess(
+		appInstall.Platform,
+		appInstall.AnalyticsInstallationId,
+		appInstall.AdvertisingId,
+		appInstall.DeveloperDeviceId,
+		appInstall.OsVersion,
+		appInstall.AppVersion,
+		appInstall.IpAddress,
+		amount,
+	)
+	if err != nil {
+		e.Log.Errorf("reportTenjinWithdrawalSuccess error: userId=%s, err=%s", userId, err)
+		_ = deleteTenjinReport(e.Orm, tenjinBizTypeWithdrawal, withdrawalId, eventName)
+	}
 }

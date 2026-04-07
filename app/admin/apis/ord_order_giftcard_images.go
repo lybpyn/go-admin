@@ -1,7 +1,7 @@
 package apis
 
 import (
-    "fmt"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -13,6 +13,8 @@ import (
 	"go-admin/app/admin/service"
 	"go-admin/app/admin/service/dto"
 	"go-admin/common/actions"
+	"go-admin/config"
+	"go-admin/pkg/filesign"
 )
 
 type OrdOrderGiftcardImages struct {
@@ -32,18 +34,18 @@ type OrdOrderGiftcardImages struct {
 // @Router /api/v1/ord-order-giftcard-images [get]
 // @Security Bearer
 func (e OrdOrderGiftcardImages) GetPage(c *gin.Context) {
-    req := dto.OrdOrderGiftcardImagesGetPageReq{}
-    s := service.OrdOrderGiftcardImages{}
-    err := e.MakeContext(c).
-        MakeOrm().
-        Bind(&req, binding.Form, binding.Query).
-        MakeService(&s.Service).
-        Errors
-   	if err != nil {
-   		e.Logger.Error(err)
-   		e.Error(500, err, err.Error())
-   		return
-   	}
+	req := dto.OrdOrderGiftcardImagesGetPageReq{}
+	s := service.OrdOrderGiftcardImages{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req, binding.Form, binding.Query).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
 
 	// 获取当前管理员ID
 	adminId := user.GetUserId(c)
@@ -55,8 +57,10 @@ func (e OrdOrderGiftcardImages) GetPage(c *gin.Context) {
 	err = s.GetPage(&req, p, adminId, &list, &count)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("获取礼品卡订单图片表失败，\r\n失败信息 %s", err.Error()))
-        return
+		return
 	}
+
+	e.signImageURLs(c, list)
 
 	e.PageOK(list, int(count), req.GetPageIndex(), req.GetPageSize(), "查询成功")
 }
@@ -72,7 +76,7 @@ func (e OrdOrderGiftcardImages) GetPage(c *gin.Context) {
 func (e OrdOrderGiftcardImages) Get(c *gin.Context) {
 	req := dto.OrdOrderGiftcardImagesGetReq{}
 	s := service.OrdOrderGiftcardImages{}
-    err := e.MakeContext(c).
+	err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
 		MakeService(&s.Service).
@@ -91,10 +95,12 @@ func (e OrdOrderGiftcardImages) Get(c *gin.Context) {
 	err = s.Get(&req, p, adminId, &object)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("获取礼品卡订单图片表失败，\r\n失败信息 %s", err.Error()))
-        return
+		return
 	}
 
-	e.OK( object, "查询成功")
+	e.signImageURL(c, &object)
+
+	e.OK(object, "查询成功")
 }
 
 // Insert 创建礼品卡订单图片表
@@ -108,25 +114,25 @@ func (e OrdOrderGiftcardImages) Get(c *gin.Context) {
 // @Router /api/v1/ord-order-giftcard-images [post]
 // @Security Bearer
 func (e OrdOrderGiftcardImages) Insert(c *gin.Context) {
-    req := dto.OrdOrderGiftcardImagesInsertReq{}
-    s := service.OrdOrderGiftcardImages{}
-    err := e.MakeContext(c).
-        MakeOrm().
-        Bind(&req).
-        MakeService(&s.Service).
-        Errors
-    if err != nil {
-        e.Logger.Error(err)
-        e.Error(500, err, err.Error())
-        return
-    }
+	req := dto.OrdOrderGiftcardImagesInsertReq{}
+	s := service.OrdOrderGiftcardImages{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
 	// 设置创建人
 	req.SetCreateBy(user.GetUserId(c))
 
 	err = s.Insert(&req)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("创建礼品卡订单图片表失败，\r\n失败信息 %s", err.Error()))
-        return
+		return
 	}
 
 	e.OK(req.GetId(), "创建成功")
@@ -144,27 +150,27 @@ func (e OrdOrderGiftcardImages) Insert(c *gin.Context) {
 // @Router /api/v1/ord-order-giftcard-images/{id} [put]
 // @Security Bearer
 func (e OrdOrderGiftcardImages) Update(c *gin.Context) {
-    req := dto.OrdOrderGiftcardImagesUpdateReq{}
-    s := service.OrdOrderGiftcardImages{}
-    err := e.MakeContext(c).
-        MakeOrm().
-        Bind(&req).
-        MakeService(&s.Service).
-        Errors
-    if err != nil {
-        e.Logger.Error(err)
-        e.Error(500, err, err.Error())
-        return
-    }
+	req := dto.OrdOrderGiftcardImagesUpdateReq{}
+	s := service.OrdOrderGiftcardImages{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
 	req.SetUpdateBy(user.GetUserId(c))
 	p := actions.GetPermissionFromContext(c)
 
 	err = s.Update(&req, p)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("修改礼品卡订单图片表失败，\r\n失败信息 %s", err.Error()))
-        return
+		return
 	}
-	e.OK( req.GetId(), "修改成功")
+	e.OK(req.GetId(), "修改成功")
 }
 
 // Delete 删除礼品卡订单图片表
@@ -176,18 +182,18 @@ func (e OrdOrderGiftcardImages) Update(c *gin.Context) {
 // @Router /api/v1/ord-order-giftcard-images [delete]
 // @Security Bearer
 func (e OrdOrderGiftcardImages) Delete(c *gin.Context) {
-    s := service.OrdOrderGiftcardImages{}
-    req := dto.OrdOrderGiftcardImagesDeleteReq{}
-    err := e.MakeContext(c).
-        MakeOrm().
-        Bind(&req).
-        MakeService(&s.Service).
-        Errors
-    if err != nil {
-        e.Logger.Error(err)
-        e.Error(500, err, err.Error())
-        return
-    }
+	s := service.OrdOrderGiftcardImages{}
+	req := dto.OrdOrderGiftcardImagesDeleteReq{}
+	err := e.MakeContext(c).
+		MakeOrm().
+		Bind(&req).
+		MakeService(&s.Service).
+		Errors
+	if err != nil {
+		e.Logger.Error(err)
+		e.Error(500, err, err.Error())
+		return
+	}
 
 	// req.SetUpdateBy(user.GetUserId(c))
 	p := actions.GetPermissionFromContext(c)
@@ -195,7 +201,66 @@ func (e OrdOrderGiftcardImages) Delete(c *gin.Context) {
 	err = s.Remove(&req, p)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("删除礼品卡订单图片表失败，\r\n失败信息 %s", err.Error()))
-        return
+		return
 	}
-	e.OK( req.GetId(), "删除成功")
+	e.OK(req.GetId(), "删除成功")
+}
+
+func (e OrdOrderGiftcardImages) signImageURLs(c *gin.Context, list []models.OrdOrderGiftcardImages) {
+	for i := range list {
+		e.signImageURL(c, &list[i])
+	}
+}
+
+func (e OrdOrderGiftcardImages) signImageURL(c *gin.Context, item *models.OrdOrderGiftcardImages) {
+	if item == nil || item.ImageUrl == "" {
+		return
+	}
+
+	secret := config.ExtConfig.Upload.SignSecret
+	if secret == "" {
+		return
+	}
+
+	baseURL := config.ExtConfig.Upload.Domain
+	if baseURL == "" {
+		baseURL = resolveRequestBaseURL(c)
+	}
+	if baseURL == "" {
+		return
+	}
+
+	expireSeconds := config.ExtConfig.Upload.SignExpireSeconds
+	if expireSeconds <= 0 {
+		expireSeconds = 600
+	}
+
+	signedURL, err := filesign.GenerateTemporaryAccessURL(baseURL, item.ImageUrl, secret, expireSeconds)
+	if err != nil {
+		e.Logger.Errorf("sign image url failed: %v", err)
+		return
+	}
+	item.ImageUrl = signedURL
+}
+
+func resolveRequestBaseURL(c *gin.Context) string {
+	if c == nil || c.Request == nil {
+		return ""
+	}
+
+	host := c.Request.Host
+	if host == "" {
+		return ""
+	}
+
+	scheme := c.GetHeader("X-Forwarded-Proto")
+	if scheme == "" {
+		if c.Request.TLS != nil {
+			scheme = "https"
+		} else {
+			scheme = "http"
+		}
+	}
+
+	return scheme + "://" + host
 }

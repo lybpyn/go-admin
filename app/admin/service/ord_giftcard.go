@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-    "github.com/go-admin-team/go-admin-core/sdk/service"
+	"github.com/go-admin-team/go-admin-core/sdk/service"
 	"gorm.io/gorm"
 
 	"go-admin/app/admin/models"
@@ -66,12 +66,15 @@ func (e *OrdGiftcard) Get(d *dto.OrdGiftcardGetReq, p *actions.DataPermission, m
 
 // Insert 创建OrdGiftcard对象
 func (e *OrdGiftcard) Insert(c *dto.OrdGiftcardInsertReq) error {
-    var err error
-    var data models.OrdGiftcard
-    c.Generate(&data)
+	var err error
+	var data models.OrdGiftcard
+	c.Generate(&data)
 	err = e.Orm.Create(&data).Error
 	if err != nil {
 		e.Log.Errorf("OrdGiftcardService Insert error:%s \r\n", err)
+		return err
+	}
+	if err := e.syncRegionDiscountRate(e.Orm, data.RegionId); err != nil {
 		return err
 	}
 	return nil
@@ -79,22 +82,31 @@ func (e *OrdGiftcard) Insert(c *dto.OrdGiftcardInsertReq) error {
 
 // Update 修改OrdGiftcard对象
 func (e *OrdGiftcard) Update(c *dto.OrdGiftcardUpdateReq, p *actions.DataPermission) error {
-    var err error
-    var data = models.OrdGiftcard{}
-    e.Orm.Scopes(
-            actions.Permission(data.TableName(), p),
-        ).First(&data, c.GetId())
-    c.Generate(&data)
+	var err error
+	var data = models.OrdGiftcard{}
+	e.Orm.Scopes(
+		actions.Permission(data.TableName(), p),
+	).First(&data, c.GetId())
+	oldRegionId := data.RegionId
+	c.Generate(&data)
 
-    db := e.Orm.Save(&data)
-    if err = db.Error; err != nil {
-        e.Log.Errorf("OrdGiftcardService Save error:%s \r\n", err)
-        return err
-    }
-    if db.RowsAffected == 0 {
-        return errors.New("无权更新该数据")
-    }
-    return nil
+	db := e.Orm.Save(&data)
+	if err = db.Error; err != nil {
+		e.Log.Errorf("OrdGiftcardService Save error:%s \r\n", err)
+		return err
+	}
+	if db.RowsAffected == 0 {
+		return errors.New("无权更新该数据")
+	}
+	if err := e.syncRegionDiscountRate(e.Orm, data.RegionId); err != nil {
+		return err
+	}
+	if oldRegionId != "" && oldRegionId != data.RegionId {
+		if err := e.syncRegionDiscountRate(e.Orm, oldRegionId); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Remove 删除OrdGiftcard
@@ -106,12 +118,12 @@ func (e *OrdGiftcard) Remove(d *dto.OrdGiftcardDeleteReq, p *actions.DataPermiss
 			actions.Permission(data.TableName(), p),
 		).Delete(&data, d.GetId())
 	if err := db.Error; err != nil {
-        e.Log.Errorf("Service RemoveOrdGiftcard error:%s \r\n", err)
-        return err
-    }
-    if db.RowsAffected == 0 {
-        return errors.New("无权删除该数据")
-    }
+		e.Log.Errorf("Service RemoveOrdGiftcard error:%s \r\n", err)
+		return err
+	}
+	if db.RowsAffected == 0 {
+		return errors.New("无权删除该数据")
+	}
 	return nil
 }
 
@@ -123,6 +135,7 @@ func (e *OrdGiftcard) BatchSet(c *dto.OrdGiftcardBatchSetReq, p *actions.DataPer
 
 	// 使用事务确保数据一致性
 	return e.Orm.Transaction(func(tx *gorm.DB) error {
+		regionIdsToSync := make(map[string]struct{})
 		for _, item := range c.Items {
 			if item.Id > 0 {
 				// 有ID，执行更新操作
@@ -142,6 +155,7 @@ func (e *OrdGiftcard) BatchSet(c *dto.OrdGiftcardBatchSetReq, p *actions.DataPer
 					return err
 				}
 
+				oldRegionId := existingData.RegionId
 				// 更新字段
 				existingData.RegionId = item.RegionId
 				existingData.Name = item.Name
@@ -156,6 +170,13 @@ func (e *OrdGiftcard) BatchSet(c *dto.OrdGiftcardBatchSetReq, p *actions.DataPer
 				if err := tx.Save(&existingData).Error; err != nil {
 					e.Log.Errorf("OrdGiftcard BatchSet update error:%s, id=%d", err, item.Id)
 					return fmt.Errorf("更新礼品卡ID=%d失败: %s", item.Id, err.Error())
+				}
+
+				if existingData.RegionId != "" {
+					regionIdsToSync[existingData.RegionId] = struct{}{}
+				}
+				if oldRegionId != "" && oldRegionId != existingData.RegionId {
+					regionIdsToSync[oldRegionId] = struct{}{}
 				}
 
 				e.Log.Infof("Updated giftcard id=%d", item.Id)
@@ -177,7 +198,17 @@ func (e *OrdGiftcard) BatchSet(c *dto.OrdGiftcardBatchSetReq, p *actions.DataPer
 					return fmt.Errorf("创建礼品卡失败: %s", err.Error())
 				}
 
+				if newData.RegionId != "" {
+					regionIdsToSync[newData.RegionId] = struct{}{}
+				}
+
 				e.Log.Infof("Created new giftcard id=%d", newData.Id)
+			}
+		}
+
+		for regionId := range regionIdsToSync {
+			if err := e.syncRegionDiscountRate(tx, regionId); err != nil {
+				return err
 			}
 		}
 
@@ -185,3 +216,30 @@ func (e *OrdGiftcard) BatchSet(c *dto.OrdGiftcardBatchSetReq, p *actions.DataPer
 	})
 }
 
+func (e *OrdGiftcard) syncRegionDiscountRate(tx *gorm.DB, regionId string) error {
+	if regionId == "" || regionId == "0" {
+		return nil
+	}
+
+	var maxRate string
+	if err := tx.Model(&models.OrdGiftcard{}).
+		Select("COALESCE(MAX(discount_rate), 0)").
+		Where("region_id = ?", regionId).
+		Scan(&maxRate).Error; err != nil {
+		e.Log.Errorf("OrdGiftcard syncRegionDiscountRate query error: regionId=%s, err=%s", regionId, err)
+		return err
+	}
+
+	if maxRate == "" {
+		maxRate = "0"
+	}
+
+	if err := tx.Model(&models.OrdGiftcardRegion{}).
+		Where("id = ?", regionId).
+		Update("discount_rate", maxRate).Error; err != nil {
+		e.Log.Errorf("OrdGiftcard syncRegionDiscountRate update error: regionId=%s, err=%s", regionId, err)
+		return err
+	}
+
+	return nil
+}

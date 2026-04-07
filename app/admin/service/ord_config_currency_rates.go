@@ -114,9 +114,6 @@ func (e *OrdConfigCurrencyRates) BatchQuery(c *dto.OrdConfigCurrencyRatesBatchQu
 		return nil, errors.New("货币对列表不能为空")
 	}
 
-	if len(c.CurrencyPairs) > 50 {
-		return nil, errors.New("货币对列表最多支持50个")
-	}
 
 	var rates []models.OrdConfigCurrencyRates
 	var data models.OrdConfigCurrencyRates

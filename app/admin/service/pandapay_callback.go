@@ -12,6 +12,7 @@ import (
 
 	"go-admin/app/admin/models"
 	"go-admin/app/admin/service/dto"
+	"go-admin/common/tenjin"
 	"go-admin/config"
 )
 
@@ -46,7 +47,10 @@ func (e *PandaPayCallback) HandleCallback(c *dto.PandaPayCallbackReq) error {
 	}
 
 	// 4. 根据回调状态更新订单
-	return e.Orm.Transaction(func(tx *gorm.DB) error {
+	shouldReport := false
+	reportUserId := withdrawal.UserId
+	reportAmount := withdrawal.NetAmount
+	err = e.Orm.Transaction(func(tx *gorm.DB) error {
 		updates := make(map[string]interface{})
 
 		// 状态映射: 0=等待, 1=成功, 2=失败, 3=下单失败, 4=处理中
@@ -62,6 +66,7 @@ func (e *PandaPayCallback) HandleCallback(c *dto.PandaPayCallbackReq) error {
 				e.Log.Errorf("PandaPayCallback update user total_withdraw error: %s", err)
 				return err
 			}
+			shouldReport = true
 
 		case 2, 3: // 失败或下单失败
 			updates["status"] = "failed"
@@ -103,6 +108,15 @@ func (e *PandaPayCallback) HandleCallback(c *dto.PandaPayCallbackReq) error {
 
 		return nil
 	})
+	if err != nil {
+		return err
+	}
+
+	if shouldReport {
+		go e.reportTenjinWithdrawalSuccess(reportUserId, reportAmount, strconv.Itoa(withdrawal.Id))
+	}
+
+	return nil
 }
 
 // verifySign 验证签名
@@ -263,4 +277,41 @@ func (e *PandaPayCallback) updateUserTotalWithdraw(tx *gorm.DB, withdrawal *mode
 
 	e.Log.Infof("Updated user %d %s: +%s", userId, updateField, netAmount)
 	return nil
+}
+
+// reportTenjinWithdrawalSuccess 上报Tenjin提现成功事件
+func (e *PandaPayCallback) reportTenjinWithdrawalSuccess(userId, amount, withdrawalId string) {
+	userIdInt, _ := strconv.Atoi(userId)
+	var appInstall models.MdAppInstall
+	err := e.Orm.Where("user_id = ?", userIdInt).
+		Order("update_time desc").
+		First(&appInstall).Error
+	if err != nil {
+		e.Log.Errorf("reportTenjinWithdrawalSuccess get app install error: userId=%s, err=%s", userId, err)
+		return
+	}
+
+	eventName := tenjinWithdrawalEventName(appInstall.Platform)
+	inserted, err := insertTenjinReport(e.Orm, tenjinBizTypeWithdrawal, withdrawalId, eventName, int64(userIdInt))
+	if err != nil {
+		e.Log.Errorf("reportTenjinWithdrawalSuccess insert report error: withdrawalId=%s, userId=%s, err=%s", withdrawalId, userId, err)
+		return
+	}
+	if !inserted {
+		return
+	}
+
+	if err := tenjin.ReportWithdrawalSuccess(
+		appInstall.Platform,
+		appInstall.AnalyticsInstallationId,
+		appInstall.AdvertisingId,
+		appInstall.DeveloperDeviceId,
+		appInstall.OsVersion,
+		appInstall.AppVersion,
+		appInstall.IpAddress,
+		amount,
+	); err != nil {
+		e.Log.Errorf("reportTenjinWithdrawalSuccess error: userId=%s, err=%s", userId, err)
+		_ = deleteTenjinReport(e.Orm, tenjinBizTypeWithdrawal, withdrawalId, eventName)
+	}
 }

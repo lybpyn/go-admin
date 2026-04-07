@@ -3,7 +3,7 @@ package service
 import (
 	"errors"
 
-    "github.com/go-admin-team/go-admin-core/sdk/service"
+	"github.com/go-admin-team/go-admin-core/sdk/service"
 	"gorm.io/gorm"
 
 	"go-admin/app/admin/models"
@@ -39,7 +39,7 @@ func (e *OrdUserOrders) GetPage(c *dto.OrdUserOrdersGetPageReq, p *actions.DataP
 }
 
 // Get 获取OrdUserOrders对象
-func (e *OrdUserOrders) Get(d *dto.OrdUserOrdersGetReq, p *actions.DataPermission, model *models.OrdUserOrders) error {
+func (e *OrdUserOrders) Get(d *dto.OrdUserOrdersGetReq, p *actions.DataPermission, adminId int, model *models.OrdUserOrders) error {
 	var data models.OrdUserOrders
 
 	err := e.Orm.Model(&data).
@@ -57,9 +57,34 @@ func (e *OrdUserOrders) Get(d *dto.OrdUserOrdersGetReq, p *actions.DataPermissio
 		return err
 	}
 
+	// 检查权限：已完成/已驳回订单允许查看，其它状态仅接单人可查看
+	if err := e.checkOrderPermission(model, adminId); err != nil {
+		return err
+	}
+
 	// 只有已完成状态（status=2）的订单才能查看兑换码
-	if model.Status != 2 {
-		model.GiftCardCode = ""
+	// if model.Status != 2 {
+	// 	model.GiftCardCode = ""
+	// }
+
+	return nil
+}
+
+// checkOrderPermission 检查订单查看权限
+func (e *OrdUserOrders) checkOrderPermission(order *models.OrdUserOrders, adminId int) error {
+	if order == nil {
+		return errors.New("订单不存在")
+	}
+
+	// 已完成/已驳回订单允许所有人查看
+	if order.Status == 2 || order.Status == 4 {
+		return nil
+	}
+
+	// 未完成订单仅接单人可查看
+	if order.AssignBy != adminId {
+		e.Log.Errorf("Permission denied: order not completed and not assigned to current admin, orderId:%d, assignBy:%d, currentAdmin:%d", order.Id, order.AssignBy, adminId)
+		return errors.New("无权查看该订单，只有接单人或已完成/已驳回订单可以查看")
 	}
 
 	return nil
@@ -67,9 +92,9 @@ func (e *OrdUserOrders) Get(d *dto.OrdUserOrdersGetReq, p *actions.DataPermissio
 
 // Insert 创建OrdUserOrders对象
 func (e *OrdUserOrders) Insert(c *dto.OrdUserOrdersInsertReq) error {
-    var err error
-    var data models.OrdUserOrders
-    c.Generate(&data)
+	var err error
+	var data models.OrdUserOrders
+	c.Generate(&data)
 	err = e.Orm.Create(&data).Error
 	if err != nil {
 		e.Log.Errorf("OrdUserOrdersService Insert error:%s \r\n", err)
@@ -80,52 +105,52 @@ func (e *OrdUserOrders) Insert(c *dto.OrdUserOrdersInsertReq) error {
 
 // Update 修改OrdUserOrders对象
 func (e *OrdUserOrders) Update(c *dto.OrdUserOrdersUpdateReq, p *actions.DataPermission) error {
-    var err error
-    var data = models.OrdUserOrders{}
-    e.Orm.Scopes(
-            actions.Permission(data.TableName(), p),
-        ).First(&data, c.GetId())
+	var err error
+	var data = models.OrdUserOrders{}
+	e.Orm.Scopes(
+		actions.Permission(data.TableName(), p),
+	).First(&data, c.GetId())
 
-    // 记录原始状态和开始处理时间
-    oldStatus := data.Status
-    processingStartedAt := data.ProcessingStartedAt
+	// 记录原始状态和开始处理时间
+	oldStatus := data.Status
+	processingStartedAt := data.ProcessingStartedAt
 
-    c.Generate(&data)
+	c.Generate(&data)
 
-    // 如果订单状态从非完成状态变更为完成状态（2），自动设置相关字段
-    if oldStatus != 2 && data.Status == 2 {
-        data.ProcessingStatus = 3
+	// 如果订单状态从非完成状态变更为完成状态（2），自动设置相关字段
+	if oldStatus != 2 && data.Status == 2 {
+		data.ProcessingStatus = 3
 
-        // 计算处理耗时（秒）：从开始处理时间到现在
-        if !processingStartedAt.IsZero() {
-            // 使用数据库的 TIMESTAMPDIFF 函数计算秒数差异
-            db := e.Orm.Model(&data).
-                Where("id = ?", c.GetId()).
-                Updates(map[string]interface{}{
-                    "processing_status":      3,
-                    "processing_started_end": gorm.Expr("NOW()"),
-                    "processing_duration":    gorm.Expr("TIMESTAMPDIFF(SECOND, processing_started_at, NOW())"),
-                })
+		// 计算处理耗时（秒）：从开始处理时间到现在
+		if !processingStartedAt.IsZero() {
+			// 使用数据库的 TIMESTAMPDIFF 函数计算秒数差异
+			db := e.Orm.Model(&data).
+				Where("id = ?", c.GetId()).
+				Updates(map[string]interface{}{
+					"processing_status":      3,
+					"processing_started_end": gorm.Expr("NOW()"),
+					"processing_duration":    gorm.Expr("TIMESTAMPDIFF(SECOND, processing_started_at, NOW())"),
+				})
 
-            if err = db.Error; err != nil {
-                e.Log.Errorf("OrdUserOrdersService Update processing fields error:%s \r\n", err)
-                return err
-            }
+			if err = db.Error; err != nil {
+				e.Log.Errorf("OrdUserOrdersService Update processing fields error:%s \r\n", err)
+				return err
+			}
 
-            // 继续保存其他字段
-            data.ProcessingStatus = 3
-        }
-    }
+			// 继续保存其他字段
+			data.ProcessingStatus = 3
+		}
+	}
 
-    db := e.Orm.Save(&data)
-    if err = db.Error; err != nil {
-        e.Log.Errorf("OrdUserOrdersService Save error:%s \r\n", err)
-        return err
-    }
-    if db.RowsAffected == 0 {
-        return errors.New("无权更新该数据")
-    }
-    return nil
+	db := e.Orm.Save(&data)
+	if err = db.Error; err != nil {
+		e.Log.Errorf("OrdUserOrdersService Save error:%s \r\n", err)
+		return err
+	}
+	if db.RowsAffected == 0 {
+		return errors.New("无权更新该数据")
+	}
+	return nil
 }
 
 // Remove 删除OrdUserOrders
@@ -137,12 +162,12 @@ func (e *OrdUserOrders) Remove(d *dto.OrdUserOrdersDeleteReq, p *actions.DataPer
 			actions.Permission(data.TableName(), p),
 		).Delete(&data, d.GetId())
 	if err := db.Error; err != nil {
-        e.Log.Errorf("Service RemoveOrdUserOrders error:%s \r\n", err)
-        return err
-    }
-    if db.RowsAffected == 0 {
-        return errors.New("无权删除该数据")
-    }
+		e.Log.Errorf("Service RemoveOrdUserOrders error:%s \r\n", err)
+		return err
+	}
+	if db.RowsAffected == 0 {
+		return errors.New("无权删除该数据")
+	}
 	return nil
 }
 
@@ -194,7 +219,6 @@ func (e *OrdUserOrders) AcceptOrder(c *dto.OrdUserOrdersAcceptReq, adminId int, 
 		return err
 	}
 
-
 	// 检查订单状态是否允许接单（只有待处理状态5才能接单）
 	if order.Status != 5 {
 		e.Log.Errorf("AcceptOrder error: invalid order status, id:%v, status:%d", c.GetId(), order.Status)
@@ -203,13 +227,13 @@ func (e *OrdUserOrders) AcceptOrder(c *dto.OrdUserOrdersAcceptReq, adminId int, 
 
 	// 更新接单信息
 	updates := map[string]interface{}{
-		"assign_by":              adminId,
-		"assign_name":            adminName,
-		"assign_type":            1, // 1=人工接单
-		"status":                 1, // 更新订单状态为"已经接单"
-		"processing_started_at":  gorm.Expr("NOW()"),
-		"processing_status":      1, // 1=正在处理
-		"update_by":              adminId,
+		"assign_by":             adminId,
+		"assign_name":           adminName,
+		"assign_type":           1, // 1=人工接单
+		"status":                1, // 更新订单状态为"已经接单"
+		"processing_started_at": gorm.Expr("NOW()"),
+		"processing_status":     1, // 1=正在处理
+		"update_by":             adminId,
 	}
 
 	db := e.Orm.Model(&order).

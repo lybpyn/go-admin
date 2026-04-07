@@ -37,8 +37,12 @@ type File struct {
 // ensureDirExists 确保目录存在，如果不存在则创建，权限设置为 0777 避免权限问题
 func ensureDirExists(path string) error {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		// 使用 0777 权限创建目录，允许所有用户读写执行
-		return os.MkdirAll(path, 0777)
+		// 使用 0777 权限创建目录
+		if err := os.MkdirAll(path, 0777); err != nil {
+			return err
+		}
+		// 显式设置目录权限为 0777，避免 umask 影响
+		return os.Chmod(path, 0777)
 	}
 	return nil
 }
@@ -212,18 +216,12 @@ func (e File) singleFile(c *gin.Context, fileResponse FileResponse, urlPrefix st
 		return FileResponse{}, true
 	}
 
-	// 获取带日期的上传路径
-	localPath, urlPath := getDateUploadPath()
+	// 直接使用配置路径，不创建日期子目录
+	uploadPath := getUploadPath()
 	fileName := uuid.New().String() + utils.GetExt(files.Filename)
 
-	// 创建目录
-	if err := ensureDirExists(localPath); err != nil {
-		e.Error(500, errors.New(err.Error()), "初始化文件路径失败")
-		return FileResponse{}, true
-	}
-
 	// 保存文件到本地
-	localFile := localPath + fileName
+	localFile := uploadPath + fileName
 	if err := c.SaveUploadedFile(files, localFile); err != nil {
 		e.Error(500, errors.New(err.Error()), fmt.Sprint("文件保存失败-%s", err.Error()))
 		return FileResponse{}, true
@@ -231,11 +229,11 @@ func (e File) singleFile(c *gin.Context, fileResponse FileResponse, urlPrefix st
 
 	// 构建返回的URL
 	fileType, _ := utils.GetType(localFile)
-	relativePath := "static" + urlPath + fileName
+	relativePath := "static/" + fileName
 	fileResponse = FileResponse{
 		Size:     pkg.GetFileSize(localFile),
 		Path:     relativePath,
-		FullPath: getFileURL(relativePath), // 完整URL: http://file.cardpartner.io/static/images/2025/11/10/xxx.jpg
+		FullPath: getFileURL(relativePath),
 		Name:     files.Filename,
 		Type:     fileType,
 	}
